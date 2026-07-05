@@ -1,134 +1,138 @@
 "use client";
 
-import React, { useRef } from "react";
+import React from "react";
 import { motion } from "framer-motion";
-import { Magnetic } from "@/components/motion/Magnetic";
-import { EASE } from "@/animations/core/tokens";
+import { Plus } from "lucide-react";
+import styles from "./Hero.module.css";
 
 export function Hero() {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  // Easing curve token
-  const expoOut = EASE.standard; // [0.16, 1, 0.3, 1]
+  const expoOut = [0.16, 1, 0.3, 1];
 
   return (
-    <div
-      ref={containerRef}
-      className="w-full min-h-screen flex flex-col justify-center items-center relative overflow-hidden bg-white select-none"
-    >
-      {/* Layer 1: Background Video */}
-      <div className="absolute inset-0 z-0 flex items-center justify-center bg-white">
-        <motion.video
-          initial={{ opacity: 0, scale: 1.45 }}
-          animate={{ opacity: 1, scale: 1.4 }}
-          transition={{ duration: 1.8, ease: expoOut }}
+    <div className={styles.heroContainer}>
+      
+      {/* Background Video */}
+      <motion.div
+        initial={{ opacity: 0, scale: 1.05 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1.8, ease: expoOut }}
+        className={styles.videoWrapper}
+      >
+        <video
           autoPlay
           muted
           playsInline
           loop
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] md:w-full md:h-full object-cover rounded-2xl md:rounded-none transition-all duration-1000"
-          style={{ objectPosition: "28% center" }}
+          className={styles.videoElement}
           src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260508_215831_c6a8989c-d716-4d8d-8745-e972a2eec711.mp4"
         />
-        {/* Subtle white gradient overlay */}
-        <div
-          className="absolute inset-0 z-10 pointer-events-none"
-          style={{
-            background: "linear-gradient(to top, #ffffff 0%, rgba(255,255,255,0.8) 50%, transparent 100%)"
-          }}
-        />
-      </div>
+      </motion.div>
 
-      {/* Layer 3: Bottom Editorial Content */}
-      <div className="relative z-20 w-full px-6 md:px-12 py-32 flex flex-col items-center justify-center min-h-screen">
-        <div className="mx-auto w-full max-w-4xl flex flex-col items-center text-center gap-6">
-          
-          {/* Left Block - Now Centered */}
-          <div className="flex flex-col items-center text-center gap-6 max-w-3xl">
-            {/* Caption */}
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.5, ease: expoOut }}
-              className="flex items-center gap-2 justify-center"
-            >
-              <span className="w-2 h-2 rounded-full bg-black block" />
-              <span className="font-mono text-xs text-black/55 uppercase tracking-widest font-bold">
-                Independent Digital Studio
-              </span>
-            </motion.div>
-
-            {/* Headline */}
-            <motion.h1
-              initial={{ opacity: 0, y: 25 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.0, delay: 0.7, ease: expoOut }}
-              className="font-display text-4xl md:text-6xl lg:text-[4.5rem] text-black tracking-[-0.03em] leading-[1.05] font-light max-w-4xl text-center"
-            >
-              Crafting websites <br className="hidden md:inline" />
-              people remember. <br />
-              <span className="font-medium text-black/60">
-                Built for brands <br className="hidden md:inline" />
-                that expect more.
-              </span>
-            </motion.h1>
-
-            {/* Supporting Paragraph */}
-            <motion.p
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.9, ease: expoOut }}
-              className="font-sans text-sm md:text-base text-neutral-700 max-w-[50ch] leading-relaxed mt-2 text-center"
-            >
-              Design, engineering and motion working together to create websites that build trust from the very first interaction.
-            </motion.p>
-
-            {/* CTA Buttons */}
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1.0, ease: expoOut }}
-              className="flex flex-wrap items-center justify-center gap-4 pt-4"
-            >
-              <Magnetic strength={0.15}>
-                <a
-                  href="#showcase"
-                  className="bg-black text-white hover:bg-neutral-900 px-6 py-3 rounded-full font-mono text-[10px] uppercase tracking-widest transition-all duration-300 shadow-sm font-semibold focus-visible:outline-none"
-                >
-                  View Our Work →
-                </a>
-              </Magnetic>
-              
-              <Magnetic strength={0.15}>
-                <a
-                  href="#contact"
-                  className="bg-transparent text-black border border-black/30 hover:border-black/75 px-6 py-3 rounded-full font-mono text-[10px] uppercase tracking-widest transition-all duration-300 font-semibold focus-visible:outline-none"
-                >
-                  Start a Project
-                </a>
-              </Magnetic>
-            </motion.div>
+      {/* Navbar Layer */}
+      <motion.nav
+        initial={{ y: -16, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.8, ease: expoOut }}
+        className={styles.navbar}
+      >
+        <div className={styles.navLeft}>
+          {/* Logo Custom SVG Icon */}
+          <div className={styles.logoIcon}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="5" y="4" width="6" height="14" rx="3" transform="rotate(-35 5 4)" fill="#000000" />
+              <rect x="13" y="8" width="6" height="14" rx="3" transform="rotate(-35 13 8)" fill="#000000" />
+            </svg>
           </div>
+          
+          <span className={styles.brandText}>NeuralKinetics</span>
 
-          {/* Right Block - Centered underneath */}
+          {/* Menu Trigger Button */}
+          <button className={styles.blackPill}>
+            <span className={styles.whiteCircle}>
+              <Plus size={12} strokeWidth={3} />
+            </span>
+            <span>Menu</span>
+          </button>
+
+          {/* Tags Pill */}
+          <div className={styles.grayPill}>
+            <span>Advanced Bionics</span>
+            <span className={styles.tagDivider}>|</span>
+            <span>Cognitive AI</span>
+          </div>
+        </div>
+
+        <div className={styles.navRight}>
+          {/* Adaptive Systems Pill */}
+          <div className={styles.adaptivePill}>
+            <span className={styles.rightLabel}>Adaptive Systems</span>
+            <button className={styles.blackCircleButton} aria-label="Toggle Systems">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="6" cy="6" r="1" fill="currentColor" />
+                <circle cx="18" cy="6" r="1" fill="currentColor" />
+                <circle cx="6" cy="18" r="1" fill="currentColor" />
+                <circle cx="18" cy="18" r="1" fill="currentColor" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </motion.nav>
+
+      <div style={{ flex: 1 }} />
+
+      {/* Footer Content */}
+      <motion.div
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 1, delay: 0.5, ease: expoOut }}
+        className={styles.footerGradient}
+      >
+        <div className={styles.footerLeft}>
+          
+          {/* Subtitle */}
           <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.1, ease: expoOut }}
-            className="flex flex-wrap justify-center gap-2 mt-6"
+            initial={{ y: 16, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.6, ease: expoOut }}
+            className={styles.subtitleLine}
           >
-            {["Next.js", "Motion", "Performance"].map((label) => (
-              <div
-                key={label}
-                className="bg-white/90 backdrop-blur text-black border border-black/10 font-mono text-[10px] uppercase tracking-widest px-4 py-2 rounded-full inline-flex items-center justify-center font-medium shadow-sm"
-              >
-                {label}
-              </div>
-            ))}
+            <span className={styles.blackDot} />
+            <span className={styles.subtitleText}>Best digital banking card 2026</span>
           </motion.div>
 
+          {/* Heading */}
+          <motion.h1
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.8, ease: expoOut }}
+            className={styles.heading}
+          >
+            One Card, Zero <br />
+            Limits. Worldwide.
+          </motion.h1>
+
+          {/* Buttons */}
+          <motion.div
+            initial={{ y: 16, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8, delay: 1.0, ease: expoOut }}
+            className={styles.buttonGroup}
+          >
+            <button className={styles.ctaButtonPrimary}>See Features</button>
+            <button className={styles.ctaButtonSecondary}>How It Works</button>
+          </motion.div>
         </div>
-      </div>
+
+        {/* Right Tags */}
+        <div className={styles.footerRight}>
+          {["Neuromorphic", "AGI", "Cybernetics"].map((tag) => (
+            <span key={tag} className={styles.tagPill}>
+              {tag}
+            </span>
+          ))}
+        </div>
+      </motion.div>
+
     </div>
   );
 }
