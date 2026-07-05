@@ -7,8 +7,10 @@ interface TextProps extends React.HTMLAttributes<HTMLParagraphElement> {
 
 export const Text = React.forwardRef<HTMLParagraphElement, TextProps>(
   ({ className, as: Tag = "p", ...props }, ref) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const Component = Tag as any;
     return (
-      <Tag
+      <Component
         ref={ref}
         className={cn(
           "font-sans text-base text-foreground/80 leading-relaxed text-wrap-pretty max-w-[75ch]",

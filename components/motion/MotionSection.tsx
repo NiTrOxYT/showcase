@@ -28,10 +28,12 @@ export function MotionSection({
   ...rest
 }: MotionSectionProps) {
   const ref = useSectionReveal<HTMLElement>({ variant, delay, start });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const Component = Tag as any;
 
   return (
-    <Tag ref={ref} className={cn(className)} {...rest}>
+    <Component ref={ref} className={cn(className)} {...rest}>
       {children}
-    </Tag>
+    </Component>
   );
 }

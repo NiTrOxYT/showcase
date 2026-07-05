@@ -19,8 +19,10 @@ export const Heading = React.forwardRef<HTMLHeadingElement, HeadingProps>(
       6: "text-base md:text-lg font-semibold leading-normal",
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const Component = Tag as any;
     return (
-      <Tag
+      <Component
         ref={ref}
         className={cn(
           "font-display text-foreground text-wrap-balance",
