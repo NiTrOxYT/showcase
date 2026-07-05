@@ -14,7 +14,7 @@ export function Hero() {
   return (
     <div
       ref={containerRef}
-      className="w-full min-h-screen flex flex-col justify-end relative overflow-hidden bg-white select-none"
+      className="w-full min-h-screen flex flex-col justify-center items-center relative overflow-hidden bg-white select-none"
     >
       {/* Layer 1: Background Video */}
       <div className="absolute inset-0 z-0 flex items-center justify-center bg-white">
@@ -27,7 +27,7 @@ export function Hero() {
           playsInline
           loop
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] md:w-full md:h-full object-cover rounded-2xl md:rounded-none transition-all duration-1000"
-          // style={{ objectPosition: "center center" }}
+          style={{ objectPosition: "72% center" }}
           src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260508_215831_c6a8989c-d716-4d8d-8745-e972a2eec711.mp4"
         />
         {/* Subtle white gradient overlay */}
@@ -40,17 +40,17 @@ export function Hero() {
       </div>
 
       {/* Layer 3: Bottom Editorial Content */}
-      <div className="relative z-20 w-full px-6 md:px-12 pb-16 md:pb-24 pt-32">
-        <div className="mx-auto w-full max-w-7xl flex flex-col md:flex-row items-end justify-between gap-10">
-
-          {/* Left Block */}
-          <div className="flex flex-col items-start gap-6 max-w-3xl">
+      <div className="relative z-20 w-full px-6 md:px-12 py-32 flex flex-col items-center justify-center min-h-screen">
+        <div className="mx-auto w-full max-w-4xl flex flex-col items-center text-center gap-6">
+          
+          {/* Left Block - Now Centered */}
+          <div className="flex flex-col items-center text-center gap-6 max-w-3xl">
             {/* Caption */}
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.5, ease: expoOut }}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 justify-center"
             >
               <span className="w-2 h-2 rounded-full bg-black block" />
               <span className="font-mono text-xs text-black/55 uppercase tracking-widest font-bold">
@@ -63,7 +63,7 @@ export function Hero() {
               initial={{ opacity: 0, y: 25 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.0, delay: 0.7, ease: expoOut }}
-              className="font-display text-4xl md:text-6xl lg:text-[4.5rem] text-black tracking-[-0.03em] leading-[1.05] font-light max-w-4xl"
+              className="font-display text-4xl md:text-6xl lg:text-[4.5rem] text-black tracking-[-0.03em] leading-[1.05] font-light max-w-4xl text-center"
             >
               Crafting websites <br className="hidden md:inline" />
               people remember. <br />
@@ -78,7 +78,7 @@ export function Hero() {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.9, ease: expoOut }}
-              className="font-sans text-sm md:text-base text-neutral-700 max-w-[50ch] leading-relaxed mt-2"
+              className="font-sans text-sm md:text-base text-neutral-700 max-w-[50ch] leading-relaxed mt-2 text-center"
             >
               Design, engineering and motion working together to create websites that build trust from the very first interaction.
             </motion.p>
@@ -88,7 +88,7 @@ export function Hero() {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 1.0, ease: expoOut }}
-              className="flex flex-wrap items-center gap-4 pt-4"
+              className="flex flex-wrap items-center justify-center gap-4 pt-4"
             >
               <Magnetic strength={0.15}>
                 <a
@@ -98,7 +98,7 @@ export function Hero() {
                   View Our Work →
                 </a>
               </Magnetic>
-
+              
               <Magnetic strength={0.15}>
                 <a
                   href="#contact"
@@ -110,12 +110,12 @@ export function Hero() {
             </motion.div>
           </div>
 
-          {/* Right Block */}
+          {/* Right Block - Centered underneath */}
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1.1, ease: expoOut }}
-            className="flex md:flex-col gap-2 shrink-0"
+            className="flex flex-wrap justify-center gap-2 mt-6"
           >
             {["Next.js", "Motion", "Performance"].map((label) => (
               <div
