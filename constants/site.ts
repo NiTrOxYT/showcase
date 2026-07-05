@@ -1,4 +1,4 @@
 export const SITE_METADATA = {
-  COMPANY_NAME: "AVENIQ",
-  SUPPORT_EMAIL: "support@aveniq.com",
+  COMPANY_NAME: "ANNEX",
+  SUPPORT_EMAIL: "support@annex.com",
 };

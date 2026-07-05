@@ -32,7 +32,7 @@ export const defaultMetadata: Metadata = {
     title: siteConfig.name,
     description: siteConfig.description,
     images: [siteConfig.ogImage],
-    creator: "@aveniq",
+    creator: "@annex",
   },
   icons: {
     icon: "/favicons/favicon.ico",

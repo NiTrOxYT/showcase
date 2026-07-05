@@ -40,7 +40,7 @@ export function Navbar() {
     >
       <div className="mx-auto w-full max-w-7xl px-6 md:px-8 lg:px-12 flex items-center justify-between">
         <Link href="/" className="font-display text-xl font-bold tracking-wider hover:opacity-80 transition-opacity">
-          AVENIQ
+          ANNEX
         </Link>
 
         {/* Minimal Trigger */}

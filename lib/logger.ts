@@ -7,7 +7,7 @@ function log(level: LogLevel, message: string, ...args: unknown[]) {
     return;
   }
 
-  const prefix = `[AVENIQ][${level.toUpperCase()}]`;
+  const prefix = `[ANNEX][${level.toUpperCase()}]`;
 
   switch (level) {
     case "info":

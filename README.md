@@ -1,6 +1,6 @@
-# AVENIQ Showcase Website
+# ANNEX Showcase Website
 
-A premium, highly interactive digital showcase designed to demonstrate the design craftsmanship and technical excellence of AVENIQ. Built as a production-ready, scalable foundation using Next.js 15, TypeScript, and Tailwind CSS v3.
+A premium, highly interactive digital showcase designed to demonstrate the design craftsmanship and technical excellence of ANNEX. Built as a production-ready, scalable foundation using Next.js 15, TypeScript, and Tailwind CSS v3.
 
 ## Technology Stack
 

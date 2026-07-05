@@ -1,10 +1,10 @@
-# AVENIQ Showcase Website
+# ANNEX Showcase Website
 
 ## Vision
 
-The AVENIQ Showcase Website is not a traditional portfolio.
+The ANNEX Showcase Website is not a traditional portfolio.
 
-It is a premium digital experience designed to demonstrate the quality, creativity, and technical excellence of AVENIQ before a potential client even starts a conversation.
+It is a premium digital experience designed to demonstrate the quality, creativity, and technical excellence of ANNEX before a potential client even starts a conversation.
 
 Every interaction should communicate craftsmanship, confidence, and attention to detail.
 
@@ -16,7 +16,7 @@ The website itself should become the strongest sales pitch.
 
 - Build trust within the first 5 seconds.
 - Showcase websites and applications as premium products.
-- Convince visitors that AVENIQ builds high-end digital experiences.
+- Convince visitors that ANNEX builds high-end digital experiences.
 - Make adding new showcase projects effortless through an internal admin panel.
 - Keep the experience fast, immersive and memorable.
 
@@ -153,7 +153,7 @@ Visitor lands on homepage.
 
 ↓
 
-Immediately understands the quality of AVENIQ.
+Immediately understands the quality of ANNEX.
 
 ↓
 
@@ -177,7 +177,7 @@ Builds trust.
 
 ↓
 
-Contacts AVENIQ.
+Contacts ANNEX.
 
 ---
 

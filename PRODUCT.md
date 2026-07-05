@@ -8,7 +8,7 @@ brand
 Small businesses, startups, restaurants, agencies, and retail owners looking for high-end digital experiences.
 
 ## Product Purpose
-Build trust within the first 5 seconds and demonstrate the design and technical excellence of AVENIQ.
+Build trust within the first 5 seconds and demonstrate the design and technical excellence of ANNEX.
 
 ## Brand Personality
 Confident, modern, minimal, elegant, technical, premium. Never loud or childish.
