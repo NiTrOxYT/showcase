@@ -1,0 +1,36 @@
+import type { Project } from "@/types/project";
+
+export const mockProjects: Project[] = [
+  {
+    id: "1",
+    title: "EcoSphere Dashboard",
+    slug: "ecosphere-dashboard",
+    description: "High-end telemetry dashboard visualizing environmental sustainability metrics.",
+    longDescription: "A comprehensive performance-optimized web platform with custom visualizations, real-time sync, and fluid layout adjustments.",
+    coverImage: "https://picsum.photos/seed/ecosphere/1920/1080",
+    images: ["https://picsum.photos/seed/ecosphere/1920/1080"],
+    techStack: ["Next.js", "React", "GSAP", "Tailwind CSS", "Supabase"],
+    liveUrl: "https://ecosphere.example.com",
+    githubUrl: "https://github.com/aveniq/ecosphere",
+    featured: true,
+    order: 1,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: "2",
+    title: "Aura Commerce",
+    slug: "aura-commerce",
+    description: "Minimalist fashion retail site utilizing premium motion design and editorial typography.",
+    longDescription: "A headless shop with zero-layout-shift transition triggers, custom cart systems, and fluid page transitions.",
+    coverImage: "https://picsum.photos/seed/aura/1920/1080",
+    images: ["https://picsum.photos/seed/aura/1920/1080"],
+    techStack: ["Next.js", "React", "Framer Motion", "Tailwind CSS", "Cloudinary"],
+    liveUrl: "https://aura.example.com",
+    githubUrl: "https://github.com/aveniq/aura",
+    featured: true,
+    order: 2,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+];
