@@ -27,11 +27,11 @@ export function Hero() {
           playsInline
           loop
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] md:w-full md:h-full object-cover rounded-2xl md:rounded-none transition-all duration-1000"
-          style={{ objectPosition: "80% center" }}
+          style={{ objectPosition: "center center" }}
           src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260508_215831_c6a8989c-d716-4d8d-8745-e972a2eec711.mp4"
         />
         {/* Subtle white gradient overlay */}
-        <div 
+        <div
           className="absolute inset-0 z-10 pointer-events-none"
           style={{
             background: "linear-gradient(to top, #ffffff 0%, rgba(255,255,255,0.8) 50%, transparent 100%)"
@@ -42,7 +42,7 @@ export function Hero() {
       {/* Layer 3: Bottom Editorial Content */}
       <div className="relative z-20 w-full px-6 md:px-12 pb-16 md:pb-24 pt-32">
         <div className="mx-auto w-full max-w-7xl flex flex-col md:flex-row items-end justify-between gap-10">
-          
+
           {/* Left Block */}
           <div className="flex flex-col items-start gap-6 max-w-3xl">
             {/* Caption */}
@@ -98,7 +98,7 @@ export function Hero() {
                   View Our Work →
                 </a>
               </Magnetic>
-              
+
               <Magnetic strength={0.15}>
                 <a
                   href="#contact"
