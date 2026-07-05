@@ -2,17 +2,26 @@ import React from "react";
 import { Container } from "@/components/layout/Container";
 import { Heading } from "@/components/typography/Heading";
 import { navigationConfig } from "@/config/navigation";
-import { SITE_METADATA } from "@/constants/site";
 import Link from "next/link";
+import { SettingsRepository } from "@/services/repositories/SettingsRepository";
 
 export function Footer() {
+  const brandingSettings = SettingsRepository.getModule("branding");
+  const contactSettings = SettingsRepository.getModule("contact");
+  const footerSettings = SettingsRepository.getModule("footer");
+  
+  const brandName = brandingSettings.brandName || "ANNEX";
+  const supportEmail = contactSettings.email || "support@annex.com";
+  const address = contactSettings.address || "Bengaluru, India";
+  const finalClosingCopy = footerSettings.finalClosingCopy || "We build for the web that matters.";
+
   return (
     <footer className="border-t border-border/20 bg-background relative overflow-hidden">
       <Container className="py-24 md:py-32">
         {/* Stage 1: Large closing statement */}
         <div className="text-center mb-24 md:mb-32">
           <Heading level={2} className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tightest max-w-4xl mx-auto leading-none text-foreground/95">
-            We build for the web that matters.
+            {finalClosingCopy}
           </Heading>
         </div>
 
@@ -22,7 +31,7 @@ export function Footer() {
           <div className="md:col-span-5 flex flex-col gap-6">
             <div>
               <Link href="/" className="font-display text-2xl font-black tracking-wider text-foreground">
-                ANNEX
+                {brandName}
               </Link>
               <p className="font-sans text-sm text-muted/75 max-w-xs mt-3 leading-relaxed">
                 Bespoke digital design and high-end engineering for brands demanding an elite digital presence.
@@ -30,13 +39,13 @@ export function Footer() {
             </div>
             <div className="flex flex-col gap-1.5 pt-2">
               <a
-                href={`mailto:${SITE_METADATA.SUPPORT_EMAIL}`}
+                href={`mailto:${supportEmail}`}
                 className="font-sans text-sm text-foreground/80 hover:text-primary transition-colors duration-300 w-fit"
               >
-                {SITE_METADATA.SUPPORT_EMAIL}
+                {supportEmail}
               </a>
               <span className="font-sans text-[11px] text-muted/50 tracking-wider">
-                Bengaluru, India
+                {address}
               </span>
             </div>
           </div>

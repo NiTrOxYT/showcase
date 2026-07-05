@@ -1,9 +1,9 @@
-import { mockProjects } from "@/data/mock/projects";
+import { ProjectRepository } from "./repositories/ProjectRepository";
 import type { Project } from "@/types/project";
 
 export const showcaseRepository = {
   getProjects(filter?: string, sortBy?: string): Project[] {
-    let projects = mockProjects.filter((p) => p.status === "Published");
+    let projects = ProjectRepository.getAll().filter((p) => p.status === "Published");
 
     // Dynamic Filter
     if (filter && filter.toLowerCase() !== "all") {
@@ -49,14 +49,14 @@ export const showcaseRepository = {
   },
 
   getProjectBySlug(slug: string): Project | undefined {
-    return mockProjects.find((p) => p.slug === slug && p.status === "Published");
+    return ProjectRepository.getAll().find((p) => p.slug === slug && p.status === "Published");
   },
 
   getRelatedProjects(slug: string, limit = 2): Project[] {
-    const current = mockProjects.find((p) => p.slug === slug);
+    const current = ProjectRepository.getAll().find((p) => p.slug === slug);
     if (!current) return [];
 
-    const otherProjects = mockProjects.filter((p) => p.slug !== slug && p.status === "Published");
+    const otherProjects = ProjectRepository.getAll().filter((p) => p.slug !== slug && p.status === "Published");
 
     const scored = otherProjects.map((p) => {
       let score = 0;
@@ -96,7 +96,7 @@ export const showcaseRepository = {
   },
 
   getUniqueCategories(): string[] {
-    const published = mockProjects.filter((p) => p.status === "Published");
+    const published = ProjectRepository.getAll().filter((p) => p.status === "Published");
     const categories = published.map((p) => p.category);
     return Array.from(new Set(categories));
   },

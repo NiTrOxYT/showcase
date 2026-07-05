@@ -6,7 +6,13 @@ import { Heading } from "@/components/typography/Heading";
 import { Text } from "@/components/typography/Text";
 import Image from "next/image";
 
+import { SettingsRepository } from "@/services/repositories/SettingsRepository";
+
 export function Hero() {
+  const homepageSettings = SettingsRepository.getModule("homepage");
+  const heroTitle = homepageSettings.hero?.title || "Digital experiences that grow businesses.";
+  const heroSubtitle = homepageSettings.hero?.subtitle || "We design and build bespoke, high-end digital products for brands who refuse to look average. Complete creative control, custom code, and pixel perfection.";
+
   return (
     <Section className="min-h-screen flex flex-col justify-center pt-36 pb-20 relative">
       <Container>
@@ -15,21 +21,10 @@ export function Hero() {
             Premium Digital Craft
           </span>
           <Heading level={1} className="text-5xl md:text-7xl lg:text-[5.5rem] max-w-6xl tracking-tightest leading-[1.05] font-black">
-            Digital
-            <span className="inline-block relative w-16 h-8 md:w-24 md:h-12 rounded-full overflow-hidden align-middle mx-2 md:mx-3.5 border border-border/80 shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
-              <Image 
-                src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=300&q=80" 
-                alt="Bespoke Design Accent" 
-                fill 
-                sizes="120px"
-                priority
-                className="object-cover" 
-              />
-            </span>
-            experiences that grow businesses.
+            {heroTitle}
           </Heading>
           <Text className="text-muted/95 text-center max-w-2xl mx-auto text-lg md:text-xl leading-relaxed">
-            We design and build bespoke, high-end digital products for brands who refuse to look average. Complete creative control, custom code, and pixel perfection.
+            {heroSubtitle}
           </Text>
           
           <div className="pt-4">

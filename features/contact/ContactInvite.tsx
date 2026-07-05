@@ -4,9 +4,16 @@ import { Section } from "@/components/layout/Section";
 import { Stack } from "@/components/layout/Stack";
 import { Heading } from "@/components/typography/Heading";
 import { Text } from "@/components/typography/Text";
-import { SITE_METADATA } from "@/constants/site";
+import { SettingsRepository } from "@/services/repositories/SettingsRepository";
 
 export function ContactInvite() {
+  const homepageSettings = SettingsRepository.getModule("homepage");
+  const contactSettings = SettingsRepository.getModule("contact");
+  
+  const title = homepageSettings.contact?.title || "Let's build something exceptional.";
+  const description = homepageSettings.contact?.description || "Whether you want to discuss a new design brief, system architecture, or schedule an initial discovery call, we are here.";
+  const supportEmail = contactSettings.email || "support@annex.com";
+
   return (
     <Section id="contact" className="border-t border-border/20 bg-background/40 relative overflow-hidden py-40 md:py-56">
       {/* Immersive glow backdrop */}
@@ -19,19 +26,19 @@ export function ContactInvite() {
           </span>
           
           <Heading level={2} className="text-5xl md:text-7xl lg:text-[5.5rem] max-w-4xl tracking-tightest leading-[1.05] font-black">
-            Let&apos;s build something exceptional.
+            {title}
           </Heading>
           
           <Text className="text-muted/80 max-w-xl mx-auto text-base md:text-lg leading-relaxed">
-            Whether you want to discuss a new design brief, system architecture, or schedule an initial discovery call, we are here.
+            {description}
           </Text>
 
           <Stack gap={6} align="center" className="pt-8 w-full">
             <a
-              href={`mailto:${SITE_METADATA.SUPPORT_EMAIL}`}
+              href={`mailto:${supportEmail}`}
               className="text-2xl md:text-4xl lg:text-5xl font-display font-black tracking-tightest border-b-2 border-foreground/30 hover:border-primary hover:text-primary pb-2 transition-all duration-500 ease-out"
             >
-              {SITE_METADATA.SUPPORT_EMAIL}
+              {supportEmail}
             </a>
             
             <a

@@ -11,10 +11,15 @@ import { ContactInvite } from "@/features/contact/ContactInvite";
 import { ShowcaseContainer } from "@/features/showcase/sections/ShowcaseContainer";
 import { showcaseRepository } from "@/services/showcaseRepository";
 
-export const metadata: Metadata = {
-  title: "Showcase | ANNEX",
-  description: "Bespoke digital platforms built for businesses demanding elite visual craftsmanship and lightning execution.",
-};
+import { SettingsRepository } from "@/services/repositories/SettingsRepository";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const seo = SettingsRepository.getModule("seo");
+  return {
+    title: seo.titleTemplate ? seo.titleTemplate.replace("%s", "Showcase") : "Showcase | ANNEX",
+    description: seo.defaultDescription || "Bespoke digital platforms built for scale.",
+  };
+}
 
 export default function ShowcasePage() {
   const initialProjects = showcaseRepository.getProjects();

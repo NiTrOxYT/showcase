@@ -20,8 +20,18 @@ export function middleware(request: NextRequest) {
   // 2. Future Authentication and Protection placeholders
   const { pathname } = request.nextUrl;
   if (pathname.startsWith("/admin")) {
-    // Authentication guard placeholder:
-    // e.g. check for auth token cookie or redirect to login.
+    const sessionCookie = request.cookies.get("annex-admin-session");
+    const isAuthenticated = sessionCookie?.value === "authenticated";
+
+    if (pathname === "/admin/login") {
+      if (isAuthenticated) {
+        return NextResponse.redirect(new URL("/admin", request.url));
+      }
+    } else {
+      if (!isAuthenticated) {
+        return NextResponse.redirect(new URL("/admin/login", request.url));
+      }
+    }
   }
 
   return response;
