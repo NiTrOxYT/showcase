@@ -1,17 +1,23 @@
+"use client";
+
 import React from "react";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { Stack } from "@/components/layout/Stack";
 import { Heading } from "@/components/typography/Heading";
 import { Text } from "@/components/typography/Text";
+import { MotionSection } from "@/components/motion/MotionSection";
+import { Magnetic } from "@/components/motion/Magnetic";
 import { SettingsRepository } from "@/services/repositories/SettingsRepository";
 
 export function ContactInvite() {
   const homepageSettings = SettingsRepository.getModule("homepage");
   const contactSettings = SettingsRepository.getModule("contact");
-  
+
   const title = homepageSettings.contact?.title || "Let's build something exceptional.";
-  const description = homepageSettings.contact?.description || "Whether you want to discuss a new design brief, system architecture, or schedule an initial discovery call, we are here.";
+  const description =
+    homepageSettings.contact?.description ||
+    "Whether you want to discuss a new design brief, system architecture, or schedule an initial discovery call, we are here.";
   const supportEmail = contactSettings.email || "support@annex.com";
 
   return (
@@ -21,33 +27,39 @@ export function ContactInvite() {
 
       <Container>
         <Stack gap={10} align="center" className="text-center">
-          <span className="font-sans text-xs uppercase tracking-widest text-primary font-semibold px-3 py-1 rounded-full border border-primary/20 bg-primary/5">
+          <MotionSection as="span" variant="fade" className="font-sans text-xs uppercase tracking-widest text-primary font-semibold px-3 py-1 rounded-full border border-primary/20 bg-primary/5">
             Get in Touch
-          </span>
-          
-          <Heading level={2} className="text-5xl md:text-7xl lg:text-[5.5rem] max-w-4xl tracking-tightest leading-[1.05] font-black">
-            {title}
-          </Heading>
-          
-          <Text className="text-muted/80 max-w-xl mx-auto text-base md:text-lg leading-relaxed">
-            {description}
-          </Text>
+          </MotionSection>
 
-          <Stack gap={6} align="center" className="pt-8 w-full">
-            <a
-              href={`mailto:${supportEmail}`}
-              className="text-2xl md:text-4xl lg:text-5xl font-display font-black tracking-tightest border-b-2 border-foreground/30 hover:border-primary hover:text-primary pb-2 transition-all duration-500 ease-out"
-            >
-              {supportEmail}
-            </a>
-            
+          <MotionSection as="div" variant="rise" delay={0.1}>
+            <Heading level={2} className="text-5xl md:text-7xl lg:text-[5.5rem] max-w-4xl tracking-tightest leading-[1.05] font-black">
+              {title}
+            </Heading>
+          </MotionSection>
+
+          <MotionSection as="div" variant="rise" delay={0.15}>
+            <Text className="text-muted/80 max-w-xl mx-auto text-base md:text-lg leading-relaxed">
+              {description}
+            </Text>
+          </MotionSection>
+
+          <MotionSection as="div" variant="rise" delay={0.2} className="pt-8 w-full flex flex-col items-center gap-6">
+            <Magnetic strength={0.15}>
+              <a
+                href={`mailto:${supportEmail}`}
+                className="text-2xl md:text-4xl lg:text-5xl font-display font-black tracking-tightest border-b-2 border-foreground/30 hover:border-primary hover:text-primary pb-2 transition-all duration-500 ease-out"
+              >
+                {supportEmail}
+              </a>
+            </Magnetic>
+
             <a
               href="#contact"
               className="font-sans text-xs uppercase tracking-widest text-muted hover:text-foreground transition-colors duration-300 pt-6"
             >
               Schedule Discovery Call
             </a>
-          </Stack>
+          </MotionSection>
         </Stack>
       </Container>
     </Section>

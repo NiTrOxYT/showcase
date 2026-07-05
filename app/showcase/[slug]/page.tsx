@@ -16,6 +16,7 @@ import { TechStack } from "@/components/showcase/typography/TechStack";
 import { ProjectGallery } from "@/components/showcase/gallery/ProjectGallery";
 import { ProjectCard } from "@/components/showcase/cards/ProjectCard";
 import { ProjectNavigationListener } from "@/features/showcase/components/ProjectNavigationListener";
+import { ScrollProgress } from "@/components/motion/ScrollProgress";
 import { showcaseRepository } from "@/services/showcaseRepository";
 
 interface PageProps {
@@ -69,6 +70,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
 
   return (
     <>
+      <ScrollProgress />
       <Navbar />
       <ProjectNavigationListener
         prevSlug={prevProject ? prevProject.slug : null}

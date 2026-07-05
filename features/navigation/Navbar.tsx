@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { navigationConfig } from "@/config/navigation";
+import { createMenuOpenTimeline, createMenuCloseTimeline } from "@/animations/timeline/navTimeline";
+import { shouldReduceMotion } from "@/animations/utils/reducedMotion";
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -11,24 +13,46 @@ export function Navbar() {
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const backdropRef = useRef<HTMLDivElement>(null);
+  const linkRefs = useRef<(HTMLAnchorElement | null)[]>([]);
+
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      
       setIsScrolled(currentScrollY > 20);
-      
       if (currentScrollY > lastScrollY && currentScrollY > 100) {
         setIsVisible(false);
       } else {
         setIsVisible(true);
       }
-      
       setLastScrollY(currentScrollY);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
+
+  useEffect(() => {
+    const backdrop = backdropRef.current;
+    const links = linkRefs.current.filter(Boolean) as HTMLAnchorElement[];
+    if (!backdrop) return;
+
+    if (shouldReduceMotion()) {
+      // Simple CSS toggle for reduced-motion
+      backdrop.style.opacity = isMenuOpen ? "1" : "0";
+      backdrop.style.pointerEvents = isMenuOpen ? "auto" : "none";
+      return;
+    }
+
+    if (isMenuOpen) {
+      createMenuOpenTimeline(backdrop, links);
+    } else {
+      createMenuCloseTimeline(backdrop);
+    }
+  }, [isMenuOpen]);
+
+  const handleMenuToggle = () => setIsMenuOpen((prev) => !prev);
+  const handleClose = () => setIsMenuOpen(false);
 
   return (
     <header
@@ -45,7 +69,7 @@ export function Navbar() {
 
         {/* Minimal Trigger */}
         <button
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          onClick={handleMenuToggle}
           className="font-sans text-xs uppercase tracking-widest text-foreground/80 hover:text-foreground focus:outline-none transition-colors p-3 -mr-3"
           aria-expanded={isMenuOpen}
           aria-label="Toggle Menu"
@@ -56,17 +80,19 @@ export function Navbar() {
 
       {/* Fullscreen Menu */}
       <div
-        className={cn(
-          "fixed inset-0 bg-background/95 backdrop-blur-lg z-40 flex items-center justify-center transition-all duration-500 ease-out",
-          isMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-        )}
+        ref={backdropRef}
+        className="fixed inset-0 bg-background/95 backdrop-blur-lg z-40 flex items-center justify-center"
+        style={{ opacity: 0, pointerEvents: "none" }}
       >
         <nav className="text-center flex flex-col gap-8">
-          {navigationConfig.mainNav.map((item) => (
+          {navigationConfig.mainNav.map((item, i) => (
             <Link
               key={item.title}
               href={item.href}
-              onClick={() => setIsMenuOpen(false)}
+              ref={(el) => {
+                linkRefs.current[i] = el;
+              }}
+              onClick={handleClose}
               className="font-display text-3xl md:text-5xl font-bold hover:text-primary transition-colors duration-300"
             >
               {item.title}

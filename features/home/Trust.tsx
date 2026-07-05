@@ -1,10 +1,15 @@
+"use client";
+
 import React from "react";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
-import { Grid } from "@/components/layout/Grid";
 import { Stack } from "@/components/layout/Stack";
 import { Heading } from "@/components/typography/Heading";
 import { Text } from "@/components/typography/Text";
+import { MotionSection } from "@/components/motion/MotionSection";
+import { MotionCard } from "@/components/motion/MotionCard";
+import { containerReveal } from "@/animations/variants/transitions";
+import { motion } from "framer-motion";
 
 export function Trust() {
   return (
@@ -13,21 +18,27 @@ export function Trust() {
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-2/3 h-1/3 bg-accent/3 blur-[180px] rounded-full pointer-events-none" />
 
       <Container>
-        <Stack gap={12} className="mb-24">
+        <MotionSection as="div" variant="rise" className="mb-24">
           <Heading level={2} className="text-4xl md:text-5xl lg:text-6xl max-w-3xl tracking-tightest leading-tight">
             Built for those who demand absolute excellence.
           </Heading>
-        </Stack>
+        </MotionSection>
 
-        <Grid cols={1} colsMd={3} gap={6} dense className="max-w-none">
+        <motion.div
+          variants={containerReveal}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-5%" }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-none"
+        >
           {/* Card 1: Speed - md:col-span-2 */}
-          <div className="md:col-span-2 p-8 md:p-14 rounded-2xl bg-surface/20 border border-border/40 hover:border-foreground/20 hover:bg-surface/35 transition-all duration-700 ease-out glassmorphism relative overflow-hidden group">
+          <MotionCard withReveal={false} className="md:col-span-2 p-8 md:p-14 rounded-2xl bg-surface/20 border border-border/40 hover:border-foreground/20 hover:bg-surface/35 transition-all duration-700 ease-out glassmorphism relative overflow-hidden group">
             {/* Visual shine overlay */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-foreground/2 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-[1500ms]" />
             <div className="absolute top-0 right-0 p-8 text-[10px] font-mono text-primary tracking-widest uppercase">
               [ Speed Index · 100/100 ]
             </div>
-            
+
             <Stack gap={6} className="h-full justify-between pt-20 md:pt-32">
               <Heading level={3} className="text-2xl md:text-4xl font-bold tracking-tightest">
                 Lightning performance.
@@ -36,10 +47,10 @@ export function Trust() {
                 Every component is hand-crafted and compiled for raw execution speed. Sub-second initial loads keep user engagement high and skip bounce drops.
               </Text>
             </Stack>
-          </div>
+          </MotionCard>
 
           {/* Card 2: Mobile - md:col-span-1 */}
-          <div className="md:col-span-1 p-8 md:p-12 rounded-2xl bg-surface/20 border border-border/40 hover:border-foreground/20 hover:bg-surface/35 transition-all duration-700 ease-out glassmorphism flex flex-col justify-between group relative overflow-hidden">
+          <MotionCard withReveal={false} className="md:col-span-1 p-8 md:p-12 rounded-2xl bg-surface/20 border border-border/40 hover:border-foreground/20 hover:bg-surface/35 transition-all duration-700 ease-out glassmorphism flex flex-col justify-between group relative overflow-hidden">
             <div className="text-[10px] font-mono text-muted tracking-widest uppercase mb-16">
               [ Responsive Primitives ]
             </div>
@@ -51,10 +62,10 @@ export function Trust() {
                 Adaptive typography and layout grids that scale perfectly to laptops, tablets, and phones.
               </Text>
             </Stack>
-          </div>
+          </MotionCard>
 
           {/* Card 3: SEO - md:col-span-1 */}
-          <div className="md:col-span-1 p-8 md:p-12 rounded-2xl bg-surface/20 border border-border/40 hover:border-foreground/20 hover:bg-surface/35 transition-all duration-700 ease-out glassmorphism flex flex-col justify-between group relative overflow-hidden">
+          <MotionCard withReveal={false} className="md:col-span-1 p-8 md:p-12 rounded-2xl bg-surface/20 border border-border/40 hover:border-foreground/20 hover:bg-surface/35 transition-all duration-700 ease-out glassmorphism flex flex-col justify-between group relative overflow-hidden">
             <div className="text-[10px] font-mono text-muted tracking-widest uppercase mb-16">
               [ Search Engine Authority ]
             </div>
@@ -66,15 +77,15 @@ export function Trust() {
                 Structured schemas, semantic hierarchies, dynamic XML generation, and fast Core Web Vitals score tags.
               </Text>
             </Stack>
-          </div>
+          </MotionCard>
 
           {/* Card 4: Modern Tech - md:col-span-2 */}
-          <div className="md:col-span-2 p-8 md:p-14 rounded-2xl bg-surface/20 border border-border/40 hover:border-foreground/20 hover:bg-surface/35 transition-all duration-700 ease-out glassmorphism relative overflow-hidden group">
+          <MotionCard withReveal={false} className="md:col-span-2 p-8 md:p-14 rounded-2xl bg-surface/20 border border-border/40 hover:border-foreground/20 hover:bg-surface/35 transition-all duration-700 ease-out glassmorphism relative overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-foreground/2 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-[1500ms]" />
             <div className="absolute top-0 right-0 p-8 text-[10px] font-mono text-muted tracking-widest uppercase">
               [ Compiled Architecture ]
             </div>
-            
+
             <Stack gap={6} className="h-full justify-between pt-20 md:pt-32">
               <Heading level={3} className="text-2xl md:text-4xl font-bold tracking-tightest">
                 Modern technology.
@@ -83,8 +94,8 @@ export function Trust() {
                 Engineered with React 19, Next.js 15, strict type interfaces, and modular directory structures to ensure painless scalability for years.
               </Text>
             </Stack>
-          </div>
-        </Grid>
+          </MotionCard>
+        </motion.div>
       </Container>
     </Section>
   );
