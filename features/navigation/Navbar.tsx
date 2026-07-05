@@ -1,166 +1,508 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/cn";
-import { navigationConfig } from "@/config/navigation";
-import { createMenuOpenTimeline, createMenuCloseTimeline } from "@/animations/timeline/navTimeline";
-import { shouldReduceMotion } from "@/animations/utils/reducedMotion";
+import { DURATION, EASE } from "@/animations/core/tokens";
 
-import { usePathname } from "next/navigation";
+// ─── Nav links ───────────────────────────────────────────────────────────────
+const NAV_LINKS = [
+  { label: "Work",      href: "/showcase",  num: "01" },
+  { label: "Services",  href: "/#services", num: "02" },
+  { label: "Showcase",  href: "/showcase",  num: "03" },
+  { label: "About",     href: "/#about",    num: "04" },
+  { label: "Contact",   href: "/#contact",  num: "05" },
+];
+
+const SOCIAL_LINKS = [
+  { label: "LinkedIn",  href: "https://linkedin.com/company/annex" },
+  { label: "GitHub",    href: "https://github.com/annex" },
+  { label: "Behance",   href: "https://behance.net/annex" },
+  { label: "Instagram", href: "https://instagram.com/annex" },
+];
+
+// ─── Framer Motion variants ───────────────────────────────────────────────────
+const panelVariants = {
+  hidden: {
+    opacity: 0,
+    y: -12,
+    filter: "blur(8px)",
+    transition: { duration: DURATION.normal, ease: EASE.exit },
+  },
+  show: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { duration: DURATION.normal, ease: EASE.entrance },
+  },
+};
+
+const linkStagger = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.05, delayChildren: 0.08 } },
+};
+
+const linkItem = {
+  hidden: { opacity: 0, x: -16 },
+  show:   { opacity: 1, x: 0, transition: { duration: DURATION.slow, ease: EASE.entrance } },
+};
+
+const mobileSheetVariants = {
+  hidden: {
+    opacity: 0,
+    transition: { duration: DURATION.normal, ease: EASE.exit },
+  },
+  show: {
+    opacity: 1,
+    transition: { duration: DURATION.normal, ease: EASE.entrance },
+  },
+};
+
+const mobileLinkStagger = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.06, delayChildren: 0.1 } },
+};
+
+const mobileLinkItem = {
+  hidden: { opacity: 0, y: 20 },
+  show:   { opacity: 1, y: 0, transition: { duration: DURATION.slow, ease: EASE.entrance } },
+};
+
+// ─── Logo SVG ─────────────────────────────────────────────────────────────────
+function AnnexLogo({ className }: { className?: string }) {
+  return (
+    <svg className={cn("fill-current", className)} viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 2L2 22h20L12 2zm0 4l7.5 13.5h-15L12 6z" />
+      <circle cx="12" cy="14" r="2.5" />
+    </svg>
+  );
+}
+
+// ─── Main Component ───────────────────────────────────────────────────────────
+const EMAIL   = "hello@annex-consultancy.com";
+const ADDRESS = "Kolkata, India";
 
 export function Navbar() {
-  const pathname = usePathname();
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
+  const email   = EMAIL;
+  const address = ADDRESS;
+
+  const [isScrolled,  setIsScrolled]  = useState(false);
+  const [isVisible,   setIsVisible]   = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [menuOpen,    setMenuOpen]    = useState(false);
+  const [hoverOpen,   setHoverOpen]   = useState(false);
 
-  const backdropRef = useRef<HTMLDivElement>(null);
-  const linkRefs = useRef<(HTMLAnchorElement | null)[]>([]);
+  const menuBtnRef  = useRef<HTMLButtonElement>(null);
+  const firstLinkRef = useRef<HTMLAnchorElement>(null);
+  const hoverTimer  = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const isHomepageHero = pathname === "/" && !isScrolled;
 
+  // ── Scroll hide/show ──────────────────────────────────────────────────────
   useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      setIsScrolled(currentScrollY > 20);
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        setIsVisible(false);
-      } else {
-        setIsVisible(true);
-      }
-      setLastScrollY(currentScrollY);
+    const onScroll = () => {
+      const y = window.scrollY;
+      setIsScrolled(y > 20);
+      setIsVisible(!(y > lastScrollY && y > 100));
+      setLastScrollY(y);
     };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, [lastScrollY]);
 
+  // ── ESC close ────────────────────────────────────────────────────────────
   useEffect(() => {
-    const backdrop = backdropRef.current;
-    const links = linkRefs.current.filter(Boolean) as HTMLAnchorElement[];
-    if (!backdrop) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setMenuOpen(false);
+        setHoverOpen(false);
+        menuBtnRef.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
-    if (shouldReduceMotion()) {
-      backdrop.style.opacity = isMenuOpen ? "1" : "0";
-      backdrop.style.pointerEvents = isMenuOpen ? "auto" : "none";
-      return;
-    }
-
-    if (isMenuOpen) {
-      createMenuOpenTimeline(backdrop, links);
+  // ── Lock body scroll when menu is open ───────────────────────────────────
+  useEffect(() => {
+    if (menuOpen) {
+      const scrollY = window.scrollY;
+      document.body.style.position = "fixed";
+      document.body.style.top      = `-${scrollY}px`;
+      document.body.style.left     = "0";
+      document.body.style.right    = "0";
+      document.body.style.overflow = "hidden";
     } else {
-      createMenuCloseTimeline(backdrop);
+      const scrollY = document.body.style.top;
+      document.body.style.position = "";
+      document.body.style.top      = "";
+      document.body.style.left     = "";
+      document.body.style.right    = "";
+      document.body.style.overflow = "";
+      // Restore scroll position
+      window.scrollTo(0, parseInt(scrollY || "0") * -1);
     }
-  }, [isMenuOpen]);
+    return () => {
+      document.body.style.position = "";
+      document.body.style.top      = "";
+      document.body.style.left     = "";
+      document.body.style.right    = "";
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
 
-  const handleMenuToggle = () => setIsMenuOpen((prev) => !prev);
-  const handleClose = () => setIsMenuOpen(false);
+  // ── Focus trap: move focus to first link when menu opens ─────────────────
+  useEffect(() => {
+    if (menuOpen) {
+      setTimeout(() => firstLinkRef.current?.focus(), 300);
+    }
+  }, [menuOpen]);
+
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
+  const toggleMenu = useCallback(() => {
+    setMenuOpen(p => !p);
+    setHoverOpen(false);
+  }, []);
+
+  // ── Hover panel: delayed open/close to prevent flicker ──────────────────
+  const handleMenuMouseEnter = () => {
+    if (menuOpen) return;
+    if (hoverTimer.current) clearTimeout(hoverTimer.current);
+    setHoverOpen(true);
+  };
+  const handleMenuMouseLeave = () => {
+    hoverTimer.current = setTimeout(() => setHoverOpen(false), 80);
+  };
+  const handlePanelMouseEnter = () => {
+    if (hoverTimer.current) clearTimeout(hoverTimer.current);
+  };
+  const handlePanelMouseLeave = () => {
+    hoverTimer.current = setTimeout(() => setHoverOpen(false), 80);
+  };
+
+  // ─── Shared bar padding / bg ───────────────────────────────────────────
+  const barBg   = isScrolled ? "bg-white/85 backdrop-blur-xl border-b border-black/5 shadow-sm" : "bg-transparent";
+  const barPy   = isScrolled ? "py-4" : "py-6";
+  const logoClr = "text-black";
 
   return (
-    <header
-      className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out",
-        isVisible ? "translate-y-0" : "-translate-y-full",
-        isScrolled
-          ? "bg-background/80 backdrop-blur-md border-b border-border py-4"
-          : "bg-transparent py-6"
-      )}
-    >
-      <div
+    <>
+      {/* ══════════════════════════ NAVBAR BAR ══════════════════════════════ */}
+      <header
+        role="banner"
         className={cn(
-          "w-full transition-all duration-500 mx-auto",
-          isHomepageHero
-            ? "px-4 md:px-8 lg:px-10 max-w-full"
-            : "max-w-7xl px-6 md:px-8 lg:px-12"
+          "fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out",
+          isVisible ? "translate-y-0" : "-translate-y-full",
+          barBg, barPy,
         )}
+        style={{ paddingTop: `max(${isScrolled ? "16px" : "24px"}, env(safe-area-inset-top))` }}
       >
-        {isHomepageHero ? (
-          <div className="flex items-center justify-between w-full gap-2 md:gap-4">
-            {/* Left Block */}
-            <div className="flex items-center gap-2 md:gap-3">
-              {/* Logo block - Keep Logo visible on mobile */}
-              <div className="flex items-center gap-2 mr-1 md:mr-2">
-                <svg className="w-5 h-5 text-black fill-current" viewBox="0 0 24 24">
-                  <path d="M12 2L2 22h20L12 2zm0 4l7.5 13.5h-15L12 6z" />
-                  <circle cx="12" cy="14" r="2.5" />
-                </svg>
-                <span className="hidden md:inline font-display text-sm tracking-tighter font-medium text-black">
-                  ANNEX
-                </span>
-              </div>
+        <div className="w-full px-5 md:px-8 lg:px-12 max-w-[1600px] mx-auto flex items-center justify-between">
 
-              {/* Menu pill trigger */}
-              <button
-                onClick={handleMenuToggle}
-                className="bg-black text-white hover:bg-black/90 font-mono text-[9px] md:text-[10px] uppercase tracking-widest px-3 py-1.5 md:px-4 md:py-2 rounded-full inline-flex items-center gap-1.5 md:gap-2.5 transition-all duration-300 shadow-sm"
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-white block shrink-0" />
-                <span>+</span>
-                <span>Menu</span>
-              </button>
-
-              {/* Info status pill - Hidden on mobile */}
-              <div className="hidden md:inline-flex items-center gap-2 bg-[#f3f4f6]/80 text-[#374151] border border-[#e5e7eb] font-mono text-[10px] uppercase tracking-widest px-4 py-2 rounded-full">
-                <span>Design Studio</span>
-                <span className="text-muted/60">•</span>
-                <span>Next.js Experts</span>
-              </div>
-            </div>
-
-            {/* Right Block - Keep Selected Work CTA on mobile */}
-            <div className="flex items-center">
-              <a
-                href="#showcase"
-                className="inline-flex items-center gap-1.5 md:gap-2 bg-[#f3f4f6]/80 text-[#374151] border border-[#e5e7eb] hover:bg-[#e5e7eb] font-mono text-[9px] md:text-[10px] uppercase tracking-widest px-3 py-1.5 md:px-4 md:py-2 rounded-full transition-colors duration-300"
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-[#374151] block shrink-0" />
-                <span>Selected Work</span>
-              </a>
-            </div>
-          </div>
-        ) : (
-          <div className="flex items-center justify-between">
-            <Link href="/" className="font-display text-xl font-bold tracking-wider hover:opacity-80 transition-opacity">
+          {/* ── Logo ───────────────────────────────────────────── */}
+          <Link
+            href="/"
+            className={cn("flex items-center gap-2 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/50 rounded-md", logoClr)}
+            aria-label="ANNEX — Home"
+          >
+            <AnnexLogo className="w-4 h-4 transition-opacity group-hover:opacity-70" />
+            <span className="font-display text-sm tracking-tighter font-semibold transition-opacity group-hover:opacity-70">
               ANNEX
-            </Link>
+            </span>
+          </Link>
 
-            {/* Minimal Trigger */}
+          {/* ── Menu trigger + hover preview (desktop only) ─────── */}
+          <div
+            className="relative"
+            onMouseEnter={handleMenuMouseEnter}
+            onMouseLeave={handleMenuMouseLeave}
+          >
             <button
-              onClick={handleMenuToggle}
-              className="font-sans text-xs uppercase tracking-widest text-foreground/80 hover:text-foreground focus:outline-none transition-colors p-3 -mr-3"
-              aria-expanded={isMenuOpen}
-              aria-label="Toggle Menu"
+              ref={menuBtnRef}
+              onClick={toggleMenu}
+              aria-expanded={menuOpen}
+              aria-haspopup="dialog"
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              className={cn(
+                "relative inline-flex items-center gap-2.5 font-mono text-[10px] uppercase tracking-widest transition-all duration-200",
+                "px-4 py-2 rounded-full border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40",
+                menuOpen
+                  ? "bg-black text-white border-black"
+                  : "bg-black text-white border-black hover:bg-black/85",
+              )}
             >
-              {isMenuOpen ? "Close" : "Menu"}
+              {/* Animated dot → X */}
+              <span className="relative w-2.5 h-2.5 flex items-center justify-center shrink-0">
+                <span className={cn(
+                  "absolute block w-2 h-[1.5px] bg-white transition-all duration-200",
+                  menuOpen ? "rotate-45 translate-y-0" : "-translate-y-[2.5px]"
+                )} />
+                <span className={cn(
+                  "absolute block w-2 h-[1.5px] bg-white transition-all duration-200",
+                  menuOpen ? "-rotate-45 translate-y-0" : "translate-y-[2.5px]"
+                )} />
+              </span>
+              <span>{menuOpen ? "Close" : "Menu"}</span>
             </button>
-          </div>
-        )}
-      </div>
 
-      {/* Fullscreen Menu */}
-      <div
-        ref={backdropRef}
-        className="fixed inset-0 bg-background/95 backdrop-blur-lg z-40 flex items-center justify-center"
-        style={{ opacity: 0, pointerEvents: "none" }}
-      >
-        <nav className="text-center flex flex-col gap-8">
-          {navigationConfig.mainNav.map((item, i) => (
-            <Link
-              key={item.title}
-              href={item.href}
-              ref={(el) => {
-                linkRefs.current[i] = el;
-              }}
-              onClick={handleClose}
-              className="font-display text-3xl md:text-5xl font-bold hover:text-primary transition-colors duration-300"
+            {/* ── Hover preview (desktop only) ────────────────── */}
+            <AnimatePresence>
+              {hoverOpen && !menuOpen && (
+                <motion.div
+                  variants={panelVariants}
+                  initial="hidden"
+                  animate="show"
+                  exit="hidden"
+                  onMouseEnter={handlePanelMouseEnter}
+                  onMouseLeave={handlePanelMouseLeave}
+                  className="hidden md:block absolute top-[calc(100%+10px)] right-0 w-44 bg-white/90 backdrop-blur-2xl border border-black/8 rounded-2xl shadow-xl py-3 px-4 z-10"
+                  role="menu"
+                  aria-label="Quick navigation"
+                >
+                  {NAV_LINKS.map((link) => (
+                    <Link
+                      key={link.label}
+                      href={link.href}
+                      role="menuitem"
+                      onClick={() => setHoverOpen(false)}
+                      className="block py-1.5 font-sans text-xs text-black/70 hover:text-black transition-colors duration-150 tracking-wide"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+      </header>
+
+      {/* ══════════════════════════ DESKTOP PANEL ═══════════════════════════ */}
+      <AnimatePresence>
+        {menuOpen && (
+          <>
+            {/* Click-outside backdrop (transparent) */}
+            <div
+              className="fixed inset-0 z-40"
+              aria-hidden="true"
+              onClick={closeMenu}
+            />
+
+            {/* Panel */}
+            <motion.div
+              role="dialog"
+              aria-modal="true"
+              aria-label="Site navigation"
+              variants={panelVariants}
+              initial="hidden"
+              animate="show"
+              exit="hidden"
+              className={cn(
+                "hidden md:flex fixed z-50 flex-col gap-10",
+                "top-[72px] left-5 lg:left-12",
+                "w-[580px] lg:w-[640px]",
+                "bg-white/88 backdrop-blur-[28px]",
+                "rounded-[28px] border border-black/8",
+                "shadow-[0_24px_64px_rgba(0,0,0,0.12),0_4px_16px_rgba(0,0,0,0.06)]",
+                "p-10",
+              )}
             >
-              {item.title}
-            </Link>
-          ))}
-        </nav>
-      </div>
-    </header>
+              {/* ── Two-column layout ──────────────────────────────── */}
+              <div className="flex gap-12 items-start">
+
+                {/* Left: Big nav links */}
+                <motion.nav
+                  variants={linkStagger}
+                  initial="hidden"
+                  animate="show"
+                  className="flex-1 flex flex-col gap-1"
+                  aria-label="Main navigation"
+                >
+                  {NAV_LINKS.map((link, i) => (
+                    <motion.div key={link.label} variants={linkItem}>
+                      <Link
+                        href={link.href}
+                        ref={i === 0 ? firstLinkRef : undefined}
+                        onClick={closeMenu}
+                        className={cn(
+                          "group relative flex items-baseline gap-3 py-2 pr-4",
+                          "rounded-xl transition-colors duration-200 hover:bg-black/4",
+                          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/30",
+                        )}
+                      >
+                        <span className="font-mono text-[9px] text-black/30 w-5 shrink-0 translate-y-[-1px]">
+                          {link.num}
+                        </span>
+                        <span
+                          className={cn(
+                            "font-display font-light tracking-[-0.04em] leading-none text-black",
+                            "text-[48px] lg:text-[52px]",
+                            "relative after:absolute after:bottom-[6px] after:left-0 after:h-[1.5px] after:bg-black",
+                            "after:w-0 group-hover:after:w-full after:transition-all after:duration-300",
+                            "group-hover:translate-x-1 transition-transform duration-200",
+                          )}
+                        >
+                          {link.label}
+                        </span>
+                      </Link>
+                    </motion.div>
+                  ))}
+                </motion.nav>
+
+                {/* Right: Studio info */}
+                <motion.aside
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1, transition: { delay: 0.25, duration: DURATION.normal } }}
+                  className="hidden lg:flex flex-col gap-4 pt-3 w-44 shrink-0"
+                  aria-label="Studio information"
+                >
+                  <p className="font-mono text-[9px] uppercase tracking-widest text-black/40 font-bold">Studio</p>
+                  <div className="flex flex-col gap-2">
+                    <p className="font-sans text-xs text-black/70 leading-relaxed">Independent Digital Studio</p>
+                    <p className="font-sans text-xs text-black/50">{address}</p>
+                    <a
+                      href={`mailto:${email}`}
+                      className="font-sans text-xs text-black/60 hover:text-black transition-colors duration-150 underline underline-offset-2"
+                    >
+                      {email}
+                    </a>
+                  </div>
+                  <div className="pt-2 flex flex-col gap-1">
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 block animate-pulse" />
+                      <p className="font-mono text-[9px] text-black/50 uppercase tracking-wider">Accepting projects</p>
+                    </div>
+                    <p className="font-mono text-[9px] text-black/35 uppercase tracking-wider pl-3">Avg. reply &lt;24h</p>
+                  </div>
+                </motion.aside>
+              </div>
+
+              {/* ── Bottom: Social links ──────────────────────────── */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1, transition: { delay: 0.3, duration: DURATION.normal } }}
+                className="flex items-center gap-6 border-t border-black/8 pt-6"
+              >
+                {SOCIAL_LINKS.map((s) => (
+                  <a
+                    key={s.label}
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-mono text-[9px] uppercase tracking-widest text-black/40 hover:text-black transition-colors duration-150"
+                  >
+                    {s.label}
+                  </a>
+                ))}
+              </motion.div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* ══════════════════════════ MOBILE SHEET ════════════════════════════ */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Site navigation"
+            variants={mobileSheetVariants}
+            initial="hidden"
+            animate="show"
+            exit="hidden"
+            className="md:hidden fixed inset-0 z-[60] bg-white flex flex-col overflow-hidden"
+            style={{
+              height: "100dvh",
+              paddingTop: "env(safe-area-inset-top, 0px)",
+              paddingBottom: "env(safe-area-inset-bottom, 0px)",
+            }}
+          >
+            {/* Mobile top bar */}
+            <div className="flex items-center justify-between px-6 pt-6 pb-4">
+              <Link
+                href="/"
+                onClick={closeMenu}
+                className="flex items-center gap-2 text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40 rounded-md"
+                aria-label="ANNEX — Home"
+              >
+                <AnnexLogo className="w-4 h-4" />
+                <span className="font-display text-sm tracking-tighter font-semibold">ANNEX</span>
+              </Link>
+
+              <button
+                onClick={closeMenu}
+                aria-label="Close menu"
+                className="w-11 h-11 flex items-center justify-center rounded-full border border-black/12 bg-black/4 hover:bg-black/8 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40"
+              >
+                <svg viewBox="0 0 16 16" className="w-3.5 h-3.5 fill-none stroke-black stroke-[1.5]" aria-hidden="true">
+                  <path d="M3 3l10 10M13 3L3 13" strokeLinecap="round" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Mobile nav links */}
+            <div className="flex-1 flex flex-col justify-center items-center px-8">
+              <motion.nav
+                variants={mobileLinkStagger}
+                initial="hidden"
+                animate="show"
+                className="w-full flex flex-col items-center gap-2"
+                aria-label="Main navigation"
+              >
+                {NAV_LINKS.map((link, i) => (
+                  <motion.div key={link.label} variants={mobileLinkItem} className="w-full">
+                    <Link
+                      href={link.href}
+                      ref={i === 0 ? firstLinkRef : undefined}
+                      onClick={closeMenu}
+                      className={cn(
+                        "flex items-center justify-center w-full py-4 min-h-[56px]",
+                        "font-display font-light text-[44px] leading-none tracking-[-0.04em] text-black",
+                        "hover:text-black/50 transition-colors duration-200",
+                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/30 rounded-lg",
+                      )}
+                    >
+                      {link.label}
+                    </Link>
+                  </motion.div>
+                ))}
+              </motion.nav>
+            </div>
+
+            {/* Mobile footer info */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1, transition: { delay: 0.4, duration: DURATION.normal } }}
+              className="flex flex-col items-center gap-4 px-8 pb-6 border-t border-black/8 pt-6"
+              style={{ paddingBottom: "max(24px, env(safe-area-inset-bottom, 0px))" }}
+            >
+              <div className="flex flex-col items-center gap-1">
+                <a
+                  href={`mailto:${email}`}
+                  className="font-sans text-xs text-black/50 hover:text-black transition-colors"
+                >
+                  {email}
+                </a>
+                <span className="font-sans text-xs text-black/35">{address}</span>
+              </div>
+              <div className="flex items-center gap-5">
+                {SOCIAL_LINKS.map((s) => (
+                  <a
+                    key={s.label}
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-mono text-[9px] uppercase tracking-widest text-black/40 hover:text-black transition-colors"
+                  >
+                    {s.label}
+                  </a>
+                ))}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
