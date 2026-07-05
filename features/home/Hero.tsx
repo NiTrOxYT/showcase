@@ -4,26 +4,6 @@ import React, { useRef } from "react";
 import { motion } from "framer-motion";
 import { Magnetic } from "@/components/motion/Magnetic";
 import { EASE } from "@/animations/core/tokens";
-import dynamic from "next/dynamic";
-
-function HeroStaticFallback() {
-  return (
-    <div className="absolute inset-0 w-full h-full z-0 flex items-center justify-center pointer-events-none select-none bg-white">
-      {/* Background ambient lighting vignette */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(240,240,240,0.6)_0%,rgba(255,255,255,1)_80%)] z-0" />
-      
-      {/* Static abstract sculpture simulation using CSS/glass layers */}
-      <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-full bg-gradient-to-tr from-neutral-200/40 via-neutral-100/10 to-transparent border border-neutral-200/25 backdrop-blur-md shadow-2xl flex items-center justify-center animate-[pulse_6s_infinite_ease-in-out]">
-        <div className="w-40 h-40 md:w-48 md:h-48 rounded-full bg-[#141414] shadow-inner opacity-90 border border-neutral-800/30" />
-      </div>
-    </div>
-  );
-}
-
-const Hero3DScene = dynamic(() => import("./components/Hero3DScene"), {
-  ssr: false,
-  loading: () => <HeroStaticFallback />,
-});
 
 export function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -36,8 +16,27 @@ export function Hero() {
       ref={containerRef}
       className="w-full min-h-screen flex flex-col justify-end relative overflow-hidden bg-white select-none"
     >
-      {/* Layer 1: Interactive 3D WebGL Canvas */}
-      <Hero3DScene fallback={<HeroStaticFallback />} />
+      {/* Layer 1: Background Video */}
+      <div className="absolute inset-0 z-0 flex items-center justify-center bg-white">
+        <motion.video
+          initial={{ opacity: 0, scale: 1.05 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.8, ease: expoOut }}
+          autoPlay
+          muted
+          playsInline
+          loop
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] md:w-full md:h-full object-cover rounded-2xl md:rounded-none transition-all duration-1000"
+          src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260508_215831_c6a8989c-d716-4d8d-8745-e972a2eec711.mp4"
+        />
+        {/* Subtle white gradient overlay */}
+        <div 
+          className="absolute inset-0 z-10 pointer-events-none"
+          style={{
+            background: "linear-gradient(to top, #ffffff 0%, rgba(255,255,255,0.8) 50%, transparent 100%)"
+          }}
+        />
+      </div>
 
       {/* Layer 3: Bottom Editorial Content */}
       <div className="relative z-20 w-full px-6 md:px-12 pb-16 md:pb-24 pt-32">
