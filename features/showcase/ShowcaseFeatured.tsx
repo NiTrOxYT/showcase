@@ -44,10 +44,10 @@ export function ShowcaseFeatured() {
                 <Stack gap={5} className="p-8 md:p-10">
                   <div className="flex flex-wrap items-center justify-between gap-4">
                     <span className="font-mono text-[10px] uppercase tracking-widest text-primary font-bold">
-                      {project.techStack[0]}
+                      {project.technologies[0]?.name}
                     </span>
                     <span className="font-sans text-[11px] text-muted/70 tracking-wide font-medium">
-                      {project.techStack.join(" · ")}
+                      {project.technologies.map((t) => t.name).join(" · ")}
                     </span>
                   </div>
                   
@@ -56,7 +56,7 @@ export function ShowcaseFeatured() {
                   </Heading>
                   
                   <Text className="text-muted/80 text-sm md:text-base leading-relaxed">
-                    {project.description}
+                    {project.shortDescription}
                   </Text>
                 </Stack>
               </div>
