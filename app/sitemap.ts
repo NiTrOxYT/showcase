@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { siteConfig } from "@/config/site";
-import { mockProjects } from "@/data/mock/projects";
+import { showcaseRepository } from "@/services/showcaseRepository";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const routes = ["", "/showcase", "/contact"].map((route) => ({
@@ -10,7 +10,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: route === "" ? 1.0 : 0.8,
   }));
 
-  const projectRoutes = mockProjects.map((project) => ({
+  const projects = showcaseRepository.getProjects();
+  const projectRoutes = projects.map((project) => ({
     url: `${siteConfig.url}/showcase/${project.slug}`,
     lastModified: project.updatedAt || new Date().toISOString(),
     changeFrequency: "weekly" as const,

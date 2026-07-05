@@ -49,7 +49,14 @@ export function useMagnetic<T extends HTMLElement>(options: UseMagneticOptions =
 
   useEffect(() => {
     const el = elementRef.current;
-    if (!el || shouldReduceMotion() || isTouchDevice()) return;
+    if (
+      !el ||
+      shouldReduceMotion() ||
+      isTouchDevice() ||
+      (typeof window !== "undefined" && window.location.pathname.startsWith("/admin"))
+    ) {
+      return;
+    }
 
     el.addEventListener("mousemove", handleMove);
     el.addEventListener("mouseleave", handleLeave);

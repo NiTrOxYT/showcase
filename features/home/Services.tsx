@@ -53,7 +53,7 @@ export function Services() {
                 className="py-12 md:py-16 border-b border-border/20 flex flex-col md:flex-row justify-between items-start gap-8 hover:bg-surface/10 px-6 md:px-10 rounded-2xl transition-all duration-500 ease-out group"
               >
                 <div className="flex gap-6 md:gap-12 items-start max-w-2xl">
-                  <span className="font-mono text-xs text-primary font-bold pt-1.5">[ 0{index + 1} ]</span>
+                  <span className="font-mono text-xs text-primary font-bold pt-1.5">0{index + 1} {"//"}</span>
                   <Stack gap={3}>
                     <Heading level={3} className="text-2xl md:text-3xl font-bold tracking-tightest leading-tight">
                       {service.title}

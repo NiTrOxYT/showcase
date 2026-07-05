@@ -36,7 +36,7 @@ export function Trust() {
             {/* Visual shine overlay */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-foreground/2 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-[1500ms]" />
             <div className="absolute top-0 right-0 p-8 text-[10px] font-mono text-primary tracking-widest uppercase">
-              [ Speed Index · 100/100 ]
+              01 // speed telemetry
             </div>
 
             <Stack gap={6} className="h-full justify-between pt-20 md:pt-32">
@@ -51,8 +51,8 @@ export function Trust() {
 
           {/* Card 2: Mobile - md:col-span-1 */}
           <MotionCard withReveal={false} className="md:col-span-1 p-8 md:p-12 rounded-2xl bg-surface/20 border border-border/40 hover:border-foreground/20 hover:bg-surface/35 transition-all duration-700 ease-out glassmorphism flex flex-col justify-between group relative overflow-hidden">
-            <div className="text-[10px] font-mono text-muted tracking-widest uppercase mb-16">
-              [ Responsive Primitives ]
+            <div className="text-[10px] font-mono text-muted/60 tracking-widest uppercase mb-16">
+              02 // viewport scaling
             </div>
             <Stack gap={4}>
               <Heading level={3} className="text-2xl md:text-3xl font-bold tracking-tightest">
@@ -66,8 +66,8 @@ export function Trust() {
 
           {/* Card 3: SEO - md:col-span-1 */}
           <MotionCard withReveal={false} className="md:col-span-1 p-8 md:p-12 rounded-2xl bg-surface/20 border border-border/40 hover:border-foreground/20 hover:bg-surface/35 transition-all duration-700 ease-out glassmorphism flex flex-col justify-between group relative overflow-hidden">
-            <div className="text-[10px] font-mono text-muted tracking-widest uppercase mb-16">
-              [ Search Engine Authority ]
+            <div className="text-[10px] font-mono text-muted/60 tracking-widest uppercase mb-16">
+              03 // organic crawler index
             </div>
             <Stack gap={4}>
               <Heading level={3} className="text-2xl md:text-3xl font-bold tracking-tightest">
@@ -82,8 +82,8 @@ export function Trust() {
           {/* Card 4: Modern Tech - md:col-span-2 */}
           <MotionCard withReveal={false} className="md:col-span-2 p-8 md:p-14 rounded-2xl bg-surface/20 border border-border/40 hover:border-foreground/20 hover:bg-surface/35 transition-all duration-700 ease-out glassmorphism relative overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-foreground/2 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-[1500ms]" />
-            <div className="absolute top-0 right-0 p-8 text-[10px] font-mono text-muted tracking-widest uppercase">
-              [ Compiled Architecture ]
+            <div className="absolute top-0 right-0 p-8 text-[10px] font-mono text-muted/60 tracking-widest uppercase">
+              04 // runtime composition
             </div>
 
             <Stack gap={6} className="h-full justify-between pt-20 md:pt-32">

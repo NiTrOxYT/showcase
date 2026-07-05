@@ -1,67 +1,110 @@
+"use client";
+
 import React from "react";
+import Link from "next/link";
+import Image from "next/image";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { Stack } from "@/components/layout/Stack";
 import { Heading } from "@/components/typography/Heading";
 import { Text } from "@/components/typography/Text";
-import { Grid } from "@/components/layout/Grid";
-import { mockProjects } from "@/data/mock/projects";
-import Image from "next/image";
+import { showcaseRepository } from "@/services/showcaseRepository";
+import { MotionSection } from "@/components/motion/MotionSection";
+import { Magnetic } from "@/components/motion/Magnetic";
 
 export function ShowcaseFeatured() {
+  const featuredProjects = showcaseRepository.getProjects("all", "featured").slice(0, 2);
+
   return (
-    <Section id="showcase" className="border-t border-border/20 relative">
+    <Section id="showcase" className="border-t border-border/20 bg-background relative overflow-hidden py-32 md:py-48">
       <Container>
-        <Stack gap={16}>
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <Stack gap={24}>
+          <MotionSection as="div" variant="rise" className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-border/10 pb-8">
             <Heading level={2} className="text-4xl md:text-5xl lg:text-6xl max-w-2xl tracking-tightest leading-none">
-              Selected showcase entries.
+              Selected artifacts.
             </Heading>
-            <Text className="text-muted/80 max-w-sm font-sans text-sm md:text-base mb-1">
-              Explore bespoke platforms built for clients demanding clean design and lightning execution.
+            <Text className="text-muted/80 max-w-sm font-sans text-sm md:text-base leading-relaxed">
+              Explore bespoke digital systems designed and built for brands demanding absolute visual and technical performance.
             </Text>
-          </div>
+          </MotionSection>
 
-          <Grid cols={1} colsMd={2} gap={10}>
-            {mockProjects.map((project) => (
-              <div
-                key={project.id}
-                className="group relative rounded-2xl border border-border/30 bg-surface/10 overflow-hidden flex flex-col justify-between hover:border-foreground/15 hover:bg-surface/20 transition-all duration-700 ease-out shadow-[0_16px_50px_rgba(0,0,0,0.6)]"
-              >
-                {/* Immersive Image Container */}
-                <div className="aspect-[16/10] w-full overflow-hidden relative border-b border-border/20">
-                  <Image
-                    src={project.coverImage}
-                    alt={project.title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 600px"
-                    className="object-cover filter contrast-[1.15] brightness-[0.9] transition-transform duration-[1800ms] ease-out group-hover:scale-103 group-hover:brightness-100"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent pointer-events-none" />
-                </div>
-
-                {/* Details Panel */}
-                <Stack gap={5} className="p-8 md:p-10">
-                  <div className="flex flex-wrap items-center justify-between gap-4">
-                    <span className="font-mono text-[10px] uppercase tracking-widest text-primary font-bold">
-                      {project.technologies[0]?.name}
-                    </span>
-                    <span className="font-sans text-[11px] text-muted/70 tracking-wide font-medium">
-                      {project.technologies.map((t) => t.name).join(" · ")}
-                    </span>
+          <div className="flex flex-col gap-32 md:gap-48">
+            {featuredProjects.map((project, index) => {
+              const isEven = index % 2 === 0;
+              return (
+                <div
+                  key={project.id}
+                  className={`grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center group`}
+                >
+                  {/* Image Block */}
+                  <div
+                    className={`lg:col-span-7 overflow-hidden rounded-xl bg-surface/10 border border-border/25 relative aspect-[16/10] w-full ${
+                      isEven ? "lg:order-2" : "lg:order-1"
+                    }`}
+                  >
+                    <Link href={`/showcase/${project.slug}`} className="block w-full h-full">
+                      <Image
+                        src={project.coverImage}
+                        alt={project.thumbnailAlt || project.title}
+                        fill
+                        sizes="(max-width: 1024px) 100vw, 800px"
+                        className="object-cover filter grayscale contrast-[1.1] brightness-[0.85] transition-all duration-[1200ms] ease-out group-hover:grayscale-0 group-hover:brightness-100 group-hover:scale-102"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-background/30 via-transparent to-transparent pointer-events-none" />
+                    </Link>
                   </div>
-                  
-                  <Heading level={3} className="text-2xl md:text-3xl font-bold tracking-tightest leading-tight">
-                    {project.title}
-                  </Heading>
-                  
-                  <Text className="text-muted/80 text-sm md:text-base leading-relaxed">
-                    {project.shortDescription}
-                  </Text>
-                </Stack>
-              </div>
-            ))}
-          </Grid>
+
+                  {/* Content Block */}
+                  <div
+                    className={`lg:col-span-5 flex flex-col justify-center ${
+                      isEven ? "lg:order-1" : "lg:order-2"
+                    }`}
+                  >
+                    <Stack gap={6}>
+                      <div className="flex items-center gap-4">
+                        <span className="font-mono text-xs text-primary font-bold">
+                          0{index + 1} {"//"}
+                        </span>
+                        <span className="font-sans text-xs text-muted/65 uppercase tracking-widest">
+                          {project.category}
+                        </span>
+                      </div>
+
+                      <Heading level={3} className="text-3xl md:text-4xl lg:text-5xl font-black tracking-tightest leading-tight">
+                        {project.title}
+                      </Heading>
+
+                      <Text className="text-muted/80 text-sm md:text-base leading-relaxed">
+                        {project.shortDescription}
+                      </Text>
+
+                      <div className="flex flex-wrap gap-x-6 gap-y-2 border-y border-border/10 py-4 my-2">
+                        <div className="flex flex-col gap-0.5">
+                          <span className="font-mono text-[9px] uppercase tracking-widest text-muted/40 font-bold">[ Client ]</span>
+                          <span className="font-sans text-xs text-foreground/80 font-medium">{project.client}</span>
+                        </div>
+                        <div className="flex flex-col gap-0.5">
+                          <span className="font-mono text-[9px] uppercase tracking-widest text-muted/40 font-bold">[ Deliverables ]</span>
+                          <span className="font-sans text-xs text-foreground/80 font-medium">{project.deliverables.slice(0, 2).join(" · ")}</span>
+                        </div>
+                      </div>
+
+                      <div className="pt-2">
+                        <Magnetic strength={0.25}>
+                          <Link
+                            href={`/showcase/${project.slug}`}
+                            className="font-sans text-xs uppercase tracking-widest text-foreground hover:text-primary border-b border-foreground/30 hover:border-primary pb-1 transition-all duration-300 ease-out inline-block"
+                          >
+                            Explore Case Study
+                          </Link>
+                        </Magnetic>
+                      </div>
+                    </Stack>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </Stack>
       </Container>
     </Section>

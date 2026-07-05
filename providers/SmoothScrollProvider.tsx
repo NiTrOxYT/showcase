@@ -18,8 +18,8 @@ export const SmoothScrollProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const [lenis, setLenis] = useState<Lenis | null>(null);
 
   useEffect(() => {
-    // Respect prefers-reduced-motion — use native scroll only.
-    if (shouldReduceMotion()) return;
+    // Respect prefers-reduced-motion & route scope — use native scroll on admin/reduced motion.
+    if (shouldReduceMotion() || (typeof window !== "undefined" && window.location.pathname.startsWith("/admin"))) return;
 
     const lenisInstance = new Lenis({
       duration: 1.15,

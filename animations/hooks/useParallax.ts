@@ -23,7 +23,14 @@ export function useParallax<T extends HTMLElement>(options: UseParallaxOptions =
 
   useEffect(() => {
     const el = elementRef.current;
-    if (!el || shouldReduceMotion() || isTouchDevice()) return;
+    if (
+      !el ||
+      shouldReduceMotion() ||
+      isTouchDevice() ||
+      (typeof window !== "undefined" && window.location.pathname.startsWith("/admin"))
+    ) {
+      return;
+    }
 
     const ctx = gsap.context(() => {
       gsap.to(el, {

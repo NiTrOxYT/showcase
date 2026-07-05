@@ -1,115 +1,133 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
-import { Container } from "@/components/layout/Container";
-import { Section } from "@/components/layout/Section";
-import { Stack } from "@/components/layout/Stack";
-import { Heading } from "@/components/typography/Heading";
-import { Text } from "@/components/typography/Text";
-import Image from "next/image";
-import { gsap } from "@/animations/gsap";
-import { createHeroTimeline, createHeroParallax } from "@/animations/timeline/heroTimeline";
-import { shouldReduceMotion } from "@/animations/utils/reducedMotion";
+import React, { useRef } from "react";
+import { motion } from "framer-motion";
 import { Magnetic } from "@/components/motion/Magnetic";
-import { SettingsRepository } from "@/services/repositories/SettingsRepository";
+import { EASE } from "@/animations/core/tokens";
 
 export function Hero() {
-  const homepageSettings = SettingsRepository.getModule("homepage");
-  const heroTitle = homepageSettings.hero?.title || "Digital experiences that grow businesses.";
-  const heroSubtitle =
-    homepageSettings.hero?.subtitle ||
-    "We design and build bespoke, high-end digital products for brands who refuse to look average. Complete creative control, custom code, and pixel perfection.";
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const containerRef = useRef<HTMLElement>(null);
-  const imageRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el || shouldReduceMotion()) return;
-
-    const ctx = gsap.context(() => {
-      createHeroTimeline(el);
-      if (imageRef.current) {
-        createHeroParallax(imageRef.current, 0.12);
-      }
-    }, el);
-
-    return () => ctx.revert();
-  }, []);
+  // Easing curve token
+  const expoOut = EASE.standard; // [0.16, 1, 0.3, 1]
 
   return (
-    <Section ref={containerRef} className="min-h-screen flex flex-col justify-center pt-36 pb-20 relative">
-      <Container>
-        <Stack gap={10} align="center" className="text-center">
-          <span
-            data-hero-badge
-            className="font-sans text-xs uppercase tracking-widest text-primary font-semibold px-3 py-1 rounded-full border border-primary/20 bg-primary/5"
-          >
-            Premium Digital Craft
-          </span>
-          <Heading
-            data-hero-heading
-            level={1}
-            className="text-5xl md:text-7xl lg:text-[5.5rem] max-w-6xl tracking-tightest leading-[1.05] font-black"
-          >
-            {heroTitle}
-          </Heading>
-          <Text
-            data-hero-body
-            className="text-muted/95 text-center max-w-2xl mx-auto text-lg md:text-xl leading-relaxed"
-          >
-            {heroSubtitle}
-          </Text>
+    <div
+      ref={containerRef}
+      className="w-full min-h-screen flex flex-col justify-end relative overflow-hidden bg-white select-none"
+    >
+      {/* Layer 1: Background Video */}
+      <div className="absolute inset-0 z-0 flex items-center justify-center bg-white">
+        <motion.video
+          initial={{ opacity: 0, scale: 1.05 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.8, ease: expoOut }}
+          autoPlay
+          muted
+          playsInline
+          loop
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[85%] md:w-full md:h-full object-cover rounded-2xl md:rounded-none transition-all duration-1000"
+          src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260508_215831_c6a8989c-d716-4d8d-8745-e972a2eec711.mp4"
+        />
+        {/* Subtle white gradient overlay */}
+        <div 
+          className="absolute inset-0 z-10 pointer-events-none"
+          style={{
+            background: "linear-gradient(to top, #ffffff 0%, rgba(255,255,255,0.85) 45%, rgba(255,255,255,0.2) 75%, transparent 100%)"
+          }}
+        />
+      </div>
 
-          <div data-hero-cta className="pt-4">
-            <Magnetic strength={0.2}>
-              <a
-                href="#showcase"
-                className="font-sans text-xs uppercase tracking-widest border-b border-foreground/50 pb-1.5 hover:text-primary hover:border-primary transition-all duration-300 ease-out"
+      {/* Layer 3: Bottom Editorial Content */}
+      <div className="relative z-20 w-full px-6 md:px-12 pb-16 md:pb-24 pt-32">
+        <div className="mx-auto w-full max-w-7xl flex flex-col md:flex-row items-end justify-between gap-10">
+          
+          {/* Left Block */}
+          <div className="flex flex-col items-start gap-6 max-w-3xl">
+            {/* Caption */}
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.5, ease: expoOut }}
+              className="flex items-center gap-2"
+            >
+              <span className="w-2 h-2 rounded-full bg-black block" />
+              <span className="font-mono text-xs text-black/55 uppercase tracking-widest font-bold">
+                Independent Digital Studio
+              </span>
+            </motion.div>
+
+            {/* Headline */}
+            <motion.h1
+              initial={{ opacity: 0, y: 25 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.0, delay: 0.7, ease: expoOut }}
+              className="font-display text-4xl md:text-6xl lg:text-[4.5rem] text-black tracking-[-0.03em] leading-[1.05] font-light max-w-4xl"
+            >
+              Crafting websites <br className="hidden md:inline" />
+              people remember. <br />
+              <span className="font-medium text-black/60">
+                Built for brands <br className="hidden md:inline" />
+                that expect more.
+              </span>
+            </motion.h1>
+
+            {/* Supporting Paragraph */}
+            <motion.p
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.9, ease: expoOut }}
+              className="font-sans text-sm md:text-base text-neutral-700 max-w-[50ch] leading-relaxed mt-2"
+            >
+              Design, engineering and motion working together to create websites that build trust from the very first interaction.
+            </motion.p>
+
+            {/* CTA Buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 1.0, ease: expoOut }}
+              className="flex flex-wrap items-center gap-4 pt-4"
+            >
+              <Magnetic strength={0.15}>
+                <a
+                  href="#showcase"
+                  className="bg-black text-white hover:bg-neutral-900 px-6 py-3 rounded-full font-mono text-[10px] uppercase tracking-widest transition-all duration-300 shadow-sm font-semibold focus-visible:outline-none"
+                >
+                  View Our Work →
+                </a>
+              </Magnetic>
+              
+              <Magnetic strength={0.15}>
+                <a
+                  href="#contact"
+                  className="bg-transparent text-black border border-black/30 hover:border-black/75 px-6 py-3 rounded-full font-mono text-[10px] uppercase tracking-widest transition-all duration-300 font-semibold focus-visible:outline-none"
+                >
+                  Start a Project
+                </a>
+              </Magnetic>
+            </motion.div>
+          </div>
+
+          {/* Right Block */}
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1.1, ease: expoOut }}
+            className="flex md:flex-col gap-2 shrink-0"
+          >
+            {["Next.js", "Motion", "Performance"].map((label) => (
+              <div
+                key={label}
+                className="bg-white/90 backdrop-blur text-black border border-black/10 font-mono text-[10px] uppercase tracking-widest px-4 py-2 rounded-full inline-flex items-center justify-center font-medium shadow-sm"
               >
-                Explore Our Work
-              </a>
-            </Magnetic>
-          </div>
+                {label}
+              </div>
+            ))}
+          </motion.div>
 
-          <div
-            ref={imageRef}
-            data-hero-image
-            className="w-full max-w-5xl aspect-[16/9] rounded-xl bg-surface/30 border border-border/80 relative overflow-hidden mt-12 shadow-[0_24px_80px_rgba(0,0,0,0.8)] group glassmorphism"
-          >
-            <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 via-transparent to-accent/10 opacity-70 group-hover:opacity-90 transition-opacity duration-1000" />
-            <div className="absolute -bottom-1/2 left-1/2 -translate-x-1/2 w-3/4 h-1/2 bg-primary/10 blur-[140px] rounded-full" />
-
-            <Image
-              src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1600&q=80"
-              alt="Bespoke digital artwork texture representing premium digital craftsmanship"
-              fill
-              priority
-              sizes="(max-width: 1024px) 100vw, 1024px"
-              className="object-cover opacity-90 transition-transform duration-[2000ms] group-hover:scale-103"
-            />
-          </div>
-        </Stack>
-      </Container>
-
-      {/* Infinite scrolling marquee */}
-      <div className="w-full overflow-hidden border-y border-border/10 py-8 mt-24 bg-background/20 relative">
-        <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
-
-        <div className="animate-marquee gap-24 md:gap-36 flex items-center pr-24 md:pr-36">
-          {["PERFORMANCE", "BESPOKE DESIGN", "FLUID MOTION", "ACCESSIBILITY FIRST", "SEO OPTIMIZED", "PRODUCTION READY"].map((text, idx) => (
-            <span key={idx} className="font-display text-sm md:text-base font-black tracking-[0.2em] text-muted/40 whitespace-nowrap">
-              {text}
-            </span>
-          ))}
-          {["PERFORMANCE", "BESPOKE DESIGN", "FLUID MOTION", "ACCESSIBILITY FIRST", "SEO OPTIMIZED", "PRODUCTION READY"].map((text, idx) => (
-            <span key={`dup-${idx}`} className="font-display text-sm md:text-base font-black tracking-[0.2em] text-muted/40 whitespace-nowrap">
-              {text}
-            </span>
-          ))}
         </div>
       </div>
-    </Section>
+    </div>
   );
 }

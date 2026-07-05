@@ -34,9 +34,18 @@ export function CursorFollower() {
   const { cursorType, cursorLabel } = useCursor();
   const isTouch = useIsTouch();
   const reduced = usePrefersReducedMotion();
+  const [isAdmin, setIsAdmin] = React.useState(false);
 
   useEffect(() => {
-    if (isTouch || reduced || !cursorRef.current) return;
+    if (typeof window !== "undefined") {
+      setTimeout(() => {
+        setIsAdmin(window.location.pathname.startsWith("/admin"));
+      }, 0);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isTouch || reduced || isAdmin || !cursorRef.current) return;
 
     const cursor = cursorRef.current;
     const xTo = gsap.quickTo(cursor, "x", { duration: 0.5, ease: "power3.out" });
@@ -49,11 +58,11 @@ export function CursorFollower() {
 
     window.addEventListener("mousemove", move);
     return () => window.removeEventListener("mousemove", move);
-  }, [isTouch, reduced]);
+  }, [isTouch, reduced, isAdmin]);
 
   // Size transition on cursor type change
   useEffect(() => {
-    if (!cursorRef.current || isTouch || reduced) return;
+    if (!cursorRef.current || isTouch || reduced || isAdmin) return;
     const size = SIZE_MAP[cursorType] ?? 12;
     gsap.to(cursorRef.current, {
       width: size,
@@ -61,9 +70,9 @@ export function CursorFollower() {
       duration: 0.3,
       ease: "power2.out",
     });
-  }, [cursorType, isTouch, reduced]);
+  }, [cursorType, isTouch, reduced, isAdmin]);
 
-  if (isTouch || reduced) return null;
+  if (isTouch || reduced || isAdmin) return null;
 
   const label = cursorLabel || LABEL_MAP[cursorType] || null;
   const isLarge = ["view", "open", "next", "prev", "drag"].includes(cursorType);
