@@ -27,7 +27,7 @@ export function Hero() {
           playsInline
           loop
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] md:w-full md:h-full object-cover rounded-2xl md:rounded-none transition-all duration-1000"
-          style={{ objectPosition: "center center" }}
+          // style={{ objectPosition: "center center" }}
           src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260508_215831_c6a8989c-d716-4d8d-8745-e972a2eec711.mp4"
         />
         {/* Subtle white gradient overlay */}
