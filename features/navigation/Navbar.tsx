@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/cn";
 import { DURATION, EASE } from "@/animations/core/tokens";
@@ -69,13 +70,21 @@ const mobileLinkItem = {
   show:   { opacity: 1, y: 0, transition: { duration: DURATION.slow, ease: EASE.entrance } },
 };
 
-// ─── Logo SVG ─────────────────────────────────────────────────────────────────
-function AnnexLogo({ className }: { className?: string }) {
+// ─── Logo Image helper ───────────────────────────────────────────────────────
+// height=36px desktop, 32px tablet, 26px mobile → ratio 1774:887 ≈ 2:1
+function AnnexLogo({ size = "desktop", priority = false }: { size?: "desktop" | "tablet" | "mobile"; priority?: boolean }) {
+  const heights: Record<string, number> = { desktop: 36, tablet: 32, mobile: 26 };
+  const h = heights[size];
+  const w = h * 2; // 2:1 exact ratio
   return (
-    <svg className={cn("fill-current", className)} viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 2L2 22h20L12 2zm0 4l7.5 13.5h-15L12 6z" />
-      <circle cx="12" cy="14" r="2.5" />
-    </svg>
+    <Image
+      src="/images/logo.png"
+      alt="ANNEX"
+      width={w}
+      height={h}
+      priority={priority}
+      style={{ width: w, height: h, objectFit: "contain" }}
+    />
   );
 }
 
@@ -183,7 +192,6 @@ export function Navbar() {
   // ─── Shared bar padding / bg ───────────────────────────────────────────
   const barBg   = isScrolled ? "bg-white/85 backdrop-blur-xl border-b border-black/5 shadow-sm" : "bg-transparent";
   const barPy   = isScrolled ? "py-4" : "py-6";
-  const logoClr = "text-black";
 
   return (
     <>
@@ -202,13 +210,12 @@ export function Navbar() {
           {/* ── Logo ───────────────────────────────────────────── */}
           <Link
             href="/"
-            className={cn("flex items-center gap-2 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/50 rounded-md", logoClr)}
+            className="group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/50 rounded-md transition-opacity hover:opacity-75"
             aria-label="ANNEX — Home"
           >
-            <AnnexLogo className="w-4 h-4 transition-opacity group-hover:opacity-70" />
-            <span className="font-display text-sm tracking-tighter font-semibold transition-opacity group-hover:opacity-70">
-              ANNEX
-            </span>
+            <span className="hidden md:block"><AnnexLogo size="desktop" priority /></span>
+            <span className="hidden sm:block md:hidden"><AnnexLogo size="tablet" priority /></span>
+            <span className="sm:hidden"><AnnexLogo size="mobile" priority /></span>
           </Link>
 
           {/* ── Menu trigger + hover preview (desktop only) ─────── */}
@@ -423,11 +430,10 @@ export function Navbar() {
               <Link
                 href="/"
                 onClick={closeMenu}
-                className="flex items-center gap-2 text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40 rounded-md"
+                className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40 rounded-md transition-opacity hover:opacity-75"
                 aria-label="ANNEX — Home"
               >
-                <AnnexLogo className="w-4 h-4" />
-                <span className="font-display text-sm tracking-tighter font-semibold">ANNEX</span>
+                <AnnexLogo size="mobile" priority />
               </Link>
 
               <button

@@ -4,21 +4,20 @@ import React from "react";
 import { Container } from "@/components/layout/Container";
 import { navigationConfig } from "@/config/navigation";
 import Link from "next/link";
-import { SettingsRepository } from "@/services/repositories/SettingsRepository";
+import Image from "next/image";
 import { TextReveal } from "@/components/motion/TextReveal";
 import { MotionSection } from "@/components/motion/MotionSection";
 import { motion } from "framer-motion";
 import { containerReveal, itemRevealFade } from "@/animations/variants/transitions";
 
-export function Footer() {
-  const brandingSettings = SettingsRepository.getModule("branding");
-  const contactSettings = SettingsRepository.getModule("contact");
-  const footerSettings = SettingsRepository.getModule("footer");
+const SUPPORT_EMAIL      = "hello@annex-consultancy.com";
+const STUDIO_ADDRESS     = "Kolkata, India";
+const CLOSING_COPY       = "We build for the web that matters.";
 
-  const brandName = brandingSettings.brandName || "ANNEX";
-  const supportEmail = contactSettings.email || "support@annex.com";
-  const address = contactSettings.address || "Bengaluru, India";
-  const finalClosingCopy = footerSettings.finalClosingCopy || "We build for the web that matters.";
+export function Footer() {
+  const supportEmail       = SUPPORT_EMAIL;
+  const address            = STUDIO_ADDRESS;
+  const finalClosingCopy   = CLOSING_COPY;
 
   return (
     <footer className="border-t border-border/20 bg-background relative overflow-hidden">
@@ -39,8 +38,15 @@ export function Footer() {
           {/* Left Block */}
           <MotionSection as="div" variant="rise" className="md:col-span-6 lg:col-span-5 flex flex-col gap-6 items-center md:items-start text-center md:text-left">
             <div>
-              <Link href="/" className="font-display text-2xl font-black tracking-wider text-foreground">
-                {brandName}
+              <Link href="/" className="inline-block transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40 rounded" aria-label="ANNEX — Home">
+                <Image
+                  src="/images/logo.png"
+                  alt="ANNEX"
+                  width={72}
+                  height={36}
+                  loading="lazy"
+                  style={{ width: 72, height: 36, objectFit: "contain" }}
+                />
               </Link>
               <p className="font-sans text-sm text-muted/75 max-w-xs mt-3 leading-relaxed">
                 Bespoke digital design and high-end engineering for brands demanding an elite digital presence.

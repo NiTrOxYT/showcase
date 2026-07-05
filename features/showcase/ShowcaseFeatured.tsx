@@ -1,4 +1,4 @@
-"use client";
+// Server Component — data fetched at request time, no client re-render mismatch
 
 import React from "react";
 import Link from "next/link";

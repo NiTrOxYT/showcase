@@ -95,15 +95,15 @@ export function Hero() {
                   View Our Work →
                 </a>
               </Magnetic>
-              
-              <Magnetic strength={0.15}>
+
+              {/* <Magnetic strength={0.15}>
                 <a
                   href="#contact"
                   className="bg-transparent text-black border border-black/30 hover:border-black/75 px-6 py-3 rounded-full font-mono text-[10px] uppercase tracking-widest transition-all duration-300 font-semibold focus-visible:outline-none"
                 >
                   Start a Project
                 </a>
-              </Magnetic>
+              </Magnetic> */}
             </motion.div>
 
             {/* Capability tag pills */}
@@ -196,7 +196,7 @@ export function Hero() {
             >
               View Our Work →
             </a>
-            
+
             <a
               href="#contact"
               className="bg-transparent text-black border border-black/30 hover:border-black/75 w-full py-3.5 rounded-full font-mono text-[10px] uppercase tracking-widest text-center transition-all duration-300 font-semibold focus-visible:outline-none"
