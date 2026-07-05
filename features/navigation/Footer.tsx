@@ -37,7 +37,7 @@ export function Footer() {
         {/* Stage 2: Main Content Grid */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 pb-16 md:pb-24 border-b border-border/10">
           {/* Left Block */}
-          <MotionSection as="div" variant="rise" className="md:col-span-5 flex flex-col gap-6">
+          <MotionSection as="div" variant="rise" className="md:col-span-6 lg:col-span-5 flex flex-col gap-6 items-center md:items-start text-center md:text-left">
             <div>
               <Link href="/" className="font-display text-2xl font-black tracking-wider text-foreground">
                 {brandName}
@@ -49,7 +49,7 @@ export function Footer() {
             <div className="flex flex-col gap-1.5 pt-2">
               <a
                 href={`mailto:${supportEmail}`}
-                className="font-sans text-sm text-foreground/80 hover:text-primary transition-colors duration-300 w-fit"
+                className="font-sans text-sm text-foreground/80 hover:text-primary transition-colors duration-300 w-fit mx-auto md:mx-0"
               >
                 {supportEmail}
               </a>
@@ -65,10 +65,10 @@ export function Footer() {
             initial="hidden"
             whileInView="show"
             viewport={{ once: true }}
-            className="md:col-span-4 flex flex-col gap-4"
+            className="md:col-span-3 lg:col-span-4 flex flex-col gap-4 items-center md:items-start text-center md:text-left"
           >
             <span className="font-sans text-[10px] uppercase tracking-widest text-muted font-bold">[ Navigation ]</span>
-            <nav aria-label="Footer navigation" className="grid grid-cols-2 gap-3 max-w-xs">
+            <nav aria-label="Footer navigation" className="grid grid-cols-2 gap-3 max-w-xs justify-items-center md:justify-items-start">
               {navigationConfig.mainNav.map((item) => (
                 <motion.div key={item.title} variants={itemRevealFade}>
                   <Link
@@ -88,10 +88,10 @@ export function Footer() {
             initial="hidden"
             whileInView="show"
             viewport={{ once: true }}
-            className="md:col-span-3 flex flex-col gap-4"
+            className="md:col-span-3 lg:col-span-3 flex flex-col gap-4 items-center md:items-start text-center md:text-left"
           >
             <span className="font-sans text-[10px] uppercase tracking-widest text-muted font-bold">[ Connect ]</span>
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 items-center md:items-start">
               {[
                 { label: "GitHub", href: "https://github.com/annex" },
                 { label: "LinkedIn", href: "https://linkedin.com/company/annex" },

@@ -18,12 +18,12 @@ export function ProjectCard({ project }: ProjectCardProps) {
   return (
     <motion.div
       variants={showcaseVariants.cardReveal}
-      className="group relative flex flex-col justify-between transition-all duration-700 ease-out py-8 border-b border-border/10 last:border-b-0"
+      className="group relative flex flex-col justify-between transition-all duration-700 ease-out py-6 border-b border-border/10 last:border-b-0 md:border-0 md:bg-surface/5 md:p-6 md:rounded-2xl md:border md:border-border/25 md:shadow-sm lg:bg-transparent lg:p-0 lg:rounded-none lg:border-0 lg:border-b lg:border-border/10 lg:py-8 lg:last:border-b-0 h-full"
     >
-      <Link href={`/showcase/${project.slug}`} className="block w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+      <Link href={`/showcase/${project.slug}`} className="block w-full h-full">
+        <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6 lg:gap-12 items-stretch lg:items-center h-full">
           {/* Cover image with grayscale shift */}
-          <div className="lg:col-span-6 aspect-[16/10] w-full overflow-hidden relative rounded-xl border border-border/25 bg-surface/5">
+          <div className="w-full lg:col-span-6 aspect-[16/10] overflow-hidden relative rounded-xl border border-border/25 bg-surface/5">
             <Image
               src={project.thumbnail}
               alt={project.thumbnailAlt || project.title}
@@ -35,7 +35,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
           </div>
 
           {/* Context Details */}
-          <div className="lg:col-span-6 flex flex-col gap-5 justify-center">
+          <div className="w-full lg:col-span-6 flex flex-col gap-4 lg:gap-5 justify-center flex-1">
             <div className="flex flex-wrap items-center gap-4">
               <span className="font-mono text-xs text-primary font-bold">
                 {"//"} {project.category}
@@ -45,7 +45,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
               </span>
             </div>
 
-            <Heading level={3} className="text-3xl md:text-4xl font-black tracking-tightest leading-tight">
+            <Heading level={3} className="text-2xl md:text-3xl lg:text-4xl font-black tracking-tightest leading-tight">
               {project.title}
             </Heading>
 

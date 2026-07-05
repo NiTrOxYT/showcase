@@ -78,10 +78,10 @@ export function ShowcaseContainer({ initialProjects, categories }: ShowcaseConta
             variants={showcaseVariants.staggerContainer}
             initial="hidden"
             animate="show"
-            className="flex flex-col gap-16 md:gap-24"
+            className="grid grid-cols-1 md:grid-cols-2 lg:flex lg:flex-col gap-12 md:gap-16 lg:gap-24"
           >
             {processedProjects.map((project) => (
-              <motion.div key={project.id} layout>
+              <motion.div key={project.id} layout className="h-full">
                 <ProjectCard project={project} />
               </motion.div>
             ))}

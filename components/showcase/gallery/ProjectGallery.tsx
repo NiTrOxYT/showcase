@@ -32,8 +32,9 @@ export function ProjectGallery({ gallery }: ProjectGalleryProps) {
   if (!gallery || gallery.length === 0) return null;
 
   return (
-    <div className="flex flex-col gap-24 md:gap-36">
-      <div className="flex flex-col gap-24 md:gap-36">
+    <div className="flex flex-col gap-12 md:gap-24 lg:gap-36">
+      {/* Desktop Gallery Layout */}
+      <div className="hidden lg:flex lg:flex-col lg:gap-36">
         {gallery
           .sort((a, b) => a.order - b.order)
           .map((item, index) => {
@@ -64,10 +65,10 @@ export function ProjectGallery({ gallery }: ProjectGalleryProps) {
               return (
                 <div
                   key={item.id}
-                  className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center group cursor-pointer"
+                  className="grid grid-cols-12 gap-12 items-center group cursor-pointer"
                   onClick={() => setSelectedIdx(index)}
                 >
-                  <div className="md:col-span-8">
+                  <div className="col-span-8">
                     <DeviceFrame
                       src={item.image}
                       alt={item.alt}
@@ -75,7 +76,7 @@ export function ProjectGallery({ gallery }: ProjectGalleryProps) {
                       className="hover:scale-[1.01] transition-transform duration-700 ease-out"
                     />
                   </div>
-                  <div className="md:col-span-4 flex flex-col justify-center border-l border-border/10 pl-6 h-full md:py-6">
+                  <div className="col-span-4 flex flex-col justify-center border-l border-border/10 pl-6 h-full py-6">
                     <span className="font-mono text-[10px] text-primary uppercase tracking-widest">[ {item.device} ]</span>
                     <Heading level={3} className="text-xl font-bold mt-2">
                       {item.title}
@@ -88,6 +89,60 @@ export function ProjectGallery({ gallery }: ProjectGalleryProps) {
               );
             }
           })}
+      </div>
+
+      {/* Tablet Gallery Layout (2-column) */}
+      <div className="hidden md:grid lg:hidden grid-cols-2 gap-8">
+        {gallery
+          .sort((a, b) => a.order - b.order)
+          .map((item, index) => (
+            <div
+              key={item.id}
+              className="flex flex-col gap-4 group cursor-pointer w-full h-full justify-between"
+              onClick={() => setSelectedIdx(index)}
+            >
+              <DeviceFrame
+                src={item.image}
+                alt={item.alt}
+                device={item.device}
+                className="hover:scale-[1.01] transition-transform duration-700 ease-out"
+              />
+              <div className="mt-2 text-left">
+                <span className="font-mono text-[10px] text-primary uppercase tracking-widest">[ {item.device} ]</span>
+                <Heading level={4} className="text-sm font-bold mt-1 text-muted/80">
+                  {item.title}
+                </Heading>
+              </div>
+            </div>
+          ))}
+      </div>
+
+      {/* Mobile Gallery Layout (1-column, full-width, captions below) */}
+      <div className="flex flex-col md:hidden gap-12">
+        {gallery
+          .sort((a, b) => a.order - b.order)
+          .map((item, index) => (
+            <div
+              key={item.id}
+              className="flex flex-col gap-4 group cursor-pointer w-full"
+              onClick={() => setSelectedIdx(index)}
+            >
+              <DeviceFrame
+                src={item.image}
+                alt={item.alt}
+                device={item.device}
+              />
+              <div className="text-left mt-2">
+                <span className="font-mono text-[10px] text-primary uppercase tracking-widest">[ {item.device} ]</span>
+                <Heading level={4} className="text-base font-bold mt-1">
+                  {item.title}
+                </Heading>
+                <p className="font-sans text-xs text-muted/70 mt-1.5 leading-relaxed">
+                  {item.alt}
+                </p>
+              </div>
+            </div>
+          ))}
       </div>
 
       {/* Lightbox Overlay */}

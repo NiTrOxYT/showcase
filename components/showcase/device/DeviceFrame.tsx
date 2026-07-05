@@ -27,7 +27,7 @@ export function DeviceFrame({ src, alt, device, priority = false, className }: D
               fill
               sizes="(max-width: 768px) 100vw, 300px"
               priority={priority}
-              className="object-cover"
+              className="object-cover object-top"
             />
           </div>
         </div>
@@ -43,7 +43,7 @@ export function DeviceFrame({ src, alt, device, priority = false, className }: D
               fill
               sizes="(max-width: 1024px) 100vw, 800px"
               priority={priority}
-              className="object-cover"
+              className="object-cover object-top"
             />
           </div>
           {/* Keyboard Tray base base */}
@@ -63,7 +63,7 @@ export function DeviceFrame({ src, alt, device, priority = false, className }: D
               fill
               sizes="(max-width: 1200px) 100vw, 1000px"
               priority={priority}
-              className="object-cover"
+              className="object-cover object-top"
             />
           </div>
           {/* Monitor Neck & Stand base */}
@@ -82,7 +82,7 @@ export function DeviceFrame({ src, alt, device, priority = false, className }: D
             fill
             sizes="(max-width: 768px) 100vw, 500px"
             priority={priority}
-            className="object-cover"
+            className="object-cover object-top"
           />
         </div>
       )}
@@ -107,7 +107,7 @@ export function DeviceFrame({ src, alt, device, priority = false, className }: D
               fill
               sizes="(max-width: 1200px) 100vw, 1000px"
               priority={priority}
-              className="object-cover"
+              className="object-cover object-top"
             />
           </div>
         </div>

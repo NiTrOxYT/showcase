@@ -28,17 +28,17 @@ export function ShowcaseFeatured() {
             </Text>
           </MotionSection>
 
-          <div className="flex flex-col gap-32 md:gap-48">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:flex lg:flex-col gap-12 md:gap-16 lg:gap-48">
             {featuredProjects.map((project, index) => {
               const isEven = index % 2 === 0;
               return (
                 <div
                   key={project.id}
-                  className={`grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center group`}
+                  className="flex flex-col lg:grid lg:grid-cols-12 gap-8 lg:gap-20 items-stretch lg:items-center group"
                 >
                   {/* Image Block */}
                   <div
-                    className={`lg:col-span-7 overflow-hidden rounded-xl bg-surface/10 border border-border/25 relative aspect-[16/10] w-full ${
+                    className={`w-full lg:col-span-7 aspect-[16/10] overflow-hidden rounded-xl bg-surface/10 border border-border/25 relative ${
                       isEven ? "lg:order-2" : "lg:order-1"
                     }`}
                   >
@@ -56,7 +56,7 @@ export function ShowcaseFeatured() {
 
                   {/* Content Block */}
                   <div
-                    className={`lg:col-span-5 flex flex-col justify-center ${
+                    className={`w-full lg:col-span-5 flex flex-col justify-center ${
                       isEven ? "lg:order-1" : "lg:order-2"
                     }`}
                   >
