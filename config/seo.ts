@@ -1,39 +1,44 @@
 import type { Metadata } from "next";
-import { siteConfig } from "@/config/site";
 
 export const defaultMetadata: Metadata = {
-  title: {
-    default: siteConfig.name,
-    template: `%s | ${siteConfig.name}`,
-  },
-  description: siteConfig.description,
-  metadataBase: new URL(siteConfig.url),
-  alternates: {
-    canonical: "/",
-  },
+  metadataBase: new URL("https://showcase.annex-consultancy.com"),
+
+  title: "ANNEX Showcase",
+
+  description:
+    "Premium websites, web applications, and digital experiences by ANNEX.",
+
   openGraph: {
-    type: "website",
+    title: "ANNEX Showcase",
+    description:
+      "Premium websites, web applications, and digital experiences by ANNEX.",
+    url: "https://showcase.annex-consultancy.com",
+    siteName: "ANNEX",
     locale: "en_US",
-    url: siteConfig.url,
-    title: siteConfig.name,
-    description: siteConfig.description,
-    siteName: siteConfig.name,
+    type: "website",
     images: [
       {
-        url: siteConfig.ogImage,
+        url: "/images/cover.png",
         width: 1200,
         height: 630,
-        alt: siteConfig.name,
+        alt: "ANNEX Showcase",
       },
     ],
   },
+
   twitter: {
     card: "summary_large_image",
-    title: siteConfig.name,
-    description: siteConfig.description,
-    images: [siteConfig.ogImage],
-    creator: "@annex",
+    title: "ANNEX Showcase",
+    description:
+      "Premium websites, web applications, and digital experiences by ANNEX.",
+    images: ["/images/cover.png"],
   },
+
+  robots: {
+    index: true,
+    follow: true,
+  },
+
   icons: {
     icon: "/favicons/favicon.ico",
     shortcut: "/favicons/favicon-16x16.png",

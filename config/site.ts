@@ -1,8 +1,8 @@
 export const siteConfig = {
   name: "ANNEX Showcase",
-  description: "Premium digital showcase showcasing high-end web development craftsmanship.",
-  url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
-  ogImage: "/images/og.jpg",
+  description: "Premium websites, web applications, and digital experiences by ANNEX.",
+  url: "https://showcase.annex-consultancy.com",
+  ogImage: "/images/cover.png",
   links: {
     github: "https://github.com/annex",
     twitter: "https://twitter.com/annex",
