@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useState } from "react";
-import { supabaseClient } from "@/lib/supabase/client";
+import { uploadImage } from "@/lib/supabase/storage";
 import { z } from "zod";
 import type { Project, Technology, GalleryItem } from "@/types/project";
 import { Heading } from "@/components/typography/Heading";
@@ -119,41 +119,35 @@ export function ProjectForm({
   const [newTech, setNewTech] = useState({ name: "", category: "", website: "" });
   const [uploadingField, setUploadingField] = useState<string | null>(null);
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, fieldName: string, folder = "projects") => {
+  const handleFileUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    fieldName: string,
+    folder: "projects" | "gallery" | "logos" | "uploads" = "projects"
+  ) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setUploadingField(fieldName);
-    try {
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
-      const filePath = `${folder}/${fileName}`;
+    const result = await uploadImage(file, folder);
 
-      const { error: uploadError } = await supabaseClient.storage
-        .from("site-assets")
-        .upload(filePath, file);
-
-      if (uploadError) {
-        throw uploadError;
-      }
-
-      const { data: { publicUrl } } = supabaseClient.storage
-        .from("site-assets")
-        .getPublicUrl(filePath);
-
-      if (fieldName === "coverImage" || fieldName === "thumbnail" || fieldName === "ogImage") {
-        setFormData((prev) => ({ ...prev, [fieldName]: publicUrl }));
-      } else if (fieldName.startsWith("gallery-")) {
-        const index = parseInt(fieldName.split("-")[1], 10);
-        setGallery((prev) =>
-          prev.map((item, idx) => (idx === index ? { ...item, image: publicUrl } : item))
-        );
-      }
-    } catch (err: any) {
-      alert(`Upload failed: ${err.message}`);
-    } finally {
+    if (!result.ok) {
+      alert(result.error);
       setUploadingField(null);
+      return;
     }
+
+    const publicUrl = result.publicUrl!;
+
+    if (fieldName === "coverImage" || fieldName === "thumbnail" || fieldName === "ogImage") {
+      setFormData((prev) => ({ ...prev, [fieldName]: publicUrl }));
+    } else if (fieldName.startsWith("gallery-")) {
+      const index = parseInt(fieldName.split("-")[1], 10);
+      setGallery((prev) =>
+        prev.map((item, idx) => (idx === index ? { ...item, image: publicUrl } : item))
+      );
+    }
+
+    setUploadingField(null);
   };
 
   const tabs = [

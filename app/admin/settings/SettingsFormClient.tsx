@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useState } from "react";
-import { supabaseClient } from "@/lib/supabase/client";
+import { uploadImage } from "@/lib/supabase/storage";
 import { useRouter } from "next/navigation";
 import { Heading } from "@/components/typography/Heading";
 import { Text } from "@/components/typography/Text";
@@ -29,38 +29,33 @@ export function SettingsFormClient({ initialSettings }: SettingsFormClientProps)
 
   const [uploadingField, setUploadingField] = useState<string | null>(null);
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, moduleName: string, fieldName: string, folder = "logo") => {
+  const handleFileUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    moduleName: string,
+    fieldName: string,
+    folder: "logos" | "projects" | "gallery" | "uploads" = "logos"
+  ) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setUploadingField(`${moduleName}-${fieldName}`);
-    try {
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
-      const filePath = `${folder}/${fileName}`;
+    const result = await uploadImage(file, folder);
 
-      const { error: uploadError } = await supabaseClient.storage
-        .from("site-assets")
-        .upload(filePath, file);
-
-      if (uploadError) {
-        throw uploadError;
-      }
-
-      const { data: { publicUrl } } = supabaseClient.storage
-        .from("site-assets")
-        .getPublicUrl(filePath);
-
-      if (moduleName === "branding") {
-        setBranding((prev: any) => ({ ...prev, [fieldName]: publicUrl }));
-      } else if (moduleName === "seo") {
-        setSeo((prev: any) => ({ ...prev, [fieldName]: publicUrl }));
-      }
-    } catch (err: any) {
-      alert(`Upload failed: ${err.message}`);
-    } finally {
+    if (!result.ok) {
+      alert(result.error);
       setUploadingField(null);
+      return;
     }
+
+    const publicUrl = result.publicUrl!;
+
+    if (moduleName === "branding") {
+      setBranding((prev: any) => ({ ...prev, [fieldName]: publicUrl }));
+    } else if (moduleName === "seo") {
+      setSeo((prev: any) => ({ ...prev, [fieldName]: publicUrl }));
+    }
+
+    setUploadingField(null);
   };
 
 
@@ -147,7 +142,7 @@ export function SettingsFormClient({ initialSettings }: SettingsFormClientProps)
                     <input
                       type="file"
                       accept="image/*"
-                      onChange={(e) => handleFileUpload(e, "branding", "logoUrl", "logo")}
+                      onChange={(e) => handleFileUpload(e, "branding", "logoUrl", "logos")}
                       className="hidden"
                     />
                   </label>
@@ -175,7 +170,7 @@ export function SettingsFormClient({ initialSettings }: SettingsFormClientProps)
                     <input
                       type="file"
                       accept="image/x-icon,image/png,image/svg+xml"
-                      onChange={(e) => handleFileUpload(e, "branding", "faviconUrl", "logo")}
+                      onChange={(e) => handleFileUpload(e, "branding", "faviconUrl", "logos")}
                       className="hidden"
                     />
                   </label>
