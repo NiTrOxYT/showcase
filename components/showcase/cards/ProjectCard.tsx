@@ -9,6 +9,7 @@ import { showcaseVariants } from "@/animations/variants/showcase";
 import { Heading } from "@/components/typography/Heading";
 import { Text } from "@/components/typography/Text";
 import { Magnetic } from "@/components/motion/Magnetic";
+import { safeSrc } from "@/lib/images";
 
 interface ProjectCardProps {
   project: Project;
@@ -25,7 +26,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
           {/* Cover image with grayscale shift */}
           <div className="w-full lg:col-span-6 aspect-[16/10] overflow-hidden relative rounded-xl border border-border/25 bg-surface/5">
             <Image
-              src={project.thumbnail}
+              src={safeSrc(project.thumbnail)}
               alt={project.thumbnailAlt || project.title}
               fill
               sizes="(max-width: 768px) 100vw, 600px"

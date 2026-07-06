@@ -6,6 +6,7 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/cn";
 import { DURATION, EASE } from "@/animations/core/tokens";
+import { safeSrc } from "@/lib/images";
 
 // ─── Nav links ───────────────────────────────────────────────────────────────
 const NAV_LINKS = [
@@ -76,7 +77,7 @@ function AnnexLogo({ size = "desktop", priority = false, logoUrl }: { size?: "de
   const w = h * 2; // 2:1 exact ratio
   return (
     <Image
-      src={logoUrl || "/images/logo.png"}
+      src={safeSrc(logoUrl) || "/images/logo.png"}
       alt="ANNEX"
       width={w}
       height={h}

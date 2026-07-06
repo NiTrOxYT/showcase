@@ -4,6 +4,7 @@ import type { Project } from "@/types/project";
 import { Heading } from "@/components/typography/Heading";
 import { Container } from "@/components/layout/Container";
 import { Stack } from "@/components/layout/Stack";
+import { safeSrc } from "@/lib/images";
 
 interface ProjectHeroProps {
   project: Project;
@@ -14,7 +15,7 @@ export function ProjectHero({ project }: ProjectHeroProps) {
     <section className="relative min-h-[75vh] flex items-end pt-40 pb-20 overflow-hidden bg-background">
       <div className="absolute inset-0 z-0">
         <Image
-          src={project.coverImage}
+          src={safeSrc(project.coverImage)}
           alt={project.title}
           fill
           priority

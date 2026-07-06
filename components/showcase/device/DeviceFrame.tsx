@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { cn } from "@/lib/cn";
+import { safeSrc } from "@/lib/images";
 
 interface DeviceFrameProps {
   src: string;
@@ -11,6 +12,7 @@ interface DeviceFrameProps {
 }
 
 export function DeviceFrame({ src, alt, device, priority = false, className }: DeviceFrameProps) {
+  const safeSrcUrl = safeSrc(src);
   return (
     <div className={cn("relative w-full overflow-hidden transition-all duration-700", className)}>
       {device === "mobile" && (
@@ -22,7 +24,7 @@ export function DeviceFrame({ src, alt, device, priority = false, className }: D
           {/* Content image */}
           <div className="absolute inset-0 z-10">
             <Image
-              src={src}
+              src={safeSrcUrl}
               alt={alt}
               fill
               sizes="(max-width: 768px) 100vw, 300px"
@@ -38,7 +40,7 @@ export function DeviceFrame({ src, alt, device, priority = false, className }: D
           {/* Laptop Screen */}
           <div className="aspect-[16/10] border-[6px] border-border rounded-t-xl relative bg-background shadow-2xl overflow-hidden">
             <Image
-              src={src}
+              src={safeSrcUrl}
               alt={alt}
               fill
               sizes="(max-width: 1024px) 100vw, 800px"
@@ -58,7 +60,7 @@ export function DeviceFrame({ src, alt, device, priority = false, className }: D
           {/* Desktop Monitor screen */}
           <div className="aspect-[16/9] border-8 border-border rounded-lg relative bg-background shadow-2xl overflow-hidden">
             <Image
-              src={src}
+              src={safeSrcUrl}
               alt={alt}
               fill
               sizes="(max-width: 1200px) 100vw, 1000px"
@@ -77,7 +79,7 @@ export function DeviceFrame({ src, alt, device, priority = false, className }: D
       {device === "tablet" && (
         <div className="mx-auto w-full max-w-[420px] aspect-[4/3] border-[8px] border-border rounded-2xl relative bg-background shadow-2xl overflow-hidden">
           <Image
-            src={src}
+            src={safeSrcUrl}
             alt={alt}
             fill
             sizes="(max-width: 768px) 100vw, 500px"
@@ -102,7 +104,7 @@ export function DeviceFrame({ src, alt, device, priority = false, className }: D
           {/* Content view */}
           <div className="aspect-[16/10] relative w-full overflow-hidden">
             <Image
-              src={src}
+              src={safeSrcUrl}
               alt={alt}
               fill
               sizes="(max-width: 1200px) 100vw, 1000px"

@@ -11,6 +11,7 @@ import { Text } from "@/components/typography/Text";
 import { showcaseRepository } from "@/services/showcaseRepository";
 import { MotionSection } from "@/components/motion/MotionSection";
 import { Magnetic } from "@/components/motion/Magnetic";
+import { safeSrc } from "@/lib/images";
 
 export async function ShowcaseFeatured() {
   const featuredProjects = (await showcaseRepository.getProjects("all", "featured")).slice(0, 2);
@@ -44,7 +45,7 @@ export async function ShowcaseFeatured() {
                   >
                     <Link href={`/showcase/${project.slug}`} className="block w-full h-full relative">
                       <Image
-                        src={project.coverImage}
+                        src={safeSrc(project.coverImage)}
                         alt={project.thumbnailAlt || project.title}
                         fill
                         sizes="(max-width: 1024px) 100vw, 800px"

@@ -9,6 +9,7 @@ import { TextReveal } from "@/components/motion/TextReveal";
 import { MotionSection } from "@/components/motion/MotionSection";
 import { motion } from "framer-motion";
 import { containerReveal, itemRevealFade } from "@/animations/variants/transitions";
+import { safeSrc } from "@/lib/images";
 
 const SUPPORT_EMAIL      = "hello@annex-consultancy.com";
 const STUDIO_ADDRESS     = "Kolkata, India";
@@ -71,7 +72,7 @@ export function Footer({
             <div>
               <Link href="/" className="inline-block transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40 rounded" aria-label="ANNEX — Home">
                 <Image
-                  src={logo}
+                  src={safeSrc(logo) || "/images/logo.png"}
                   alt="ANNEX"
                   width={72}
                   height={36}
