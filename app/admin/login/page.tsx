@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { supabaseClient } from "@/lib/supabase/client";
 import { Container } from "@/components/layout/Container";
 import { Heading } from "@/components/typography/Heading";
 import { Text } from "@/components/typography/Text";
@@ -28,6 +29,14 @@ export default function AdminLoginPage() {
 
       const data = await res.json();
       if (data.success) {
+        // Hydrate the browser-side Supabase client with the real session so
+        // Storage uploads carry an authenticated Bearer token (required by RLS).
+        if (data.access_token && data.refresh_token) {
+          await supabaseClient.auth.setSession({
+            access_token: data.access_token,
+            refresh_token: data.refresh_token,
+          });
+        }
         router.push("/admin");
         router.refresh();
       } else {

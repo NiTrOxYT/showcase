@@ -25,7 +25,11 @@ export async function POST(request: Request) {
       maxAge: session.expires_in,
     });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({
+      success: true,
+      access_token: session.access_token,
+      refresh_token: session.refresh_token,
+    });
   } catch (err: any) {
     return NextResponse.json({ success: false, error: err.message || "Server error" }, { status: 500 });
   }
