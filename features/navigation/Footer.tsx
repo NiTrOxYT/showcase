@@ -14,10 +14,41 @@ const SUPPORT_EMAIL      = "hello@annex-consultancy.com";
 const STUDIO_ADDRESS     = "Kolkata, India";
 const CLOSING_COPY       = "We build for the web that matters.";
 
-export function Footer() {
-  const supportEmail       = SUPPORT_EMAIL;
-  const address            = STUDIO_ADDRESS;
-  const finalClosingCopy   = CLOSING_COPY;
+interface FooterProps {
+  navLinks?: any[];
+  logoUrl?: string;
+  contactEmail?: string;
+  contactAddress?: string;
+  closingCopy?: string;
+  copyrightText?: string;
+  socialLinks?: { label: string; href: string }[];
+}
+
+export function Footer({
+  navLinks,
+  logoUrl,
+  contactEmail,
+  contactAddress,
+  closingCopy,
+  copyrightText,
+  socialLinks,
+}: FooterProps = {}) {
+  const supportEmail       = contactEmail || SUPPORT_EMAIL;
+  const address            = contactAddress || STUDIO_ADDRESS;
+  const finalClosingCopy   = closingCopy || CLOSING_COPY;
+  const logo               = logoUrl || "/images/logo.png";
+
+  const links = (navLinks && navLinks.length > 0)
+    ? navLinks
+    : navigationConfig.mainNav;
+
+  const socials = (socialLinks && socialLinks.length > 0)
+    ? socialLinks
+    : [
+        { label: "GitHub", href: "https://github.com/annex" },
+        { label: "LinkedIn", href: "https://linkedin.com/company/annex" },
+        { label: "Instagram", href: "https://instagram.com/annex" },
+      ];
 
   return (
     <footer className="border-t border-border/20 bg-background relative overflow-hidden">
@@ -40,7 +71,7 @@ export function Footer() {
             <div>
               <Link href="/" className="inline-block transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40 rounded" aria-label="ANNEX — Home">
                 <Image
-                  src="/images/logo.png"
+                  src={logo}
                   alt="ANNEX"
                   width={72}
                   height={36}
@@ -75,13 +106,13 @@ export function Footer() {
           >
             <span className="font-sans text-[10px] uppercase tracking-widest text-muted font-bold">[ Navigation ]</span>
             <nav aria-label="Footer navigation" className="grid grid-cols-2 gap-3 max-w-xs justify-items-center md:justify-items-start">
-              {navigationConfig.mainNav.map((item) => (
-                <motion.div key={item.title} variants={itemRevealFade}>
+              {links.map((item: any) => (
+                <motion.div key={item.title || item.label} variants={itemRevealFade}>
                   <Link
                     href={item.href}
                     className="font-sans text-sm text-foreground/70 hover:text-foreground transition-colors duration-300 w-fit"
                   >
-                    {item.title}
+                    {item.title || item.label}
                   </Link>
                 </motion.div>
               ))}
@@ -98,12 +129,7 @@ export function Footer() {
           >
             <span className="font-sans text-[10px] uppercase tracking-widest text-muted font-bold">[ Connect ]</span>
             <div className="flex flex-col gap-3 items-center md:items-start">
-              {[
-                { label: "GitHub", href: "https://github.com/annex" },
-                { label: "LinkedIn", href: "https://linkedin.com/company/annex" },
-                { label: "X / Twitter", href: "https://twitter.com/annex" },
-                { label: "Instagram", href: "https://instagram.com/annex" },
-              ].map((link) => (
+              {socials.map((link: any) => (
                 <motion.div key={link.label} variants={itemRevealFade}>
                   <a
                     href={link.href}
@@ -121,7 +147,7 @@ export function Footer() {
 
         {/* Stage 3: Bottom Bar */}
         <MotionSection as="div" variant="fade" className="pt-10 flex flex-col md:flex-row justify-between items-center gap-6 text-[11px] text-muted/65 font-sans tracking-wide">
-          <div>&copy; {new Date().getFullYear()} ANNEX.</div>
+          <div>{copyrightText || `© ${new Date().getFullYear()} ANNEX. All rights reserved.`}</div>
           <div>Designed &amp; Developed by ANNEX</div>
           <div>Made in India</div>
         </MotionSection>

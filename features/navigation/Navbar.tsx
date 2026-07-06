@@ -10,10 +10,8 @@ import { DURATION, EASE } from "@/animations/core/tokens";
 // ─── Nav links ───────────────────────────────────────────────────────────────
 const NAV_LINKS = [
   { label: "Work",      href: "/showcase",  num: "01" },
-  { label: "Services",  href: "/#services", num: "02" },
-  { label: "Showcase",  href: "/showcase",  num: "03" },
-  { label: "About",     href: "/#about",    num: "04" },
-  { label: "Contact",   href: "/#contact",  num: "05" },
+  { label: "About",     href: "/#about",    num: "02" },
+  { label: "Contact",   href: "/#contact",  num: "03" },
 ];
 
 const SOCIAL_LINKS = [
@@ -72,13 +70,13 @@ const mobileLinkItem = {
 
 // ─── Logo Image helper ───────────────────────────────────────────────────────
 // height=36px desktop, 32px tablet, 26px mobile → ratio 1774:887 ≈ 2:1
-function AnnexLogo({ size = "desktop", priority = false }: { size?: "desktop" | "tablet" | "mobile"; priority?: boolean }) {
+function AnnexLogo({ size = "desktop", priority = false, logoUrl }: { size?: "desktop" | "tablet" | "mobile"; priority?: boolean; logoUrl?: string }) {
   const heights: Record<string, number> = { desktop: 36, tablet: 32, mobile: 26 };
   const h = heights[size];
   const w = h * 2; // 2:1 exact ratio
   return (
     <Image
-      src="/images/logo.png"
+      src={logoUrl || "/images/logo.png"}
       alt="ANNEX"
       width={w}
       height={h}
@@ -92,9 +90,26 @@ function AnnexLogo({ size = "desktop", priority = false }: { size?: "desktop" | 
 const EMAIL   = "hello@annex-consultancy.com";
 const ADDRESS = "Kolkata, India";
 
-export function Navbar() {
-  const email   = EMAIL;
-  const address = ADDRESS;
+interface NavbarProps {
+  navLinks?: any[];
+  logoUrl?: string;
+  contactEmail?: string;
+  contactAddress?: string;
+}
+
+export function Navbar({ navLinks, logoUrl, contactEmail, contactAddress }: NavbarProps = {}) {
+  const email   = contactEmail || EMAIL;
+  const address = contactAddress || ADDRESS;
+  const logo    = logoUrl || "/images/logo.png";
+
+  const links: any[] = (navLinks && navLinks.length > 0)
+    ? navLinks.map((item, idx) => ({
+        label: item.title,
+        href: item.href,
+        num: `0${idx + 1}`,
+        children: item.children || [],
+      }))
+    : NAV_LINKS.map((item) => ({ ...item, children: [] }));
 
   const [isScrolled,  setIsScrolled]  = useState(false);
   const [isVisible,   setIsVisible]   = useState(true);
@@ -213,9 +228,9 @@ export function Navbar() {
             className="group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/50 rounded-md transition-opacity hover:opacity-75"
             aria-label="ANNEX — Home"
           >
-            <span className="hidden md:block"><AnnexLogo size="desktop" priority /></span>
-            <span className="hidden sm:block md:hidden"><AnnexLogo size="tablet" priority /></span>
-            <span className="sm:hidden"><AnnexLogo size="mobile" priority /></span>
+            <span className="hidden md:block"><AnnexLogo size="desktop" priority logoUrl={logo} /></span>
+            <span className="hidden sm:block md:hidden"><AnnexLogo size="tablet" priority logoUrl={logo} /></span>
+            <span className="sm:hidden"><AnnexLogo size="mobile" priority logoUrl={logo} /></span>
           </Link>
 
           {/* ── Menu trigger + hover preview (desktop only) ─────── */}
@@ -266,7 +281,7 @@ export function Navbar() {
                   role="menu"
                   aria-label="Quick navigation"
                 >
-                  {NAV_LINKS.map((link) => (
+                  {links.map((link) => (
                     <Link
                       key={link.label}
                       href={link.href}
@@ -325,7 +340,7 @@ export function Navbar() {
                   className="flex-1 flex flex-col gap-1"
                   aria-label="Main navigation"
                 >
-                  {NAV_LINKS.map((link, i) => (
+                  {links.map((link, i) => (
                     <motion.div key={link.label} variants={linkItem}>
                       <Link
                         href={link.href}
@@ -433,7 +448,7 @@ export function Navbar() {
                 className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40 rounded-md transition-opacity hover:opacity-75"
                 aria-label="ANNEX — Home"
               >
-                <AnnexLogo size="mobile" priority />
+                <AnnexLogo size="mobile" priority logoUrl={logo} />
               </Link>
 
               <button
@@ -456,21 +471,36 @@ export function Navbar() {
                 className="w-full flex flex-col items-center gap-2"
                 aria-label="Main navigation"
               >
-                {NAV_LINKS.map((link, i) => (
-                  <motion.div key={link.label} variants={mobileLinkItem} className="w-full">
+                {links.map((link, i) => (
+                  <motion.div key={link.label} variants={mobileLinkItem} className="w-full flex flex-col items-center">
                     <Link
                       href={link.href}
                       ref={i === 0 ? firstLinkRef : undefined}
                       onClick={closeMenu}
                       className={cn(
-                        "flex items-center justify-center w-full py-4 min-h-[56px]",
-                        "font-display font-light text-[44px] leading-none tracking-[-0.04em] text-black",
+                        "flex items-center justify-center w-full py-2 min-h-[48px]",
+                        "font-display font-light text-[40px] leading-none tracking-[-0.04em] text-black",
                         "hover:text-black/50 transition-colors duration-200",
                         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/30 rounded-lg",
                       )}
                     >
                       {link.label}
                     </Link>
+                    {link.children && link.children.length > 0 && (
+                      <div className="flex flex-col items-center gap-1 mt-0.5 mb-2.5">
+                        {link.children.map((child: any) => (
+                          <Link
+                            key={child.title}
+                            href={child.href}
+                            onClick={closeMenu}
+                            className="font-mono text-xs text-neutral-500 hover:text-black transition-colors py-1 flex items-center gap-1.5"
+                          >
+                            <span className="w-1 h-1 rounded-full bg-primary" />
+                            {child.title}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
                   </motion.div>
                 ))}
               </motion.nav>

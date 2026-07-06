@@ -12,22 +12,39 @@ import { ShowcaseContainer } from "@/features/showcase/sections/ShowcaseContaine
 import { showcaseRepository } from "@/services/showcaseRepository";
 
 import { SettingsRepository } from "@/services/repositories/SettingsRepository";
+import { navigationRepository } from "@/services/navigationRepository";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const seo = SettingsRepository.getModule("seo");
+  const seo = await SettingsRepository.getModule("seo");
   return {
     title: seo.titleTemplate ? seo.titleTemplate.replace("%s", "Showcase") : "Showcase | ANNEX",
     description: seo.defaultDescription || "Bespoke digital platforms built for scale.",
   };
 }
 
-export default function ShowcasePage() {
-  const initialProjects = showcaseRepository.getProjects();
-  const categories = showcaseRepository.getUniqueCategories();
+export default async function ShowcasePage() {
+  const [initialProjects, categories, settings, headerNav, footerNav] = await Promise.all([
+    showcaseRepository.getProjects(),
+    showcaseRepository.getCategories(),
+    SettingsRepository.getAll(),
+    navigationRepository.getNavigation("header"),
+    navigationRepository.getNavigation("footer"),
+  ]);
+
+  const socialLinks = [
+    { label: "GitHub", href: settings.social.github },
+    { label: "LinkedIn", href: settings.social.linkedin },
+    { label: "Instagram", href: settings.social.instagram },
+  ];
 
   return (
     <>
-      <Navbar />
+      <Navbar
+        navLinks={headerNav}
+        logoUrl={settings.branding.logoUrl}
+        contactEmail={settings.contact.email}
+        contactAddress={settings.contact.address}
+      />
       <main className="overflow-x-hidden w-full max-w-full">
         {/* Showcase Hero Section */}
         <Section className="pt-40 pb-16 border-b border-border/10 bg-background/50">
@@ -59,7 +76,15 @@ export default function ShowcasePage() {
         {/* Call to Action */}
         <ContactInvite />
       </main>
-      <Footer />
+      <Footer
+        navLinks={footerNav}
+        logoUrl={settings.branding.logoUrl}
+        contactEmail={settings.contact.email}
+        contactAddress={settings.contact.address}
+        closingCopy={settings.footer.finalClosingCopy}
+        copyrightText={settings.footer.copyrightText}
+        socialLinks={socialLinks}
+      />
     </>
   );
 }

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const response = NextResponse.next();
 
   // 1. Security Headers Configuration
@@ -19,9 +19,17 @@ export function middleware(request: NextRequest) {
 
   // 2. Future Authentication and Protection placeholders
   const { pathname } = request.nextUrl;
+  if (pathname === "/about") {
+    return NextResponse.redirect(new URL("/#about", request.url));
+  }
+  if (pathname === "/contact") {
+    return NextResponse.redirect(new URL("/#contact", request.url));
+  }
+
+  // 2. Protect /admin routes
   if (pathname.startsWith("/admin")) {
-    const sessionCookie = request.cookies.get("annex-admin-session");
-    const isAuthenticated = sessionCookie?.value === "authenticated";
+    const { supabaseMiddleware } = await import("@/lib/supabase/middleware");
+    const { isAuthenticated } = await supabaseMiddleware(request);
 
     if (pathname === "/admin/login") {
       if (isAuthenticated) {

@@ -1,26 +1,32 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { createAdminClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
   try {
-    const { password } = await request.json();
-    const adminPassword = process.env.ADMIN_PASSWORD || "admin";
+    const { email, password } = await request.json();
+    const supabase = createAdminClient();
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email || "admin@annex.com", // sensible default fallback email
+      password,
+    });
 
-    if (password === adminPassword) {
-      const cookieStore = await cookies();
-      cookieStore.set("annex-admin-session", "authenticated", {
-        path: "/",
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: 60 * 60 * 24, // 1 day
-      });
-
-      return NextResponse.json({ success: true });
+    if (error || !data.session) {
+      return NextResponse.json({ success: false, error: error?.message || "Invalid credentials" }, { status: 401 });
     }
 
-    return NextResponse.json({ success: false, error: "Invalid credentials" }, { status: 401 });
-  } catch {
-    return NextResponse.json({ success: false, error: "Server error" }, { status: 500 });
+    const session = data.session;
+    const cookieStore = await cookies();
+    cookieStore.set("annex-admin-session", session.access_token, {
+      path: "/",
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: session.expires_in,
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (err: any) {
+    return NextResponse.json({ success: false, error: err.message || "Server error" }, { status: 500 });
   }
 }

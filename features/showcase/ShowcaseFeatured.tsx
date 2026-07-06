@@ -12,8 +12,8 @@ import { showcaseRepository } from "@/services/showcaseRepository";
 import { MotionSection } from "@/components/motion/MotionSection";
 import { Magnetic } from "@/components/motion/Magnetic";
 
-export function ShowcaseFeatured() {
-  const featuredProjects = showcaseRepository.getProjects("all", "featured").slice(0, 2);
+export async function ShowcaseFeatured() {
+  const featuredProjects = (await showcaseRepository.getProjects("all", "featured")).slice(0, 2);
 
   return (
     <Section id="showcase" className="border-t border-border/20 bg-background relative overflow-hidden py-32 md:py-48">
@@ -42,7 +42,7 @@ export function ShowcaseFeatured() {
                       isEven ? "lg:order-2" : "lg:order-1"
                     }`}
                   >
-                    <Link href={`/showcase/${project.slug}`} className="block w-full h-full">
+                    <Link href={`/showcase/${project.slug}`} className="block w-full h-full relative">
                       <Image
                         src={project.coverImage}
                         alt={project.thumbnailAlt || project.title}

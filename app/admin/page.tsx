@@ -17,13 +17,13 @@ import {
   Settings,
 } from "lucide-react";
 
-export default function AdminDashboardPage() {
-  const projects = ProjectRepository.getAll();
+export default async function AdminDashboardPage() {
+  const projects = await ProjectRepository.getAll();
   const publishedCount = projects.filter((p) => p.status === "Published").length;
   const draftCount = projects.filter((p) => p.status === "Draft").length;
   const featuredCount = projects.filter((p) => p.featured).length;
-  const categoriesCount = CategoryRepository.getAll().length;
-  const technologiesCount = TechnologyRepository.getAll().length;
+  const categoriesCount = (await CategoryRepository.getAll()).length;
+  const technologiesCount = (await TechnologyRepository.getAll()).length;
 
   const sortedProjects = [...projects].sort(
     (a, b) => new Date(b.updatedAt || "").getTime() - new Date(a.updatedAt || "").getTime()

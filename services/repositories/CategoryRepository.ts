@@ -1,25 +1,18 @@
-import { readDb, writeDb } from "@/data/mock/db";
+import { showcaseRepository } from "../showcaseRepository";
 
+// Server-side Category repository layer querying unique categories dynamically from Supabase projects
 export const CategoryRepository = {
-  getAll(): string[] {
-    const db = readDb();
-    return db.categories || [];
+  async getAll(): Promise<string[]> {
+    return showcaseRepository.getCategories();
   },
 
-  create(name: string): string[] {
-    const db = readDb();
-    const formatted = name.trim();
-    if (formatted && !db.categories.includes(formatted)) {
-      db.categories = [...db.categories, formatted];
-      writeDb(db);
-    }
-    return db.categories;
+  async create(name: string): Promise<string[]> {
+    // Categories are inferred dynamically from project categories, so create is a no-op
+    return showcaseRepository.getCategories();
   },
 
-  delete(name: string): string[] {
-    const db = readDb();
-    db.categories = db.categories.filter((c: string) => c !== name);
-    writeDb(db);
-    return db.categories;
+  async delete(name: string): Promise<string[]> {
+    // Categories are deleted automatically when no projects reference them
+    return showcaseRepository.getCategories();
   },
 };

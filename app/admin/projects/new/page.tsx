@@ -4,7 +4,7 @@ import { ProjectCreateClient } from "./ProjectCreateClient";
 
 export const dynamic = "force-dynamic";
 
-export default function NewProjectAdminPage() {
-  const availableTechnologies = TechnologyRepository.getAll();
+export default async function NewProjectAdminPage() {
+  const availableTechnologies = await TechnologyRepository.getAll();
   return <ProjectCreateClient availableTechnologies={availableTechnologies} />;
 }

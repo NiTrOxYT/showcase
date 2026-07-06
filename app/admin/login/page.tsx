@@ -8,6 +8,7 @@ import { Text } from "@/components/typography/Text";
 import { Stack } from "@/components/layout/Stack";
 
 export default function AdminLoginPage() {
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,7 +23,7 @@ export default function AdminLoginPage() {
       const res = await fetch("/api/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await res.json();
@@ -59,6 +60,20 @@ export default function AdminLoginPage() {
                 <Text className="text-muted/60 text-xs mt-1">
                   Secure administration interface portal.
                 </Text>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="font-mono text-[10px] uppercase tracking-widest text-muted/60 font-medium">
+                  Email Identity
+                </label>
+                <input
+                  type="email"
+                  required
+                  placeholder="Enter administrator email..."
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="font-mono text-sm px-4 py-3 bg-surface/30 rounded border border-border/60 text-foreground focus:outline-none focus:border-primary/80 focus:ring-1 focus:ring-primary/40 transition-all duration-300 w-full"
+                />
               </div>
 
               <div className="flex flex-col gap-2">

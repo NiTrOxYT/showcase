@@ -18,13 +18,15 @@ import { ProjectCard } from "@/components/showcase/cards/ProjectCard";
 import { ProjectNavigationListener } from "@/features/showcase/components/ProjectNavigationListener";
 import { ScrollProgress } from "@/components/motion/ScrollProgress";
 import { showcaseRepository } from "@/services/showcaseRepository";
+import { SettingsRepository } from "@/services/repositories/SettingsRepository";
+import { navigationRepository } from "@/services/navigationRepository";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
 export async function generateStaticParams() {
-  const projects = showcaseRepository.getProjects();
+  const projects = await showcaseRepository.getProjects();
   return projects.map((p) => ({
     slug: p.slug,
   }));
@@ -32,7 +34,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const project = showcaseRepository.getProjectBySlug(slug);
+  const project = await showcaseRepository.getProjectBySlug(slug);
 
   if (!project) {
     return {
@@ -53,25 +55,41 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ProjectDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const project = showcaseRepository.getProjectBySlug(slug);
+  
+  // Fetch details, navigation, and settings in parallel
+  const [project, allProjects, relatedProjects, settings, headerNav, footerNav] = await Promise.all([
+    showcaseRepository.getProjectBySlug(slug),
+    showcaseRepository.getProjects(),
+    showcaseRepository.getRelatedProjects(slug, 2),
+    SettingsRepository.getAll(),
+    navigationRepository.getNavigation("header"),
+    navigationRepository.getNavigation("footer"),
+  ]);
 
   if (!project) {
     notFound();
   }
 
   // Get dynamic pagination targets
-  const allProjects = showcaseRepository.getProjects();
   const currentIdx = allProjects.findIndex((p) => p.slug === slug);
   const prevProject = currentIdx > 0 ? allProjects[currentIdx - 1] : null;
   const nextProject = currentIdx < allProjects.length - 1 ? allProjects[currentIdx + 1] : null;
 
-  // Get related project cards
-  const relatedProjects = showcaseRepository.getRelatedProjects(slug, 2);
+  const socialLinks = [
+    { label: "GitHub", href: settings.social.github },
+    { label: "LinkedIn", href: settings.social.linkedin },
+    { label: "Instagram", href: settings.social.instagram },
+  ];
 
   return (
     <>
       <ScrollProgress />
-      <Navbar />
+      <Navbar
+        navLinks={headerNav}
+        logoUrl={settings.branding.logoUrl}
+        contactEmail={settings.contact.email}
+        contactAddress={settings.contact.address}
+      />
       <ProjectNavigationListener
         prevSlug={prevProject ? prevProject.slug : null}
         nextSlug={nextProject ? nextProject.slug : null}
@@ -250,10 +268,17 @@ export default async function ProjectDetailPage({ params }: PageProps) {
           </Section>
         )}
 
-        {/* Standard CTA invite */}
         <ContactInvite />
       </main>
-      <Footer />
+      <Footer
+        navLinks={footerNav}
+        logoUrl={settings.branding.logoUrl}
+        contactEmail={settings.contact.email}
+        contactAddress={settings.contact.address}
+        closingCopy={settings.footer.finalClosingCopy}
+        copyrightText={settings.footer.copyrightText}
+        socialLinks={socialLinks}
+      />
     </>
   );
 }

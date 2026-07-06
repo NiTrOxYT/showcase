@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useState } from "react";
+import { supabaseClient } from "@/lib/supabase/client";
 import { z } from "zod";
 import type { Project, Technology, GalleryItem } from "@/types/project";
 import { Heading } from "@/components/typography/Heading";
@@ -116,6 +117,44 @@ export function ProjectForm({
   const [selectedTech, setSelectedTech] = useState<Technology[]>(initialData?.technologies || []);
 
   const [newTech, setNewTech] = useState({ name: "", category: "", website: "" });
+  const [uploadingField, setUploadingField] = useState<string | null>(null);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, fieldName: string, folder = "projects") => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingField(fieldName);
+    try {
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
+      const filePath = `${folder}/${fileName}`;
+
+      const { error: uploadError } = await supabaseClient.storage
+        .from("site-assets")
+        .upload(filePath, file);
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      const { data: { publicUrl } } = supabaseClient.storage
+        .from("site-assets")
+        .getPublicUrl(filePath);
+
+      if (fieldName === "coverImage" || fieldName === "thumbnail" || fieldName === "ogImage") {
+        setFormData((prev) => ({ ...prev, [fieldName]: publicUrl }));
+      } else if (fieldName.startsWith("gallery-")) {
+        const index = parseInt(fieldName.split("-")[1], 10);
+        setGallery((prev) =>
+          prev.map((item, idx) => (idx === index ? { ...item, image: publicUrl } : item))
+        );
+      }
+    } catch (err: any) {
+      alert(`Upload failed: ${err.message}`);
+    } finally {
+      setUploadingField(null);
+    }
+  };
 
   const tabs = [
     { id: "general", label: "General" },
@@ -492,27 +531,65 @@ export function ProjectForm({
         {activeTab === "gallery" && (
           <div className="flex flex-col gap-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6 border-b border-border/10">
-              <div className="flex flex-col gap-2">
-                <label className="font-mono text-[10px] uppercase tracking-widest text-muted/60">Thumbnail Image URL</label>
-                <input
-                  type="text"
-                  name="thumbnail"
-                  required
-                  value={formData.thumbnail}
-                  onChange={handleInputChange}
-                  className="font-mono text-xs px-3.5 py-2.5 bg-surface/20 border border-border/40 rounded text-foreground focus:outline-none focus:border-primary/80 transition-colors w-full"
-                />
+              <div className="flex flex-col gap-3">
+                <label className="font-mono text-[10px] uppercase tracking-widest text-muted/60 flex justify-between items-center">
+                  <span>Thumbnail Image URL</span>
+                  {uploadingField === "thumbnail" && <span className="text-primary text-[9px] uppercase animate-pulse">Uploading...</span>}
+                </label>
+                <div className="flex gap-4 items-center">
+                  {formData.thumbnail && (
+                    <img src={formData.thumbnail} alt="Thumbnail Preview" className="w-12 h-12 object-cover rounded border border-border/20 bg-surface/10" />
+                  )}
+                  <div className="flex-1 flex gap-2">
+                    <input
+                      type="text"
+                      name="thumbnail"
+                      required
+                      value={formData.thumbnail}
+                      onChange={handleInputChange}
+                      className="font-mono text-xs px-3.5 py-2.5 bg-surface/20 border border-border/40 rounded text-foreground focus:outline-none focus:border-primary/80 transition-colors w-full"
+                    />
+                    <label className="cursor-pointer flex items-center justify-center font-mono text-[10px] uppercase tracking-widest px-4 py-2.5 bg-surface/30 border border-border/40 rounded hover:bg-surface/50 text-muted hover:text-foreground transition-all duration-300">
+                      Upload
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleFileUpload(e, "thumbnail")}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
+                </div>
               </div>
-              <div className="flex flex-col gap-2">
-                <label className="font-mono text-[10px] uppercase tracking-widest text-muted/60">Cover Header Image URL</label>
-                <input
-                  type="text"
-                  name="coverImage"
-                  required
-                  value={formData.coverImage}
-                  onChange={handleInputChange}
-                  className="font-mono text-xs px-3.5 py-2.5 bg-surface/20 border border-border/40 rounded text-foreground focus:outline-none focus:border-primary/80 transition-colors w-full"
-                />
+              <div className="flex flex-col gap-3">
+                <label className="font-mono text-[10px] uppercase tracking-widest text-muted/60 flex justify-between items-center">
+                  <span>Cover Header Image URL</span>
+                  {uploadingField === "coverImage" && <span className="text-primary text-[9px] uppercase animate-pulse">Uploading...</span>}
+                </label>
+                <div className="flex gap-4 items-center">
+                  {formData.coverImage && (
+                    <img src={formData.coverImage} alt="Cover Preview" className="w-12 h-12 object-cover rounded border border-border/20 bg-surface/10" />
+                  )}
+                  <div className="flex-1 flex gap-2">
+                    <input
+                      type="text"
+                      name="coverImage"
+                      required
+                      value={formData.coverImage}
+                      onChange={handleInputChange}
+                      className="font-mono text-xs px-3.5 py-2.5 bg-surface/20 border border-border/40 rounded text-foreground focus:outline-none focus:border-primary/80 transition-colors w-full"
+                    />
+                    <label className="cursor-pointer flex items-center justify-center font-mono text-[10px] uppercase tracking-widest px-4 py-2.5 bg-surface/30 border border-border/40 rounded hover:bg-surface/50 text-muted hover:text-foreground transition-all duration-300">
+                      Upload
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleFileUpload(e, "coverImage")}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -547,14 +624,33 @@ export function ProjectForm({
 
                   <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
                     <div className="md:col-span-6 flex flex-col gap-2">
-                      <label className="font-mono text-[9px] uppercase tracking-widest text-muted/60">Image Address URL</label>
-                      <input
-                        type="text"
-                        required
-                        value={item.image}
-                        onChange={(e) => handleGalleryItemChange(item.id, "image", e.target.value)}
-                        className="font-mono text-xs px-3 py-2 bg-surface/20 border border-border/40 rounded text-foreground focus:outline-none"
-                      />
+                      <label className="font-mono text-[9px] uppercase tracking-widest text-muted/60 flex justify-between items-center">
+                        <span>Image Address URL</span>
+                        {uploadingField === `gallery-${index}` && <span className="text-primary text-[8px] uppercase animate-pulse">Uploading...</span>}
+                      </label>
+                      <div className="flex gap-3 items-center">
+                        {item.image && (
+                          <img src={item.image} alt="Preview" className="w-8 h-8 object-cover rounded border border-border/20 bg-surface/10" />
+                        )}
+                        <div className="flex-1 flex gap-2">
+                          <input
+                            type="text"
+                            required
+                            value={item.image}
+                            onChange={(e) => handleGalleryItemChange(item.id, "image", e.target.value)}
+                            className="font-mono text-xs px-3 py-2 bg-surface/20 border border-border/40 rounded text-foreground focus:outline-none w-full"
+                          />
+                          <label className="cursor-pointer flex items-center justify-center font-mono text-[9px] uppercase tracking-widest px-3 py-2 bg-surface/30 border border-border/40 rounded hover:bg-surface/50 text-muted hover:text-foreground transition-all duration-300">
+                            Upload
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => handleFileUpload(e, `gallery-${index}`)}
+                              className="hidden"
+                            />
+                          </label>
+                        </div>
+                      </div>
                     </div>
                     <div className="md:col-span-3 flex flex-col gap-2">
                       <label className="font-mono text-[9px] uppercase tracking-widest text-muted/60">Device Mockup Frame</label>
@@ -712,14 +808,33 @@ export function ProjectForm({
                   />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <label className="font-mono text-[10px] uppercase tracking-widest text-muted/60">OG Metadata Image URL</label>
-                  <input
-                    type="text"
-                    name="ogImage"
-                    value={formData.ogImage}
-                    onChange={handleInputChange}
-                    className="font-mono text-xs px-3.5 py-2.5 bg-surface/20 border border-border/40 rounded text-foreground focus:outline-none"
-                  />
+                  <label className="font-mono text-[10px] uppercase tracking-widest text-muted/60 flex justify-between items-center">
+                    <span>OG Metadata Image URL</span>
+                    {uploadingField === "ogImage" && <span className="text-primary text-[9px] uppercase animate-pulse">Uploading...</span>}
+                  </label>
+                  <div className="flex gap-4 items-center">
+                    {formData.ogImage && (
+                      <img src={formData.ogImage} alt="OG Preview" className="w-12 h-12 object-cover rounded border border-border/20 bg-surface/10" />
+                    )}
+                    <div className="flex-1 flex gap-2">
+                      <input
+                        type="text"
+                        name="ogImage"
+                        value={formData.ogImage}
+                        onChange={handleInputChange}
+                        className="font-mono text-xs px-3.5 py-2.5 bg-surface/20 border border-border/40 rounded text-foreground focus:outline-none w-full"
+                      />
+                      <label className="cursor-pointer flex items-center justify-center font-mono text-[10px] uppercase tracking-widest px-4 py-2.5 bg-surface/30 border border-border/40 rounded hover:bg-surface/50 text-muted hover:text-foreground transition-all duration-300">
+                        Upload
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleFileUpload(e, "ogImage")}
+                          className="hidden"
+                        />
+                      </label>
+                    </div>
+                  </div>
                 </div>
                 <div className="flex flex-col gap-2 md:col-span-2">
                   <label className="font-mono text-[10px] uppercase tracking-widest text-muted/60">Custom SEO Description</label>

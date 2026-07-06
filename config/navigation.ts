@@ -2,10 +2,9 @@ import type { NavItem } from "@/types/navigation";
 
 export const navigationConfig = {
   mainNav: [
-    { title: "Home", href: "/" },
-    { title: "Showcase", href: "/showcase" },
-    { title: "Process", href: "/#process" },
-    { title: "Contact", href: "/contact" },
+    { title: "Work", href: "/showcase" },
+    { title: "About", href: "/#about" },
+    { title: "Contact", href: "/#contact" },
   ] as NavItem[],
   adminNav: [
     { title: "Dashboard", href: "/admin" },

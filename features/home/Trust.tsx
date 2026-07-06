@@ -13,7 +13,7 @@ import { motion } from "framer-motion";
 
 export function Trust() {
   return (
-    <Section className="border-t border-border/20 bg-background/30 relative">
+    <Section id="about" className="border-t border-border/20 bg-background/30 relative">
       {/* Background ambient radial highlight */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-2/3 h-1/3 bg-accent/3 blur-[180px] rounded-full pointer-events-none" />
 

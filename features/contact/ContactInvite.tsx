@@ -8,17 +8,18 @@ import { Heading } from "@/components/typography/Heading";
 import { Text } from "@/components/typography/Text";
 import { MotionSection } from "@/components/motion/MotionSection";
 import { Magnetic } from "@/components/motion/Magnetic";
-import { SettingsRepository } from "@/services/repositories/SettingsRepository";
+interface ContactInviteProps {
+  title?: string;
+  description?: string;
+  supportEmail?: string;
+}
 
-export function ContactInvite() {
-  const homepageSettings = SettingsRepository.getModule("homepage");
-  const contactSettings = SettingsRepository.getModule("contact");
-
-  const title = homepageSettings.contact?.title || "Let's build something exceptional.";
+export function ContactInvite({ title: propTitle, description: propDescription, supportEmail: propSupportEmail }: ContactInviteProps = {}) {
+  const title = propTitle || "Let's build something exceptional.";
   const description =
-    homepageSettings.contact?.description ||
+    propDescription ||
     "Whether you want to discuss a new design brief, system architecture, or schedule an initial discovery call, we are here.";
-  const supportEmail = contactSettings.email || "support@annex.com";
+  const supportEmail = propSupportEmail || "hello@annex-consultancy.com";
 
   return (
     <Section id="contact" className="border-t border-border/20 bg-background/40 relative overflow-hidden py-40 md:py-56">

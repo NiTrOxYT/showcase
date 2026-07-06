@@ -1,29 +1,31 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { readDb, writeDb } from "@/data/mock/db";
+import { showcaseRepository } from "../showcaseRepository";
 import type { Technology } from "@/types/project";
 
+// Server-side Technology repository layer querying unique libraries dynamically from Supabase projects
 export const TechnologyRepository = {
-  getAll(): Technology[] {
-    const db = readDb();
-    return db.technologies || [];
+  async getAll(): Promise<Technology[]> {
+    const projects = await showcaseRepository.getProjects();
+    const techMap = new Map<string, Technology>();
+
+    projects.forEach((p) => {
+      if (Array.isArray(p.technologies)) {
+        p.technologies.forEach((t) => {
+          if (t && t.name) {
+            techMap.set(t.name.toLowerCase(), t);
+          }
+        });
+      }
+    });
+
+    return Array.from(techMap.values());
   },
 
-  create(tech: Technology): Technology[] {
-    const db = readDb();
-    const exists = db.technologies.some(
-      (t: any) => t.name.toLowerCase() === tech.name.toLowerCase()
-    );
-    if (!exists) {
-      db.technologies = [...db.technologies, tech];
-      writeDb(db);
-    }
-    return db.technologies;
+  async create(tech: Technology): Promise<Technology[]> {
+    // Technologies are defined dynamically within project tech_stack schemas
+    return this.getAll();
   },
 
-  delete(name: string): Technology[] {
-    const db = readDb();
-    db.technologies = db.technologies.filter((t: any) => t.name !== name);
-    writeDb(db);
-    return db.technologies;
+  async delete(name: string): Promise<Technology[]> {
+    return this.getAll();
   },
 };

@@ -12,13 +12,13 @@ export const dynamic = "force-dynamic";
 
 export default async function EditProjectPage({ params }: PageProps) {
   const { id } = await params;
-  const project = ProjectRepository.getById(id);
+  const project = await ProjectRepository.getById(id);
   
   if (!project) {
     notFound();
   }
 
-  const availableTechnologies = TechnologyRepository.getAll();
+  const availableTechnologies = await TechnologyRepository.getAll();
 
   return (
     <ProjectEditClient

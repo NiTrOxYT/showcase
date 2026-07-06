@@ -7,6 +7,7 @@ import { ProjectCard } from "@/components/showcase/cards/ProjectCard";
 import { EmptyState } from "@/components/showcase/layout/EmptyState";
 import type { Project } from "@/types/project";
 import { showcaseVariants } from "@/animations/variants/showcase";
+import { normalizeCategory } from "@/services/showcaseRepository";
 
 interface ShowcaseContainerProps {
   initialProjects: Project[];
@@ -18,20 +19,24 @@ export function ShowcaseContainer({ initialProjects, categories }: ShowcaseConta
   const [sort, setSort] = useState("featured");
 
   const categoriesWithCount = useMemo(() => {
-    return categories.map((cat) => ({
-      name: cat,
-      count: initialProjects.filter(
-        (p) => p.category.toLowerCase() === cat.toLowerCase() || p.type.toLowerCase() === cat.toLowerCase()
-      ).length,
-    }));
+    return categories.map((cat) => {
+      const normCat = normalizeCategory(cat);
+      return {
+        name: cat,
+        count: initialProjects.filter(
+          (p) => normalizeCategory(p.category || "") === normCat || normalizeCategory(p.type || "") === normCat
+        ).length,
+      };
+    });
   }, [categories, initialProjects]);
 
   const processedProjects = useMemo(() => {
     let result = [...initialProjects];
 
-    if (filter !== "All") {
+    const normFilter = normalizeCategory(filter);
+    if (normFilter !== "all" && normFilter !== "") {
       result = result.filter(
-        (p) => p.category.toLowerCase() === filter.toLowerCase() || p.type.toLowerCase() === filter.toLowerCase()
+        (p) => normalizeCategory(p.category || "") === normFilter || normalizeCategory(p.type || "") === normFilter
       );
     }
 
@@ -51,8 +56,8 @@ export function ShowcaseContainer({ initialProjects, categories }: ShowcaseConta
           if (a.featured !== b.featured) {
             return a.featured ? -1 : 1;
           }
-          const aVal = a.featuredOrder ?? a.order;
-          const bVal = b.featuredOrder ?? b.order;
+          const aVal = a.featuredOrder ?? a.order ?? 999;
+          const bVal = b.featuredOrder ?? b.order ?? 999;
           return aVal - bVal;
         });
         break;
@@ -74,6 +79,7 @@ export function ShowcaseContainer({ initialProjects, categories }: ShowcaseConta
       <AnimatePresence mode="popLayout">
         {processedProjects.length > 0 ? (
           <motion.div
+            key="grid"
             layout
             variants={showcaseVariants.staggerContainer}
             initial="hidden"
@@ -88,15 +94,16 @@ export function ShowcaseContainer({ initialProjects, categories }: ShowcaseConta
           </motion.div>
         ) : (
           <motion.div
+            key="empty"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             layout
           >
             <EmptyState
-              title="No projects found"
-              message={`We couldn't find any projects matching the "${filter}" filter. Try checking another category.`}
-              actionText="Reset Filters"
+              title="No projects available in this category yet."
+              message="We are constantly working on new artifacts. Check back soon or view our other works."
+              actionText="View All Projects"
               onAction={() => {
                 setFilter("All");
                 setSort("featured");

@@ -1,24 +1,10 @@
-import { readDb, writeDb } from "@/data/mock/db";
-
-export interface UserPreferences {
-  sidebarCollapsed: boolean;
-  theme: string;
-  tableDensity: "normal" | "compact" | "spacious";
-}
-
+// UserPreferencesRepository stub implementation
 export const UserPreferencesRepository = {
-  getAll(): UserPreferences {
-    const db = readDb();
-    return db.userPreferences || { sidebarCollapsed: false, theme: "dark", tableDensity: "normal" };
+  async get(): Promise<any> {
+    return {};
   },
 
-  update(updates: Partial<UserPreferences>): UserPreferences {
-    const db = readDb();
-    db.userPreferences = {
-      ...db.userPreferences,
-      ...updates,
-    };
-    writeDb(db);
-    return db.userPreferences;
+  async update(pref: any): Promise<any> {
+    return pref;
   },
 };

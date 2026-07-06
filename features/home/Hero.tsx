@@ -5,8 +5,20 @@ import { motion } from "framer-motion";
 import { Magnetic } from "@/components/motion/Magnetic";
 import { EASE } from "@/animations/core/tokens";
 
-export function Hero() {
+interface HeroProps {
+  settings?: {
+    title: string;
+    subtitle: string;
+    description: string;
+  };
+}
+
+export function Hero({ settings }: HeroProps = {}) {
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  const title = settings?.title || "Design that earns trust before words.";
+  const subtitle = settings?.subtitle || "Independent Digital Studio";
+  const description = settings?.description || "A bionic design studio combining raw engineering with cinematic motion to build websites your competitors wish they launched.";
 
   // Easing curve token
   const expoOut = EASE.standard; // [0.16, 1, 0.3, 1]
@@ -53,7 +65,7 @@ export function Hero() {
             >
               <span className="w-2 h-2 rounded-full bg-black block" />
               <span className="font-mono text-xs text-black/55 uppercase tracking-widest font-bold">
-                Independent Digital Studio
+                {subtitle}
               </span>
             </motion.div>
 
@@ -63,12 +75,8 @@ export function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.0, delay: 0.7, ease: expoOut }}
               className="font-display text-4xl lg:text-[4.5rem] text-black tracking-[-0.03em] leading-[1.05] font-light max-w-xl text-left"
-            >
-              Design that earns <br />
-              <span className="font-medium text-black/60">
-                trust before words.
-              </span>
-            </motion.h1>
+              dangerouslySetInnerHTML={{ __html: title.replace(/\n/g, "<br />") }}
+            />
 
             {/* Supporting Paragraph */}
             <motion.p
@@ -77,7 +85,7 @@ export function Hero() {
               transition={{ duration: 0.8, delay: 0.9, ease: expoOut }}
               className="font-sans text-sm md:text-base text-neutral-700 max-w-[45ch] leading-relaxed mt-2 text-left"
             >
-              A bionic design studio combining raw engineering with cinematic motion to build websites your competitors wish they launched.
+              {description}
             </motion.p>
 
             {/* CTA Buttons */}
@@ -85,25 +93,16 @@ export function Hero() {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 1.0, ease: expoOut }}
-              className="flex items-center gap-4 pt-4"
+              className="pt-4"
             >
               <Magnetic strength={0.15}>
                 <a
                   href="#showcase"
-                  className="bg-black text-white hover:bg-neutral-900 px-6 py-3 rounded-full font-mono text-[10px] uppercase tracking-widest transition-all duration-300 shadow-sm font-semibold focus-visible:outline-none"
+                  className="bg-black text-white hover:bg-neutral-900 px-6 py-3 rounded-full font-mono text-[10px] uppercase tracking-widest transition-all duration-300 shadow-sm font-semibold focus-visible:outline-none inline-block"
                 >
                   View Our Work →
                 </a>
               </Magnetic>
-
-              {/* <Magnetic strength={0.15}>
-                <a
-                  href="#contact"
-                  className="bg-transparent text-black border border-black/30 hover:border-black/75 px-6 py-3 rounded-full font-mono text-[10px] uppercase tracking-widest transition-all duration-300 font-semibold focus-visible:outline-none"
-                >
-                  Start a Project
-                </a>
-              </Magnetic> */}
             </motion.div>
 
             {/* Capability tag pills */}
@@ -156,7 +155,7 @@ export function Hero() {
           >
             <span className="w-1.5 h-1.5 rounded-full bg-black block" />
             <span className="font-mono text-[10px] text-black/55 uppercase tracking-widest font-bold">
-              Independent Digital Studio
+              {subtitle}
             </span>
           </motion.div>
 
@@ -166,12 +165,8 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.0, delay: 0.5, ease: expoOut }}
             className="font-display text-4xl text-black tracking-[-0.03em] leading-[1.1] font-light max-w-sm"
-          >
-            Design that earns <br />
-            <span className="font-medium text-black/60">
-              trust before words.
-            </span>
-          </motion.h1>
+            dangerouslySetInnerHTML={{ __html: title.replace(/\n/g, "<br />") }}
+          />
 
           {/* Supporting Paragraph */}
           <motion.p
@@ -180,28 +175,21 @@ export function Hero() {
             transition={{ duration: 0.8, delay: 0.7, ease: expoOut }}
             className="font-sans text-sm text-neutral-700 max-w-[34ch] leading-relaxed"
           >
-            A bionic design studio combining raw engineering with cinematic motion to build websites your competitors wish they launched.
+            {description}
           </motion.p>
 
-          {/* CTA Buttons - Vertical Stacked on Mobile */}
+          {/* CTA Buttons - Mobile */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.8, ease: expoOut }}
-            className="flex flex-col items-center gap-3 w-full max-w-[340px]"
+            className="w-full max-w-[340px]"
           >
             <a
               href="#showcase"
-              className="bg-black text-white hover:bg-neutral-900 w-full py-3.5 rounded-full font-mono text-[10px] uppercase tracking-widest text-center transition-all duration-300 font-semibold focus-visible:outline-none"
+              className="bg-black text-white hover:bg-neutral-900 w-full py-3.5 rounded-full font-mono text-[10px] uppercase tracking-widest text-center transition-all duration-300 font-semibold focus-visible:outline-none block"
             >
               View Our Work →
-            </a>
-
-            <a
-              href="#contact"
-              className="bg-transparent text-black border border-black/30 hover:border-black/75 w-full py-3.5 rounded-full font-mono text-[10px] uppercase tracking-widest text-center transition-all duration-300 font-semibold focus-visible:outline-none"
-            >
-              Start a Project
             </a>
           </motion.div>
 
