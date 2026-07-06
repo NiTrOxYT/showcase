@@ -8,9 +8,14 @@
  *   projects/   – cover images, OG images, thumbnails
  *   gallery/    – project gallery images
  *   uploads/    – misc / future media
+ *
+ * IMPORTANT: uploadImage() and deleteImage() require an authenticated Supabase
+ * client instance (with an active session) to satisfy Storage RLS policies.
+ * Pass the browser supabaseClient from @/lib/supabase/client – never create a
+ * fresh anonymous client here, or the upload will be rejected by RLS.
  */
 
-import { createClient } from "@supabase/supabase-js";
+import { SupabaseClient } from "@supabase/supabase-js";
 
 const BUCKET = "site-assets";
 
@@ -24,14 +29,6 @@ const ALLOWED_MIME_TYPES = [
 ];
 
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
-
-// Use anon client – uploads happen client-side from admin forms.
-// RLS Storage policies allow authenticated admin users to write.
-function getClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-  return createClient(url, key);
-}
 
 // ─── Error formatter ────────────────────────────────────────────────────────
 
@@ -50,16 +47,21 @@ function friendlyError(raw: string): string {
   if (lower.includes("mime") || lower.includes("content-type") || lower.includes("invalid format")) {
     return "Invalid file type. Allowed: PNG, JPEG, WebP, SVG.";
   }
-  if (lower.includes("permission") || lower.includes("unauthorized") || lower.includes("403")) {
+  if (
+    lower.includes("row-level security") ||
+    lower.includes("rls") ||
+    lower.includes("permission") ||
+    lower.includes("unauthorized") ||
+    lower.includes("403")
+  ) {
     return (
-      "Upload permission denied. Make sure you are logged in as admin and " +
-      `the "${BUCKET}" bucket has the correct Storage RLS policies.`
+      "Upload permission denied. You must be logged in as admin. " +
+      "Check that Storage RLS policies exist on the site-assets bucket."
     );
   }
   if (lower.includes("network") || lower.includes("fetch") || lower.includes("timeout")) {
     return "Network error during upload. Check your connection and try again.";
   }
-  // Fallback – mask raw API noise
   return `Upload failed. Please try again. (${raw.slice(0, 120)})`;
 }
 
@@ -98,11 +100,13 @@ export interface UploadResult {
 /**
  * Upload an image file to Supabase Storage.
  *
- * @param file   - File object from an <input type="file"> element.
- * @param folder - Subfolder inside site-assets (logos | projects | gallery | uploads).
- * @returns UploadResult with publicUrl on success, friendly error on failure.
+ * @param supabase - Authenticated Supabase client (from @/lib/supabase/client).
+ *                   Must have an active session; otherwise Storage RLS will block.
+ * @param file     - File object from an <input type="file"> element.
+ * @param folder   - Subfolder inside site-assets.
  */
 export async function uploadImage(
+  supabase: SupabaseClient,
   file: File,
   folder: "logos" | "projects" | "gallery" | "uploads" = "uploads"
 ): Promise<UploadResult> {
@@ -112,15 +116,13 @@ export async function uploadImage(
     return { ok: false, error: validation.error };
   }
 
-  const supabase = getClient();
-
   // 2. Build a unique path.
   const ext = file.name.split(".").pop()?.toLowerCase() ?? "bin";
   const uniqueName = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}.${ext}`;
   const path = `${folder}/${uniqueName}`;
 
   try {
-    // 3. Upload.
+    // 3. Upload using the caller's authenticated client.
     const { error: uploadError } = await supabase.storage
       .from(BUCKET)
       .upload(path, file, {
@@ -151,13 +153,15 @@ export async function uploadImage(
 }
 
 /**
- * Delete a file from Supabase Storage by its storage path.
- * Path is the relative path inside site-assets, e.g. "projects/abc123.jpg".
+ * Delete a file from Supabase Storage.
+ * @param supabase - Authenticated Supabase client.
+ * @param path     - Relative path inside site-assets, e.g. "projects/abc123.jpg".
  */
-export async function deleteImage(path: string): Promise<{ ok: boolean; error?: string }> {
+export async function deleteImage(
+  supabase: SupabaseClient,
+  path: string
+): Promise<{ ok: boolean; error?: string }> {
   if (!path) return { ok: false, error: "No path provided." };
-
-  const supabase = getClient();
 
   try {
     const { error } = await supabase.storage.from(BUCKET).remove([path]);
@@ -169,10 +173,11 @@ export async function deleteImage(path: string): Promise<{ ok: boolean; error?: 
 }
 
 /**
- * Get the public URL for an existing file without re-uploading.
+ * Get the public URL for an existing file (no auth needed – read-only).
+ * @param supabase - Any Supabase client (anon is fine for public URLs).
+ * @param path     - Relative path inside site-assets.
  */
-export function getPublicUrl(path: string): string {
-  const supabase = getClient();
+export function getPublicUrl(supabase: SupabaseClient, path: string): string {
   const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
   return data?.publicUrl ?? "";
 }

@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useState } from "react";
+import { supabaseClient } from "@/lib/supabase/client";
 import { uploadImage } from "@/lib/supabase/storage";
 import { useRouter } from "next/navigation";
 import { Heading } from "@/components/typography/Heading";
@@ -39,7 +40,7 @@ export function SettingsFormClient({ initialSettings }: SettingsFormClientProps)
     if (!file) return;
 
     setUploadingField(`${moduleName}-${fieldName}`);
-    const result = await uploadImage(file, folder);
+    const result = await uploadImage(supabaseClient, file, folder);
 
     if (!result.ok) {
       alert(result.error);
