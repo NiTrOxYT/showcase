@@ -12,6 +12,9 @@ import { showcaseRepository } from "@/services/showcaseRepository";
 import { MotionSection } from "@/components/motion/MotionSection";
 import { Magnetic } from "@/components/motion/Magnetic";
 import { safeSrc } from "@/lib/images";
+import { ROUTES } from "@/constants/routes";
+import { ArrowRight } from "lucide-react";
+import { DURATION } from "@/animations/core/tokens";
 
 export async function ShowcaseFeatured() {
   const featuredProjects = (await showcaseRepository.getProjects("all", "featured")).slice(0, 2);
@@ -89,6 +92,16 @@ export async function ShowcaseFeatured() {
                           <span className="font-sans text-xs text-foreground/80 font-medium">{project.deliverables.slice(0, 2).join(" · ")}</span>
                         </div>
                       </div>
+
+                      <MotionSection as="div" variant="fade" delay={DURATION.fast}>
+                        <Link
+                          href={ROUTES.SHOWCASE}
+                          className="group inline-flex items-center justify-center w-full lg:w-fit h-[44px] lg:h-[42px] px-[20px] rounded-full border border-[rgba(255,255,255,0.14)] bg-transparent text-white text-[12px] font-medium tracking-[0.12em] uppercase gap-[8px] transition-[border-color,background-color] duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-white hover:bg-[rgba(255,255,255,0.04)] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                        >
+                          See All Projects
+                          <ArrowRight className="w-3.5 h-3.5 transition-transform duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-[4px]" />
+                        </Link>
+                      </MotionSection>
 
                       <div className="pt-2">
                         <Magnetic strength={0.25}>
