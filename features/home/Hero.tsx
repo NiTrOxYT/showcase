@@ -2,6 +2,7 @@
 
 import React, { useRef } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { Magnetic } from "@/components/motion/Magnetic";
 import { EASE } from "@/animations/core/tokens";
 
@@ -98,12 +99,11 @@ export function Hero({ settings }: HeroProps = {}) {
               {description}
             </motion.p>
 
-            {/* CTA Buttons */}
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 1.0, ease: expoOut }}
-              className="pt-4"
+              className="pt-4 flex items-center gap-4"
             >
               <Magnetic strength={0.15}>
                 <a
@@ -112,6 +112,15 @@ export function Hero({ settings }: HeroProps = {}) {
                 >
                   View Our Work →
                 </a>
+              </Magnetic>
+              <Magnetic strength={0.15}>
+                <Link
+                  href="/book-call"
+                  prefetch
+                  className="bg-white text-black border border-black/10 hover:border-black/35 hover:bg-neutral-50 px-6 py-3 rounded-full font-mono text-[10px] uppercase tracking-widest transition-all duration-300 shadow-sm font-semibold focus-visible:outline-none inline-block"
+                >
+                  Book a Free Call
+                </Link>
               </Magnetic>
             </motion.div>
 
@@ -197,7 +206,7 @@ export function Hero({ settings }: HeroProps = {}) {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.8, ease: expoOut }}
-            className="w-full max-w-[340px]"
+            className="w-full max-w-[340px] flex flex-col gap-3"
           >
             <a
               href="#showcase"
@@ -205,6 +214,13 @@ export function Hero({ settings }: HeroProps = {}) {
             >
               View Our Work →
             </a>
+            <Link
+              href="/book-call"
+              prefetch
+              className="bg-white text-black border border-black/20 hover:border-black/45 w-full py-3.5 rounded-full font-mono text-[10px] uppercase tracking-widest text-center transition-all duration-300 font-semibold focus-visible:outline-none block shadow-sm"
+            >
+              Book a Free Call
+            </Link>
           </motion.div>
 
           {/* Capability tag pills — no backdrop-blur */}
