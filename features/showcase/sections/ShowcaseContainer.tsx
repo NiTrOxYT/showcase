@@ -6,7 +6,6 @@ import { FilterBar } from "@/components/showcase/filters/FilterBar";
 import { ProjectCard } from "@/components/showcase/cards/ProjectCard";
 import { EmptyState } from "@/components/showcase/layout/EmptyState";
 import type { Project } from "@/types/project";
-import { showcaseVariants } from "@/animations/variants/showcase";
 import { normalizeCategory } from "@/lib/categories";
 
 interface ShowcaseContainerProps {
@@ -31,35 +30,16 @@ export function ShowcaseContainer({ initialProjects, categories }: ShowcaseConta
   }, [categories, initialProjects]);
 
   const sortedProjects = useMemo(() => {
-    const projects = initialProjects;
-    console.log("Projects", projects);
-    console.log("Filter", selectedFilter);
-    console.log("Sort", selectedSort);
-
-    console.table(
-      projects.map(project => ({
-        title: project.title,
-        category: project.category,
-        platform: project.platform,
-        status: project.status,
-        featured: project.featured,
-      }))
-    );
-
-    let filteredProjects = [...projects];
+    let filtered = [...initialProjects];
 
     const filterNormalized = normalizeCategory(selectedFilter);
     if (filterNormalized !== "all" && filterNormalized !== "") {
-      filteredProjects = filteredProjects.filter((project) => {
-        const normFilter = normalizeCategory(selectedFilter);
-        const normCategory = normalizeCategory(project.category || "");
-        return normCategory === normFilter;
-      });
+      filtered = filtered.filter(
+        (p) => normalizeCategory(p.category || "") === filterNormalized
+      );
     }
 
-    console.log("Filtered", filteredProjects);
-
-    const sorted = [...filteredProjects];
+    const sorted = [...filtered];
     switch (selectedSort) {
       case "newest":
         sorted.sort((a, b) => {
@@ -81,9 +61,7 @@ export function ShowcaseContainer({ initialProjects, categories }: ShowcaseConta
       case "featured":
       default:
         sorted.sort((a, b) => {
-          if (a.featured !== b.featured) {
-            return a.featured ? -1 : 1;
-          }
+          if (a.featured !== b.featured) return a.featured ? -1 : 1;
           const aVal = a.featuredOrder ?? a.order ?? 999;
           const bVal = b.featuredOrder ?? b.order ?? 999;
           return aVal - bVal;
@@ -91,13 +69,8 @@ export function ShowcaseContainer({ initialProjects, categories }: ShowcaseConta
         break;
     }
 
-    console.log("Sorted", sorted);
-    console.log("Length", sorted.length);
-
     return sorted;
   }, [initialProjects, selectedFilter, selectedSort]);
-
-  console.log(sortedProjects.length);
 
   return (
     <div className="flex flex-col gap-16">
@@ -113,26 +86,23 @@ export function ShowcaseContainer({ initialProjects, categories }: ShowcaseConta
         {sortedProjects.length > 0 ? (
           <motion.div
             key="grid"
-            variants={showcaseVariants.staggerContainer}
-            initial="hidden"
-            animate="show"
+            initial={{ opacity: 1 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             className="grid grid-cols-1 md:grid-cols-2 lg:flex lg:flex-col gap-12 md:gap-16 lg:gap-24"
           >
-            <AnimatePresence mode="popLayout">
-              {sortedProjects.map((project) => (
-                <motion.div
-                  key={project.id ?? project.slug}
-                  layout
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.4 }}
-                  className="h-full"
-                >
-                  <ProjectCard project={project} />
-                </motion.div>
-              ))}
-            </AnimatePresence>
+            {sortedProjects.map((project, i) => (
+              <motion.div
+                key={project.id ?? project.slug}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: i * 0.1 }}
+                className="h-full"
+              >
+                <ProjectCard project={project} />
+              </motion.div>
+            ))}
           </motion.div>
         ) : (
           <motion.div
@@ -140,7 +110,6 @@ export function ShowcaseContainer({ initialProjects, categories }: ShowcaseConta
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            layout
           >
             <EmptyState
               title="No projects found."

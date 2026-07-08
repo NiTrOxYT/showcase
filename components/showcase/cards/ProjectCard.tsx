@@ -3,9 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from "framer-motion";
 import type { Project } from "@/types/project";
-import { showcaseVariants } from "@/animations/variants/showcase";
 import { Heading } from "@/components/typography/Heading";
 import { Text } from "@/components/typography/Text";
 import { Magnetic } from "@/components/motion/Magnetic";
@@ -17,8 +15,7 @@ interface ProjectCardProps {
 
 export function ProjectCard({ project }: ProjectCardProps) {
   return (
-    <motion.div
-      variants={showcaseVariants.cardReveal}
+    <div
       className="group relative flex flex-col justify-between transition-all duration-700 ease-out py-6 border-b border-border/10 last:border-b-0 md:border-0 md:bg-surface/5 md:p-6 md:rounded-2xl md:border md:border-border/25 md:shadow-sm lg:bg-transparent lg:p-0 lg:rounded-none lg:border-0 lg:border-b lg:border-border/10 lg:py-8 lg:last:border-b-0 h-full"
     >
       <Link href={`/showcase/${project.slug}`} className="block w-full h-full">
@@ -77,6 +74,6 @@ export function ProjectCard({ project }: ProjectCardProps) {
           </div>
         </div>
       </Link>
-    </motion.div>
+    </div>
   );
 }
