@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { Stack } from "@/components/layout/Stack";
@@ -8,6 +9,7 @@ import { Heading } from "@/components/typography/Heading";
 import { Text } from "@/components/typography/Text";
 import { MotionSection } from "@/components/motion/MotionSection";
 import { Magnetic } from "@/components/motion/Magnetic";
+
 interface ContactInviteProps {
   title?: string;
   description?: string;
@@ -54,12 +56,13 @@ export function ContactInvite({ title: propTitle, description: propDescription, 
               </a>
             </Magnetic>
 
-            <a
-              href="#contact"
+            <Link
+              href="/book-call"
+              prefetch
               className="font-sans text-xs uppercase tracking-widest text-muted hover:text-foreground transition-colors duration-300 pt-6"
             >
-              Schedule Discovery Call
-            </a>
+              Book a Free Call
+            </Link>
           </MotionSection>
         </Stack>
       </Container>

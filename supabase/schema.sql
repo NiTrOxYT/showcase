@@ -159,3 +159,32 @@ CREATE POLICY "Allow authenticated reads" ON public.newsletter_subscribers
 
 ALTER PUBLICATION supabase_realtime ADD TABLE public.newsletter_subscribers;
 
+-- ─── CONSULTATION REQUESTS TABLE ────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS public.consultation_requests (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    reference_id TEXT NOT NULL UNIQUE,
+    name TEXT NOT NULL,
+    phone TEXT NOT NULL,
+    consultation_type TEXT NOT NULL,
+    address TEXT,
+    preferred_date DATE NOT NULL,
+    preferred_time TEXT NOT NULL,
+    notes TEXT,
+    status TEXT NOT NULL DEFAULT 'Pending',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_consultation_requests_phone ON public.consultation_requests(phone);
+CREATE INDEX IF NOT EXISTS idx_consultation_requests_created_at ON public.consultation_requests(created_at);
+
+ALTER TABLE public.consultation_requests ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow anonymous inserts" ON public.consultation_requests
+    FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "Allow authenticated full write/read" ON public.consultation_requests
+    FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
+ALTER PUBLICATION supabase_realtime ADD TABLE public.consultation_requests;
+
+

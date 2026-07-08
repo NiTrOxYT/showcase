@@ -240,6 +240,48 @@ export interface Database {
         }
         Relationships: []
       }
+      consultation_requests: {
+        Row: {
+          id: string
+          reference_id: string
+          name: string
+          phone: string
+          consultation_type: string
+          address: string | null
+          preferred_date: string
+          preferred_time: string
+          notes: string | null
+          status: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          reference_id: string
+          name: string
+          phone: string
+          consultation_type: string
+          address?: string | null
+          preferred_date: string
+          preferred_time: string
+          notes?: string | null
+          status?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          reference_id?: string
+          name?: string
+          phone?: string
+          consultation_type?: string
+          address?: string | null
+          preferred_date?: string
+          preferred_time?: string
+          notes?: string | null
+          status?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
