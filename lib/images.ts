@@ -35,7 +35,7 @@ export function isValidImageUrl(url: string | null | undefined): url is string {
  * Use this before passing any url to <Image> or <img>.
  */
 export function safeSrc(url: string | null | undefined): string {
-  return isValidImageUrl(url) ? url!.trim() : PLACEHOLDER_SRC;
+  return isValidImageUrl(url) ? url.trim() : PLACEHOLDER_SRC;
 }
 
 // ─── Cloudinary helpers ───────────────────────────────────────────────────────
@@ -43,8 +43,7 @@ export function safeSrc(url: string | null | undefined): string {
 const CLOUDINARY_BASE = "https://res.cloudinary.com";
 
 export function isCloudinaryUrl(url: string | null | undefined): boolean {
-  if (!isValidImageUrl(url)) return false;
-  return url!.startsWith(CLOUDINARY_BASE);
+  return isValidImageUrl(url) && url.startsWith(CLOUDINARY_BASE);
 }
 
 /**
@@ -59,7 +58,8 @@ export function cloudinaryTransform(
   transform: string
 ): string {
   if (!isCloudinaryUrl(url)) return safeSrc(url);
-  const safe = url!.trim();
+  const safe = url ? url.trim() : "";
+  if (!safe) return PLACEHOLDER_SRC;
   // Insert transformation after /upload/
   return safe.replace("/upload/", `/upload/${transform}/`);
 }

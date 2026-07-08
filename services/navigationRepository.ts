@@ -42,11 +42,18 @@ export const navigationRepository = {
     });
 
     data.forEach((row) => {
-      const mapped = itemMap.get(row.id)!;
-      if (row.parent_id && itemMap.has(row.parent_id)) {
-        itemMap.get(row.parent_id)!.children!.push(mapped);
-      } else {
-        roots.push(mapped);
+      const mapped = itemMap.get(row.id);
+      if (mapped) {
+        if (row.parent_id) {
+          const parent = itemMap.get(row.parent_id);
+          if (parent && parent.children) {
+            parent.children.push(mapped);
+          } else {
+            roots.push(mapped);
+          }
+        } else {
+          roots.push(mapped);
+        }
       }
     });
 

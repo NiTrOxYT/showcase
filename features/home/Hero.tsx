@@ -33,6 +33,12 @@ export function Hero({ settings }: HeroProps = {}) {
         <div className="absolute inset-0 z-0 flex items-center justify-center bg-white pointer-events-none">
           {/* Custom scale & positioning per viewport */}
           <motion.video
+            ref={(el) => {
+              if (el) {
+                el.muted = true;
+                el.play().catch(() => {});
+              }
+            }}
             initial={{ opacity: 0, x: "-50%", y: "-50%", scale: 1.05 }}
             animate={{ opacity: 1, x: "-50%", y: "-50%", scale: 1 }}
             transition={{ duration: 1.8, ease: expoOut }}
@@ -134,6 +140,12 @@ export function Hero({ settings }: HeroProps = {}) {
           {/* Video First on Mobile */}
           <div className="flex items-center justify-center w-[90vw] h-[42vh] max-h-[420px] mx-auto relative rounded-2xl overflow-hidden border border-neutral-100 bg-neutral-50/50 shadow-sm">
             <motion.video
+              ref={(el) => {
+                if (el) {
+                  el.muted = true;
+                  el.play().catch(() => {});
+                }
+              }}
               initial={{ opacity: 0, scale: 1.03 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1.8, ease: expoOut }}
