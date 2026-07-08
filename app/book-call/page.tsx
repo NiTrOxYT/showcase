@@ -1,15 +1,37 @@
 import React from "react";
+import type { Metadata } from "next";
 import { Navbar } from "@/features/navigation/Navbar";
 import { Footer } from "@/features/navigation/Footer";
 import { SettingsRepository } from "@/services/repositories/SettingsRepository";
 import { navigationRepository } from "@/services/navigationRepository";
-import { BookCallForm } from "./BookCallForm";
+import { BookCallForm } from "@/app/book-call/BookCallForm";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Book a Free Consultation | ANNEX",
   description: "Book a free consultation with ANNEX and discover how we can help build your next digital product.",
+  openGraph: {
+    title: "Book a Free Consultation | ANNEX",
+    description: "Book a free consultation with ANNEX and discover how we can help build your next digital product.",
+    url: "https://showcase.annex-consultancy.com/book-call",
+    siteName: "ANNEX",
+    images: [
+      {
+        url: "/images/bookacall.png",
+        width: 1200,
+        height: 630,
+        alt: "Book a Free Consultation with ANNEX",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Book a Free Consultation | ANNEX",
+    description: "Book a free consultation with ANNEX and discover how we can help build your next digital product.",
+    images: ["/images/bookacall.png"],
+  },
 };
 
 export default async function BookCallPage() {
