@@ -8,6 +8,9 @@ import { useScrollProgress } from "@/animations/hooks/useScrollProgress";
  * Thin scroll progress bar fixed at the top of the viewport.
  * Only mount this on /showcase/[slug] pages.
  * Uses amber brand primary color.
+ *
+ * PERF: scaleX now receives a MotionValue directly — Framer Motion
+ * reads it without touching React. Zero re-renders on scroll.
  */
 export function ScrollProgress() {
   const progress = useScrollProgress();

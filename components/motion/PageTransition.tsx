@@ -10,10 +10,14 @@ interface PageTransitionProps {
   routeKey?: string;
 }
 
+// PERF: Removed filter:blur from variants.
+// blur() on a full-page container forces GPU layer promotion on the entire document
+// subtree, which is prohibitively expensive on mobile and mid-range desktop.
+// opacity + y is sufficient and compositor-only.
 const variants = {
-  initial: { opacity: 0, y: 10, filter: "blur(4px)" },
-  animate: { opacity: 1, y: 0, filter: "blur(0px)" },
-  exit: { opacity: 0, y: -6, filter: "blur(2px)" },
+  initial: { opacity: 0, y: 8 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -4 },
 };
 
 const reducedVariants = {
@@ -42,7 +46,9 @@ export function PageTransition({ children, routeKey }: PageTransitionProps) {
           duration: reduced ? DURATION.fast : DURATION.page,
           ease: EASE.standard,
         }}
-        style={{ willChange: "opacity, transform, filter" }}
+        // PERF: Do not set willChange on full-page containers — it creates a
+        // permanent compositing layer for the entire document subtree.
+        // Framer Motion manages willChange internally during animations.
       >
         {children}
       </motion.div>

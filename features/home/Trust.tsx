@@ -32,7 +32,7 @@ export function Trust() {
           className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-none"
         >
           {/* Card 1: Speed - md:col-span-2 */}
-          <MotionCard withReveal={false} className="md:col-span-2 p-8 md:p-14 rounded-2xl bg-surface/20 border border-border/40 hover:border-foreground/20 hover:bg-surface/35 transition-all duration-700 ease-out glassmorphism relative overflow-hidden group">
+          <MotionCard withReveal={false} className="md:col-span-2 p-8 md:p-14 rounded-2xl bg-surface/20 border border-border/40 hover:border-foreground/20 hover:bg-surface/35 transition-all duration-700 ease-out relative overflow-hidden group">
             {/* Visual shine overlay */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-foreground/2 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-[1500ms]" />
             <div className="absolute top-0 right-0 p-8 text-[10px] font-mono text-primary tracking-widest uppercase">
@@ -50,7 +50,7 @@ export function Trust() {
           </MotionCard>
 
           {/* Card 2: Mobile - md:col-span-1 */}
-          <MotionCard withReveal={false} className="md:col-span-1 p-8 md:p-12 rounded-2xl bg-surface/20 border border-border/40 hover:border-foreground/20 hover:bg-surface/35 transition-all duration-700 ease-out glassmorphism flex flex-col justify-between group relative overflow-hidden">
+          <MotionCard withReveal={false} className="md:col-span-1 p-8 md:p-12 rounded-2xl bg-surface/20 border border-border/40 hover:border-foreground/20 hover:bg-surface/35 transition-all duration-700 ease-out flex flex-col justify-between group relative overflow-hidden">
             <div className="text-[10px] font-mono text-muted/60 tracking-widest uppercase mb-16">
               02 // viewport scaling
             </div>
@@ -65,7 +65,7 @@ export function Trust() {
           </MotionCard>
 
           {/* Card 3: SEO - md:col-span-1 */}
-          <MotionCard withReveal={false} className="md:col-span-1 p-8 md:p-12 rounded-2xl bg-surface/20 border border-border/40 hover:border-foreground/20 hover:bg-surface/35 transition-all duration-700 ease-out glassmorphism flex flex-col justify-between group relative overflow-hidden">
+          <MotionCard withReveal={false} className="md:col-span-1 p-8 md:p-12 rounded-2xl bg-surface/20 border border-border/40 hover:border-foreground/20 hover:bg-surface/35 transition-all duration-700 ease-out flex flex-col justify-between group relative overflow-hidden">
             <div className="text-[10px] font-mono text-muted/60 tracking-widest uppercase mb-16">
               03 // organic crawler index
             </div>
@@ -80,7 +80,7 @@ export function Trust() {
           </MotionCard>
 
           {/* Card 4: Modern Tech - md:col-span-2 */}
-          <MotionCard withReveal={false} className="md:col-span-2 p-8 md:p-14 rounded-2xl bg-surface/20 border border-border/40 hover:border-foreground/20 hover:bg-surface/35 transition-all duration-700 ease-out glassmorphism relative overflow-hidden group">
+          <MotionCard withReveal={false} className="md:col-span-2 p-8 md:p-14 rounded-2xl bg-surface/20 border border-border/40 hover:border-foreground/20 hover:bg-surface/35 transition-all duration-700 ease-out relative overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-foreground/2 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-[1500ms]" />
             <div className="absolute top-0 right-0 p-8 text-[10px] font-mono text-muted/60 tracking-widest uppercase">
               04 // runtime composition

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { FilterBar } from "@/components/showcase/filters/FilterBar";
 import { ProjectCard } from "@/components/showcase/cards/ProjectCard";
 import { EmptyState } from "@/components/showcase/layout/EmptyState";
@@ -86,18 +86,30 @@ export function ShowcaseContainer({ initialProjects, categories }: ShowcaseConta
         {sortedProjects.length > 0 ? (
           <motion.div
             key="grid"
-            initial={{ opacity: 1 }}
+            initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
             className="grid grid-cols-1 md:grid-cols-2 lg:flex lg:flex-col gap-12 md:gap-16 lg:gap-24"
           >
             {sortedProjects.map((project, i) => (
+              /*
+               * PERF: Each card has its own entrance animation, but stagger is capped
+               * at 0.3s total so the last card never waits > 300ms.
+               * key stays stable across re-orders → React reuses DOM nodes,
+               * no Magnetic/ScrollReveal re-mount unless the card actually leaves the list.
+               */
               <motion.div
                 key={project.id ?? project.slug}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: i * 0.1 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{
+                  duration: 0.55,
+                  ease: [0.16, 1, 0.3, 1],
+                  // Cap stagger: with 10 cards, last card starts at 0.25s not 1.0s
+                  delay: Math.min(i * 0.06, 0.3),
+                }}
                 className="h-full"
               >
                 <ProjectCard project={project} />

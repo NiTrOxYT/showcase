@@ -114,26 +114,29 @@ export function Navbar({ navLinks, logoUrl, contactEmail, contactAddress }: Navb
 
   const [isScrolled,  setIsScrolled]  = useState(false);
   const [isVisible,   setIsVisible]   = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
   const [menuOpen,    setMenuOpen]    = useState(false);
   const [hoverOpen,   setHoverOpen]   = useState(false);
 
+  // PERF: lastScrollY in a ref — never in effect deps.
+  // Putting it in deps caused a new addEventListener on every scroll tick.
+  const lastScrollY = useRef(0);
   const menuBtnRef  = useRef<HTMLButtonElement>(null);
   const firstLinkRef = useRef<HTMLAnchorElement>(null);
   const hoverTimer  = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-
   // ── Scroll hide/show ──────────────────────────────────────────────────────
+  // PERF: Single setState call per scroll event (was 3 separate calls).
   useEffect(() => {
     const onScroll = () => {
       const y = window.scrollY;
+      const prev = lastScrollY.current;
+      lastScrollY.current = y;
       setIsScrolled(y > 20);
-      setIsVisible(!(y > lastScrollY && y > 100));
-      setLastScrollY(y);
+      setIsVisible(!(y > prev && y > 100));
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, [lastScrollY]);
+  }, []);
 
   // ── ESC close ────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -190,20 +193,20 @@ export function Navbar({ navLinks, logoUrl, contactEmail, contactAddress }: Navb
   }, []);
 
   // ── Hover panel: delayed open/close to prevent flicker ──────────────────
-  const handleMenuMouseEnter = () => {
+  const handleMenuMouseEnter = useCallback(() => {
     if (menuOpen) return;
     if (hoverTimer.current) clearTimeout(hoverTimer.current);
     setHoverOpen(true);
-  };
-  const handleMenuMouseLeave = () => {
+  }, [menuOpen]);
+  const handleMenuMouseLeave = useCallback(() => {
     hoverTimer.current = setTimeout(() => setHoverOpen(false), 80);
-  };
-  const handlePanelMouseEnter = () => {
+  }, []);
+  const handlePanelMouseEnter = useCallback(() => {
     if (hoverTimer.current) clearTimeout(hoverTimer.current);
-  };
-  const handlePanelMouseLeave = () => {
+  }, []);
+  const handlePanelMouseLeave = useCallback(() => {
     hoverTimer.current = setTimeout(() => setHoverOpen(false), 80);
-  };
+  }, []);
 
   // ─── Shared bar padding / bg ───────────────────────────────────────────
   const barBg   = isScrolled ? "bg-white/85 backdrop-blur-xl border-b border-black/5 shadow-sm" : "bg-transparent";

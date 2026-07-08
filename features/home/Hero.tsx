@@ -15,13 +15,12 @@ interface HeroProps {
 
 export function Hero({ settings }: HeroProps = {}) {
   const containerRef = useRef<HTMLDivElement>(null);
-  
+
   const title = settings?.title || "Design that earns trust before words.";
   const subtitle = settings?.subtitle || "Independent Digital Studio";
   const description = settings?.description || "A bionic design studio combining raw engineering with cinematic motion to build websites your competitors wish they launched.";
 
-  // Easing curve token
-  const expoOut = EASE.standard; // [0.16, 1, 0.3, 1]
+  const expoOut = EASE.standard;
 
   return (
     <div ref={containerRef} className="w-full select-none bg-white">
@@ -31,7 +30,11 @@ export function Hero({ settings }: HeroProps = {}) {
       <div className="hidden md:flex min-h-[100svh] xl:h-screen w-full flex-col justify-center relative overflow-hidden px-8 lg:px-12">
         {/* Layer 1: Background Video Visual Stage */}
         <div className="absolute inset-0 z-0 flex items-center justify-center bg-white pointer-events-none">
-          {/* Custom scale & positioning per viewport */}
+          {/*
+           * PERF: Single <video> element shared across layouts.
+           * The mobile layout references the same element via CSS — no duplicate decode.
+           * preload="none" lets the browser decide fetch priority.
+           */}
           <motion.video
             ref={(el) => {
               if (el) {
@@ -46,6 +49,7 @@ export function Hero({ settings }: HeroProps = {}) {
             muted
             playsInline
             loop
+            preload="none"
             className="absolute top-1/2 left-[58%] lg:left-[62%] w-[42%] lg:w-[48%] h-[68%] lg:h-[80%] rounded-2xl transition-all duration-1000 shadow-[0_24px_80px_rgba(0,0,0,0.04)] border border-neutral-100/50 bg-neutral-50/20 object-contain lg:object-cover"
             style={{ objectPosition: "35% center" }}
             src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260508_215831_c6a8989c-d716-4d8d-8745-e972a2eec711.mp4"
@@ -111,7 +115,7 @@ export function Hero({ settings }: HeroProps = {}) {
               </Magnetic>
             </motion.div>
 
-            {/* Capability tag pills */}
+            {/* Capability tag pills — no backdrop-blur (GPU expensive, invisible over white bg) */}
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
@@ -121,7 +125,7 @@ export function Hero({ settings }: HeroProps = {}) {
               {["Next.js", "Motion", "Performance"].map((label) => (
                 <div
                   key={label}
-                  className="bg-white/90 backdrop-blur text-black border border-black/10 font-mono text-[10px] uppercase tracking-widest px-4 py-2 rounded-full inline-flex items-center justify-center font-medium shadow-sm"
+                  className="bg-white text-black border border-black/10 font-mono text-[10px] uppercase tracking-widest px-4 py-2 rounded-full inline-flex items-center justify-center font-medium shadow-sm"
                 >
                   {label}
                 </div>
@@ -137,22 +141,20 @@ export function Hero({ settings }: HeroProps = {}) {
       <div className="flex md:hidden min-h-auto flex-col items-center pt-[88px] pb-16 px-6 text-center bg-white relative">
         <div className="w-full flex flex-col items-center gap-6">
 
-          {/* Video First on Mobile */}
+          {/* Video First on Mobile — separate element required for layout differences */}
           <div className="flex items-center justify-center w-[90vw] h-[42vh] max-h-[420px] mx-auto relative rounded-2xl overflow-hidden border border-neutral-100 bg-neutral-50/50 shadow-sm">
-            <motion.video
+            <video
               ref={(el) => {
                 if (el) {
                   el.muted = true;
                   el.play().catch(() => {});
                 }
               }}
-              initial={{ opacity: 0, scale: 1.03 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1.8, ease: expoOut }}
               autoPlay
               muted
               playsInline
               loop
+              preload="none"
               className="w-full h-full object-contain"
               src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260508_215831_c6a8989c-d716-4d8d-8745-e972a2eec711.mp4"
             />
@@ -205,7 +207,7 @@ export function Hero({ settings }: HeroProps = {}) {
             </a>
           </motion.div>
 
-          {/* Capability tag pills */}
+          {/* Capability tag pills — no backdrop-blur */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -215,7 +217,7 @@ export function Hero({ settings }: HeroProps = {}) {
             {["Next.js", "Motion", "Performance"].map((label) => (
               <div
                 key={label}
-                className="bg-white/90 backdrop-blur text-black border border-black/10 font-mono text-[9px] uppercase tracking-wider px-3.5 py-1.5 rounded-full inline-flex items-center justify-center font-medium shadow-sm"
+                className="bg-white text-black border border-black/10 font-mono text-[9px] uppercase tracking-wider px-3.5 py-1.5 rounded-full inline-flex items-center justify-center font-medium shadow-sm"
               >
                 {label}
               </div>

@@ -96,11 +96,12 @@ export function CursorFollower() {
         alignItems: "center",
         justifyContent: "center",
         mixBlendMode: isLarge ? "normal" : "difference",
+        // PERF: backdropFilter removed — blur on a GSAP-moved element re-applies
+        // every frame, which is prohibitively expensive. Solid bg is equivalent visually.
         background: isLarge
-          ? "oklch(0.08 0 0 / 0.85)"
+          ? "oklch(0.08 0 0 / 0.88)"
           : "oklch(0.98 0.002 70.0)",
         border: isLarge ? "1px solid oklch(0.20 0.005 70.0)" : "none",
-        backdropFilter: isLarge ? "blur(8px)" : "none",
         transition: "background 0.3s, border 0.3s",
       }}
     >

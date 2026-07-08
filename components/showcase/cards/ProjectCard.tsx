@@ -13,7 +13,12 @@ interface ProjectCardProps {
   project: Project;
 }
 
-export function ProjectCard({ project }: ProjectCardProps) {
+/**
+ * Memoized — only re-renders when `project` reference changes.
+ * Prevents re-render cascade when ShowcaseContainer filter/sort state updates
+ * for cards that are not affected by the change.
+ */
+export const ProjectCard = React.memo(function ProjectCard({ project }: ProjectCardProps) {
   return (
     <div
       className="group relative flex flex-col justify-between transition-all duration-700 ease-out py-6 border-b border-border/10 last:border-b-0 md:border-0 md:bg-surface/5 md:p-6 md:rounded-2xl md:border md:border-border/25 md:shadow-sm lg:bg-transparent lg:p-0 lg:rounded-none lg:border-0 lg:border-b lg:border-border/10 lg:py-8 lg:last:border-b-0 h-full"
@@ -76,4 +81,4 @@ export function ProjectCard({ project }: ProjectCardProps) {
       </Link>
     </div>
   );
-}
+});
