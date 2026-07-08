@@ -19,7 +19,7 @@ export function ContactInvite({ title: propTitle, description: propDescription, 
   const description =
     propDescription ||
     "Whether you want to discuss a new design brief, system architecture, or schedule an initial discovery call, we are here.";
-  const supportEmail = propSupportEmail || "hello@annex-consultancy.com";
+  const supportEmail = propSupportEmail || "support@annex-consultancy.com";
 
   return (
     <Section id="contact" className="border-t border-border/20 bg-background/40 relative overflow-hidden py-40 md:py-56">

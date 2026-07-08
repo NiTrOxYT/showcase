@@ -11,9 +11,9 @@ import { motion } from "framer-motion";
 import { containerReveal, itemRevealFade } from "@/animations/variants/transitions";
 import { safeSrc } from "@/lib/images";
 
-const SUPPORT_EMAIL      = "hello@annex-consultancy.com";
-const STUDIO_ADDRESS     = "Kolkata, India";
-const CLOSING_COPY       = "We build for the web that matters.";
+const SUPPORT_EMAIL = "support@annex-consultancy.com";
+const STUDIO_ADDRESS = "Kolkata, India";
+const CLOSING_COPY = "We build for the web that matters.";
 
 interface FooterProps {
   navLinks?: any[];
@@ -34,10 +34,10 @@ export function Footer({
   copyrightText,
   socialLinks,
 }: FooterProps = {}) {
-  const supportEmail       = contactEmail || SUPPORT_EMAIL;
-  const address            = contactAddress || STUDIO_ADDRESS;
-  const finalClosingCopy   = closingCopy || CLOSING_COPY;
-  const logo               = logoUrl || "/images/logo.png";
+  const supportEmail = contactEmail || SUPPORT_EMAIL;
+  const address = contactAddress || STUDIO_ADDRESS;
+  const finalClosingCopy = closingCopy || CLOSING_COPY;
+  const logo = logoUrl || "/images/logo.png";
 
   const links = (navLinks && navLinks.length > 0)
     ? navLinks
@@ -46,10 +46,10 @@ export function Footer({
   const socials = (socialLinks && socialLinks.length > 0)
     ? socialLinks
     : [
-        { label: "GitHub", href: "https://github.com/annex" },
-        { label: "LinkedIn", href: "https://linkedin.com/company/annex" },
-        { label: "Instagram", href: "https://instagram.com/annex" },
-      ];
+      { label: "GitHub", href: "https://github.com/NiTrOxYT" },
+      { label: "LinkedIn", href: "https://www.linkedin.com/in/annex-consultancy-880a18420/" },
+      { label: "Instagram", href: "https://www.instagram.com/annexconsultancy1/" },
+    ];
 
   return (
     <footer className="border-t border-border/20 bg-background relative overflow-hidden">

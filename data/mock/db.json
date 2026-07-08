@@ -14,11 +14,31 @@
       "shortDescription": "High-end telemetry dashboard visualizing environmental sustainability metrics globally.",
       "fullDescription": "EcoSphere brings real-time environmental analysis to the enterprise scale. By compiling telemetry feeds from global sensors, the dashboard maps thermal deviations, ocean currents, and localized emissions indicators. The dashboard utilizes WebGL maps and custom charting tools, delivering high data density with zero interface stutter.",
       "technologies": [
-        { "name": "Next.js", "category": "Framework", "website": "https://nextjs.org" },
-        { "name": "React", "category": "Library", "website": "https://react.dev" },
-        { "name": "GSAP", "category": "Animation", "website": "https://greensock.com" },
-        { "name": "Tailwind CSS", "category": "Styling", "website": "https://tailwindcss.com" },
-        { "name": "Supabase", "category": "Database", "website": "https://supabase.com" }
+        {
+          "name": "Next.js",
+          "category": "Framework",
+          "website": "https://nextjs.org"
+        },
+        {
+          "name": "React",
+          "category": "Library",
+          "website": "https://react.dev"
+        },
+        {
+          "name": "GSAP",
+          "category": "Animation",
+          "website": "https://greensock.com"
+        },
+        {
+          "name": "Tailwind CSS",
+          "category": "Styling",
+          "website": "https://tailwindcss.com"
+        },
+        {
+          "name": "Supabase",
+          "category": "Database",
+          "website": "https://supabase.com"
+        }
       ],
       "thumbnail": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80",
       "coverImage": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1600&q=80",
@@ -54,9 +74,23 @@
       },
       "status": "Published",
       "featuredOrder": 1,
-      "tags": ["Telemetry", "Real-time", "Analytics", "SaaS"],
-      "services": ["Strategy", "Interface Design", "Frontend Engineering", "Database Architectures"],
-      "deliverables": ["Telemetry Dashboard", "SVG Data Maps", "Supabase Database Configs"],
+      "tags": [
+        "Telemetry",
+        "Real-time",
+        "Analytics",
+        "SaaS"
+      ],
+      "services": [
+        "Strategy",
+        "Interface Design",
+        "Frontend Engineering",
+        "Database Architectures"
+      ],
+      "deliverables": [
+        "Telemetry Dashboard",
+        "SVG Data Maps",
+        "Supabase Database Configs"
+      ],
       "platform": "Web",
       "duration": "4 Months",
       "teamSize": 3,
@@ -81,10 +115,26 @@
       "shortDescription": "Minimalist fashion retail site utilizing premium motion design and editorial typography.",
       "fullDescription": "Aura Label requires digital presentation matching their physical designs. We built a custom headless storefront with instant page shifts, responsive image layouts, and fluid hover-activated cart sliders. Utilizing Next.js Server Components, Aura serves high-resolution photos under 50kb and maintains top Core Web Vitals rankings.",
       "technologies": [
-        { "name": "Next.js", "category": "Framework", "website": "https://nextjs.org" },
-        { "name": "React", "category": "Library", "website": "https://react.dev" },
-        { "name": "Framer Motion", "category": "Animation", "website": "https://motion.dev" },
-        { "name": "Tailwind CSS", "category": "Styling", "website": "https://tailwindcss.com" }
+        {
+          "name": "Next.js",
+          "category": "Framework",
+          "website": "https://nextjs.org"
+        },
+        {
+          "name": "React",
+          "category": "Library",
+          "website": "https://react.dev"
+        },
+        {
+          "name": "Framer Motion",
+          "category": "Animation",
+          "website": "https://motion.dev"
+        },
+        {
+          "name": "Tailwind CSS",
+          "category": "Styling",
+          "website": "https://tailwindcss.com"
+        }
       ],
       "thumbnail": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=800&q=80",
       "coverImage": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1600&q=80",
@@ -120,9 +170,22 @@
       },
       "status": "Published",
       "featuredOrder": 2,
-      "tags": ["E-Commerce", "Headless storefront", "Fashion", "Luxury"],
-      "services": ["Brand Strategy", "Visual Design", "Frontend Engineering"],
-      "deliverables": ["Headless E-Commerce System", "Custom Cart Systems", "Lenis Smooth Scroll Tuning"],
+      "tags": [
+        "E-Commerce",
+        "Headless storefront",
+        "Fashion",
+        "Luxury"
+      ],
+      "services": [
+        "Brand Strategy",
+        "Visual Design",
+        "Frontend Engineering"
+      ],
+      "deliverables": [
+        "Headless E-Commerce System",
+        "Custom Cart Systems",
+        "Lenis Smooth Scroll Tuning"
+      ],
       "platform": "Web",
       "duration": "3 Months",
       "teamSize": 2,
@@ -147,9 +210,21 @@
       "shortDescription": "Sleek iOS and Android mobile app providing real-time biomechanics and workout logs.",
       "fullDescription": "Apex provides fitness analytics using wearables sensor feeds. We designed and built a mobile application featuring highly interactive graphs, haptic feedback hooks, offline sync capabilities, and instant loading profiles. Built with React Native and custom native modules.",
       "technologies": [
-        { "name": "React Native", "category": "Framework", "website": "https://reactnative.dev" },
-        { "name": "TypeScript", "category": "Language", "website": "https://typescriptlang.org" },
-        { "name": "Tailwind CSS", "category": "Styling", "website": "https://tailwindcss.com" }
+        {
+          "name": "React Native",
+          "category": "Framework",
+          "website": "https://reactnative.dev"
+        },
+        {
+          "name": "TypeScript",
+          "category": "Language",
+          "website": "https://typescriptlang.org"
+        },
+        {
+          "name": "Tailwind CSS",
+          "category": "Styling",
+          "website": "https://tailwindcss.com"
+        }
       ],
       "thumbnail": "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=800&q=80",
       "coverImage": "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=1600&q=80",
@@ -172,9 +247,22 @@
       "completionDate": "2026-03-05",
       "status": "Published",
       "featuredOrder": 3,
-      "tags": ["Mobile App", "React Native", "Biomechanics", "Wearables"],
-      "services": ["Product Design", "Mobile App Development", "Native Integrations"],
-      "deliverables": ["iOS App Store Build", "Android Play Store Build", "Wearable API Sync Modules"],
+      "tags": [
+        "Mobile App",
+        "React Native",
+        "Biomechanics",
+        "Wearables"
+      ],
+      "services": [
+        "Product Design",
+        "Mobile App Development",
+        "Native Integrations"
+      ],
+      "deliverables": [
+        "iOS App Store Build",
+        "Android Play Store Build",
+        "Wearable API Sync Modules"
+      ],
       "platform": "Mobile",
       "duration": "5 Months",
       "teamSize": 4,
@@ -199,10 +287,26 @@
       "shortDescription": "Custom SaaS business tool managing dynamic pipeline metrics and resources.",
       "fullDescription": "Zenith brings structure to distributed corporate resources. By integrating project feeds, resource schedules, and financial projections into one database, Zenith simplifies complex planning decisions and avoids spreadsheets duplication. Custom tables, filters, and dynamic pipelines operate synchronously with Postgres backends.",
       "technologies": [
-        { "name": "Next.js", "category": "Framework", "website": "https://nextjs.org" },
-        { "name": "React", "category": "Library", "website": "https://react.dev" },
-        { "name": "Supabase", "category": "Database", "website": "https://supabase.com" },
-        { "name": "Tailwind CSS", "category": "Styling", "website": "https://tailwindcss.com" }
+        {
+          "name": "Next.js",
+          "category": "Framework",
+          "website": "https://nextjs.org"
+        },
+        {
+          "name": "React",
+          "category": "Library",
+          "website": "https://react.dev"
+        },
+        {
+          "name": "Supabase",
+          "category": "Database",
+          "website": "https://supabase.com"
+        },
+        {
+          "name": "Tailwind CSS",
+          "category": "Styling",
+          "website": "https://tailwindcss.com"
+        }
       ],
       "thumbnail": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80",
       "coverImage": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1600&q=80",
@@ -224,9 +328,21 @@
       "githubUrl": "",
       "completionDate": "2026-06-01",
       "status": "Published",
-      "tags": ["SaaS", "Enterprise", "Pipeline Management", "Resource Planning"],
-      "services": ["Database Schema Design", "Frontend Engineering", "API Services Customization"],
-      "deliverables": ["Zenith Platform Frontend Build", "Supabase Relational Database Setup"],
+      "tags": [
+        "SaaS",
+        "Enterprise",
+        "Pipeline Management",
+        "Resource Planning"
+      ],
+      "services": [
+        "Database Schema Design",
+        "Frontend Engineering",
+        "API Services Customization"
+      ],
+      "deliverables": [
+        "Zenith Platform Frontend Build",
+        "Supabase Relational Database Setup"
+      ],
       "platform": "Web",
       "duration": "6 Months",
       "teamSize": 5,
@@ -268,10 +384,10 @@
       "email": "support@annex.com"
     },
     "social": {
-      "github": "https://github.com/annex",
-      "twitter": "https://twitter.com/annex",
-      "linkedin": "https://linkedin.com/company/annex",
-      "instagram": "https://instagram.com/annex"
+      "github": "https://github.com/NiTrOxYT",
+      "Facebook": "https://www.facebook.com/profile.php?id=61558767534473",
+      "linkedin": "https://www.linkedin.com/in/annex-consultancy-880a18420/",
+      "instagram": "https://www.instagram.com/annexconsultancy1/"
     },
     "footer": {
       "copyrightText": "© 2026 ANNEX. All rights reserved.",
@@ -283,21 +399,66 @@
   },
   "navigation": {
     "mainNav": [
-      { "title": "Home", "href": "/" },
-      { "title": "Showcase", "href": "/showcase" },
-      { "title": "Process", "href": "/#process" },
-      { "title": "Contact", "href": "/contact" }
+      {
+        "title": "Home",
+        "href": "/"
+      },
+      {
+        "title": "Showcase",
+        "href": "/showcase"
+      },
+      {
+        "title": "Process",
+        "href": "/#process"
+      },
+      {
+        "title": "Contact",
+        "href": "/contact"
+      }
     ]
   },
-  "categories": ["Website", "Web App", "Dashboard", "Mobile App"],
+  "categories": [
+    "Website",
+    "Web App",
+    "Dashboard",
+    "Mobile App"
+  ],
   "technologies": [
-    { "name": "Next.js", "category": "Framework", "website": "https://nextjs.org" },
-    { "name": "React", "category": "Library", "website": "https://react.dev" },
-    { "name": "TypeScript", "category": "Language", "website": "https://typescriptlang.org" },
-    { "name": "Tailwind CSS", "category": "Styling", "website": "https://tailwindcss.com" },
-    { "name": "Supabase", "category": "Database", "website": "https://supabase.com" },
-    { "name": "GSAP", "category": "Animation", "website": "https://greensock.com" },
-    { "name": "Framer Motion", "category": "Animation", "website": "https://motion.dev" }
+    {
+      "name": "Next.js",
+      "category": "Framework",
+      "website": "https://nextjs.org"
+    },
+    {
+      "name": "React",
+      "category": "Library",
+      "website": "https://react.dev"
+    },
+    {
+      "name": "TypeScript",
+      "category": "Language",
+      "website": "https://typescriptlang.org"
+    },
+    {
+      "name": "Tailwind CSS",
+      "category": "Styling",
+      "website": "https://tailwindcss.com"
+    },
+    {
+      "name": "Supabase",
+      "category": "Database",
+      "website": "https://supabase.com"
+    },
+    {
+      "name": "GSAP",
+      "category": "Animation",
+      "website": "https://greensock.com"
+    },
+    {
+      "name": "Framer Motion",
+      "category": "Animation",
+      "website": "https://motion.dev"
+    }
   ],
   "userPreferences": {
     "sidebarCollapsed": false,

@@ -8,7 +8,7 @@ export const settingsRepository = {
       .select("*")
       .eq("id", "global")
       .single();
-    
+
     if (error || !data) {
       // Return sensible defaults if settings row is empty
       return {
@@ -31,15 +31,15 @@ export const settingsRepository = {
           },
         },
         contact: {
-          email: "hello@annex-consultancy.com",
+          email: "support@annex-consultancy.com",
           phone: "+91 98765 43210",
           address: "Kolkata, India",
         },
         social: {
-          instagram: "https://instagram.com/annex",
-          linkedin: "https://linkedin.com/company/annex",
-          github: "https://github.com/annex",
-          behance: "https://behance.net/annex",
+          instagram: "https://www.instagram.com/annexconsultancy1/",
+          linkedin: "https://www.linkedin.com/in/annex-consultancy-880a18420/",
+          github: "https://github.com/NiTrOxYT",
+          facebook: "https://www.facebook.com/profile.php?id=61558767534473",
         },
         footer: {
           copyrightText: "© 2026 ANNEX. All rights reserved.",
@@ -75,15 +75,15 @@ export const settingsRepository = {
         },
       },
       contact: {
-        email: data.email || "hello@annex-consultancy.com",
+        email: data.email || "support@annex-consultancy.com",
         phone: data.phone || "+91 98765 43210",
         address: data.address || "Kolkata, India",
       },
       social: {
-        instagram: data.instagram || "https://instagram.com/annex",
-        linkedin: data.linkedin || "https://linkedin.com/company/annex",
-        github: data.github || "https://github.com/annex",
-        behance: data.behance || "https://behance.net/annex",
+        instagram: data.instagram || "https://www.instagram.com/annexconsultancy1/",
+        linkedin: data.linkedin || "https://www.linkedin.com/in/annex-consultancy-880a18420/",
+        github: data.github || "https://github.com/NiTrOxYT",
+        facebook: data.behance || "https://www.facebook.com/profile.php?id=61558767534473",
       },
       footer: {
         copyrightText: `© ${new Date().getFullYear()} ${data.brand_name || "ANNEX"}. All rights reserved.`,
@@ -102,7 +102,7 @@ export const settingsRepository = {
 
   async updateModule(moduleName: string, updates: any) {
     const supabase = createAdminClient();
-    
+
     // Map updates back to columns
     const columns: any = {};
     if (moduleName === "branding") {

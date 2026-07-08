@@ -10,16 +10,16 @@ import { safeSrc } from "@/lib/images";
 
 // ─── Nav links ───────────────────────────────────────────────────────────────
 const NAV_LINKS = [
-  { label: "Work",      href: "/showcase",  num: "01" },
-  { label: "About",     href: "/#about",    num: "02" },
-  { label: "Contact",   href: "/#contact",  num: "03" },
+  { label: "Work", href: "/showcase", num: "01" },
+  { label: "About", href: "/#about", num: "02" },
+  { label: "Contact", href: "/#contact", num: "03" },
 ];
 
 const SOCIAL_LINKS = [
-  { label: "LinkedIn",  href: "https://linkedin.com/company/annex" },
-  { label: "GitHub",    href: "https://github.com/annex" },
-  { label: "Behance",   href: "https://behance.net/annex" },
-  { label: "Instagram", href: "https://instagram.com/annex" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/annex-consultancy-880a18420/" },
+  { label: "GitHub", href: "https://github.com/NiTrOxYT" },
+  { label: "Facebook", href: "https://www.facebook.com/profile.php?id=61558767534473" },
+  { label: "Instagram", href: "https://www.instagram.com/annexconsultancy1/" },
 ];
 
 // ─── Framer Motion variants ───────────────────────────────────────────────────
@@ -45,7 +45,7 @@ const linkStagger = {
 
 const linkItem = {
   hidden: { opacity: 0, x: -16 },
-  show:   { opacity: 1, x: 0, transition: { duration: DURATION.slow, ease: EASE.entrance } },
+  show: { opacity: 1, x: 0, transition: { duration: DURATION.slow, ease: EASE.entrance } },
 };
 
 const mobileSheetVariants = {
@@ -66,7 +66,7 @@ const mobileLinkStagger = {
 
 const mobileLinkItem = {
   hidden: { opacity: 0, y: 20 },
-  show:   { opacity: 1, y: 0, transition: { duration: DURATION.slow, ease: EASE.entrance } },
+  show: { opacity: 1, y: 0, transition: { duration: DURATION.slow, ease: EASE.entrance } },
 };
 
 // ─── Logo Image helper ───────────────────────────────────────────────────────
@@ -88,7 +88,7 @@ function AnnexLogo({ size = "desktop", priority = false, logoUrl }: { size?: "de
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
-const EMAIL   = "hello@annex-consultancy.com";
+const EMAIL = "support@annex-consultancy.com";
 const ADDRESS = "Kolkata, India";
 
 interface NavbarProps {
@@ -99,30 +99,30 @@ interface NavbarProps {
 }
 
 export function Navbar({ navLinks, logoUrl, contactEmail, contactAddress }: NavbarProps = {}) {
-  const email   = contactEmail || EMAIL;
+  const email = contactEmail || EMAIL;
   const address = contactAddress || ADDRESS;
-  const logo    = logoUrl || "/images/logo.png";
+  const logo = logoUrl || "/images/logo.png";
 
   const links: any[] = (navLinks && navLinks.length > 0)
     ? navLinks.map((item, idx) => ({
-        label: item.title,
-        href: item.href,
-        num: `0${idx + 1}`,
-        children: item.children || [],
-      }))
+      label: item.title,
+      href: item.href,
+      num: `0${idx + 1}`,
+      children: item.children || [],
+    }))
     : NAV_LINKS.map((item) => ({ ...item, children: [] }));
 
-  const [isScrolled,  setIsScrolled]  = useState(false);
-  const [isVisible,   setIsVisible]   = useState(true);
-  const [menuOpen,    setMenuOpen]    = useState(false);
-  const [hoverOpen,   setHoverOpen]   = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [hoverOpen, setHoverOpen] = useState(false);
 
   // PERF: lastScrollY in a ref — never in effect deps.
   // Putting it in deps caused a new addEventListener on every scroll tick.
   const lastScrollY = useRef(0);
-  const menuBtnRef  = useRef<HTMLButtonElement>(null);
+  const menuBtnRef = useRef<HTMLButtonElement>(null);
   const firstLinkRef = useRef<HTMLAnchorElement>(null);
-  const hoverTimer  = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // ── Scroll hide/show ──────────────────────────────────────────────────────
   // PERF: Single setState call per scroll event (was 3 separate calls).
@@ -156,25 +156,25 @@ export function Navbar({ navLinks, logoUrl, contactEmail, contactAddress }: Navb
     if (menuOpen) {
       const scrollY = window.scrollY;
       document.body.style.position = "fixed";
-      document.body.style.top      = `-${scrollY}px`;
-      document.body.style.left     = "0";
-      document.body.style.right    = "0";
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.left = "0";
+      document.body.style.right = "0";
       document.body.style.overflow = "hidden";
     } else {
       const scrollY = document.body.style.top;
       document.body.style.position = "";
-      document.body.style.top      = "";
-      document.body.style.left     = "";
-      document.body.style.right    = "";
+      document.body.style.top = "";
+      document.body.style.left = "";
+      document.body.style.right = "";
       document.body.style.overflow = "";
       // Restore scroll position
       window.scrollTo(0, parseInt(scrollY || "0") * -1);
     }
     return () => {
       document.body.style.position = "";
-      document.body.style.top      = "";
-      document.body.style.left     = "";
-      document.body.style.right    = "";
+      document.body.style.top = "";
+      document.body.style.left = "";
+      document.body.style.right = "";
       document.body.style.overflow = "";
     };
   }, [menuOpen]);
@@ -209,8 +209,8 @@ export function Navbar({ navLinks, logoUrl, contactEmail, contactAddress }: Navb
   }, []);
 
   // ─── Shared bar padding / bg ───────────────────────────────────────────
-  const barBg   = isScrolled ? "bg-white/85 backdrop-blur-xl border-b border-black/5 shadow-sm" : "bg-transparent";
-  const barPy   = isScrolled ? "py-4" : "py-6";
+  const barBg = isScrolled ? "bg-white/85 backdrop-blur-xl border-b border-black/5 shadow-sm" : "bg-transparent";
+  const barPy = isScrolled ? "py-4" : "py-6";
 
   return (
     <>
