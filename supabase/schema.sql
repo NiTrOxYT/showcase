@@ -133,7 +133,29 @@ CREATE POLICY "Allow public read on navigation" ON public.navigation
 CREATE POLICY "Allow authenticated full write on navigation" ON public.navigation
     FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
+
 -- ─── REALTIME CHANNELS ──────────────────────────────────────────────────────
 ALTER PUBLICATION supabase_realtime ADD TABLE public.projects;
 ALTER PUBLICATION supabase_realtime ADD TABLE public.settings;
 ALTER PUBLICATION supabase_realtime ADD TABLE public.navigation;
+
+-- ─── NEWSLETTER SUBSCRIBERS TABLE ───────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS public.newsletter_subscribers (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    email TEXT NOT NULL UNIQUE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    source TEXT NOT NULL DEFAULT 'website_footer'
+);
+
+CREATE INDEX IF NOT EXISTS idx_newsletter_subscribers_created_at ON public.newsletter_subscribers(created_at);
+
+ALTER TABLE public.newsletter_subscribers ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow anonymous inserts" ON public.newsletter_subscribers
+    FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "Allow authenticated reads" ON public.newsletter_subscribers
+    FOR SELECT TO authenticated USING (true);
+
+ALTER PUBLICATION supabase_realtime ADD TABLE public.newsletter_subscribers;
+

@@ -219,6 +219,27 @@ export interface Database {
           }
         ]
       }
+      newsletter_subscribers: {
+        Row: {
+          id: string
+          email: string
+          created_at: string
+          source: string
+        }
+        Insert: {
+          id?: string
+          email: string
+          created_at?: string
+          source?: string
+        }
+        Update: {
+          id?: string
+          email?: string
+          created_at?: string
+          source?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
