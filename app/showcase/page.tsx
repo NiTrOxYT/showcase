@@ -1,5 +1,7 @@
 import React from "react";
 import type { Metadata } from "next";
+
+export const dynamic = "force-dynamic";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { Stack } from "@/components/layout/Stack";

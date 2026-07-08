@@ -92,6 +92,9 @@ export const showcaseRepository = {
     let query = supabase.from("projects").select("*");
 
     const { data, error } = await query;
+    if (error) {
+      console.error("Supabase Projects Query Error:", error);
+    }
     if (error || !data) return [];
 
     let projects = data.map(mapRowToProject);

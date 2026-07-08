@@ -15,8 +15,8 @@ interface ShowcaseContainerProps {
 }
 
 export function ShowcaseContainer({ initialProjects, categories }: ShowcaseContainerProps) {
-  const [filter, setFilter] = useState("All");
-  const [sort, setSort] = useState("featured");
+  const [selectedFilter, setSelectedFilter] = useState("All");
+  const [selectedSort, setSelectedSort] = useState("featured");
 
   const categoriesWithCount = useMemo(() => {
     return categories.map((cat) => {
@@ -30,34 +30,37 @@ export function ShowcaseContainer({ initialProjects, categories }: ShowcaseConta
     });
   }, [categories, initialProjects]);
 
-  const processedProjects = useMemo(() => {
-    // Print repository result before filtering (as specified)
+  const sortedProjects = useMemo(() => {
+    const projects = initialProjects;
+    console.log("Projects", projects);
+    console.log("Filter", selectedFilter);
+    console.log("Sort", selectedSort);
+
     console.table(
-      initialProjects.map((p) => ({
-        id: p.id,
-        title: p.title,
-        category: p.category,
-        platform: p.platform,
-        status: p.status,
-        featured: p.featured,
+      projects.map(project => ({
+        title: project.title,
+        category: project.category,
+        platform: project.platform,
+        status: project.status,
+        featured: project.featured,
       }))
     );
-    console.log("Distinct Categories:", [...new Set(initialProjects.map(p => p.category))]);
 
-    let result = [...initialProjects];
+    let filteredProjects = [...projects];
 
-    const filterNormalized = normalizeCategory(filter);
+    const filterNormalized = normalizeCategory(selectedFilter);
     if (filterNormalized !== "all" && filterNormalized !== "") {
-      result = result.filter((project) => {
-        const normFilter = normalizeCategory(filter);
+      filteredProjects = filteredProjects.filter((project) => {
+        const normFilter = normalizeCategory(selectedFilter);
         const normCategory = normalizeCategory(project.category || "");
         return normCategory === normFilter;
       });
     }
-    console.log("result length:", result.length);
 
-    const sorted = [...result];
-    switch (sort) {
+    console.log("Filtered", filteredProjects);
+
+    const sorted = [...filteredProjects];
+    switch (selectedSort) {
       case "newest":
         sorted.sort((a, b) => {
           const aTime = a.completionDate ? new Date(a.completionDate).getTime() : 0;
@@ -88,21 +91,26 @@ export function ShowcaseContainer({ initialProjects, categories }: ShowcaseConta
         break;
     }
 
+    console.log("Sorted", sorted);
+    console.log("Length", sorted.length);
+
     return sorted;
-  }, [initialProjects, filter, sort]);
+  }, [initialProjects, selectedFilter, selectedSort]);
+
+  console.log(sortedProjects.length);
 
   return (
     <div className="flex flex-col gap-16">
       <FilterBar
         categories={categoriesWithCount}
-        activeFilter={filter}
-        onFilterChange={setFilter}
-        activeSort={sort}
-        onSortChange={setSort}
+        activeFilter={selectedFilter}
+        onFilterChange={setSelectedFilter}
+        activeSort={selectedSort}
+        onSortChange={setSelectedSort}
       />
 
       <AnimatePresence mode="popLayout">
-        {processedProjects.length > 0 ? (
+        {sortedProjects.length > 0 ? (
           <motion.div
             key="grid"
             variants={showcaseVariants.staggerContainer}
@@ -111,7 +119,7 @@ export function ShowcaseContainer({ initialProjects, categories }: ShowcaseConta
             className="grid grid-cols-1 md:grid-cols-2 lg:flex lg:flex-col gap-12 md:gap-16 lg:gap-24"
           >
             <AnimatePresence mode="popLayout">
-              {processedProjects.map((project) => (
+              {sortedProjects.map((project) => (
                 <motion.div
                   key={project.id ?? project.slug}
                   layout
@@ -139,8 +147,8 @@ export function ShowcaseContainer({ initialProjects, categories }: ShowcaseConta
               message="We are constantly working on new artifacts. Check back soon or view our other works."
               actionText="View All Projects"
               onAction={() => {
-                setFilter("All");
-                setSort("featured");
+                setSelectedFilter("All");
+                setSelectedSort("featured");
               }}
             />
           </motion.div>
