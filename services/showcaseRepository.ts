@@ -1,19 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/server";
 import type { Project } from "@/types/project";
-
-// Robust normalization function for categories to handle plurals, casing, and spacing issues
-export function normalizeCategory(cat: string): string {
-  if (!cat) return "";
-  const s = cat.trim().toLowerCase();
-  if (s === "mobile apps" || s === "mobile app") return "mobile app";
-  if (s === "web apps" || s === "web app") return "web app";
-  if (s === "websites" || s === "website") return "website";
-  if (s === "dashboards" || s === "dashboard") return "dashboard";
-  if (s === "landing pages" || s === "landing page") return "landing page";
-  // fallback for plural/singular
-  if (s.endsWith("s")) return s.slice(0, -1);
-  return s;
-}
+import { normalizeCategory } from "@/lib/categories";
 
 // Convert Supabase database row to frontend Project model
 export function mapRowToProject(row: any): Project {
@@ -110,10 +97,10 @@ export const showcaseRepository = {
     let projects = data.map(mapRowToProject);
 
     // Filter projects locally with normalized categories
-    if (filter && filter.toLowerCase() !== "all") {
+    if (filter && filter.trim().toLowerCase() !== "all") {
       const normFilter = normalizeCategory(filter);
       projects = projects.filter(
-        (p) => normalizeCategory(p.category) === normFilter || normalizeCategory(p.platform) === normFilter
+        (p) => normalizeCategory(p.category) === normFilter
       );
     }
 

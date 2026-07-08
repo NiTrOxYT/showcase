@@ -7,7 +7,7 @@ import { ProjectCard } from "@/components/showcase/cards/ProjectCard";
 import { EmptyState } from "@/components/showcase/layout/EmptyState";
 import type { Project } from "@/types/project";
 import { showcaseVariants } from "@/animations/variants/showcase";
-import { normalizeCategory } from "@/services/showcaseRepository";
+import { normalizeCategory } from "@/lib/categories";
 
 interface ShowcaseContainerProps {
   initialProjects: Project[];
@@ -24,21 +24,37 @@ export function ShowcaseContainer({ initialProjects, categories }: ShowcaseConta
       return {
         name: cat,
         count: initialProjects.filter(
-          (p) => normalizeCategory(p.category || "") === normCat || normalizeCategory(p.type || "") === normCat
+          (p) => normalizeCategory(p.category || "") === normCat
         ).length,
       };
     });
   }, [categories, initialProjects]);
 
   const processedProjects = useMemo(() => {
+    // Print repository result before filtering (as specified)
+    console.table(
+      initialProjects.map((p) => ({
+        id: p.id,
+        title: p.title,
+        category: p.category,
+        platform: p.platform,
+        status: p.status,
+        featured: p.featured,
+      }))
+    );
+    console.log("Distinct Categories:", [...new Set(initialProjects.map(p => p.category))]);
+
     let result = [...initialProjects];
 
-    const normFilter = normalizeCategory(filter);
-    if (normFilter !== "all" && normFilter !== "") {
-      result = result.filter(
-        (p) => normalizeCategory(p.category || "") === normFilter || normalizeCategory(p.type || "") === normFilter
-      );
+    const filterNormalized = normalizeCategory(filter);
+    if (filterNormalized !== "all" && filterNormalized !== "") {
+      result = result.filter((project) => {
+        const normFilter = normalizeCategory(filter);
+        const normCategory = normalizeCategory(project.category || "");
+        return normCategory === normFilter;
+      });
     }
+    console.log("result length:", result.length);
 
     const sorted = [...result];
     switch (sort) {
@@ -119,7 +135,7 @@ export function ShowcaseContainer({ initialProjects, categories }: ShowcaseConta
             layout
           >
             <EmptyState
-              title="No projects available in this category yet."
+              title="No projects found."
               message="We are constantly working on new artifacts. Check back soon or view our other works."
               actionText="View All Projects"
               onAction={() => {
