@@ -14,6 +14,37 @@ interface ShowcaseContainerProps {
   categories: string[];
 }
 
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean; error: Error | null }
+> {
+  constructor(props: any) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error: Error, errorInfo: any) {
+    console.error("ErrorBoundary caught error:", error, errorInfo);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="p-6 border border-red-500/30 rounded-xl bg-red-950/20 text-red-400 font-mono text-xs max-w-4xl mx-auto my-8">
+          <h3 className="font-bold text-sm mb-2 text-red-500">// React Render Crash:</h3>
+          <p className="mb-4 font-bold">{this.state.error?.message}</p>
+          <pre className="whitespace-pre-wrap overflow-auto max-h-96 text-[10px] opacity-80 leading-relaxed bg-black/40 p-4 rounded-lg">
+            {this.state.error?.stack}
+          </pre>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+
 export function ShowcaseContainer({ initialProjects, categories }: ShowcaseContainerProps) {
   const [filter, setFilter] = useState("All");
   const [sort, setSort] = useState("featured");
@@ -76,42 +107,44 @@ export function ShowcaseContainer({ initialProjects, categories }: ShowcaseConta
         onSortChange={setSort}
       />
 
-      <AnimatePresence mode="popLayout">
-        {processedProjects.length > 0 ? (
-          <motion.div
-            key="grid"
-            layout
-            variants={showcaseVariants.staggerContainer}
-            initial="hidden"
-            animate="show"
-            className="grid grid-cols-1 md:grid-cols-2 lg:flex lg:flex-col gap-12 md:gap-16 lg:gap-24"
-          >
-            {processedProjects.map((project) => (
-              <motion.div key={project.id} layout className="h-full">
-                <ProjectCard project={project} />
-              </motion.div>
-            ))}
-          </motion.div>
-        ) : (
-          <motion.div
-            key="empty"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            layout
-          >
-            <EmptyState
-              title="No projects available in this category yet."
-              message="We are constantly working on new artifacts. Check back soon or view our other works."
-              actionText="View All Projects"
-              onAction={() => {
-                setFilter("All");
-                setSort("featured");
-              }}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <ErrorBoundary>
+        <AnimatePresence mode="popLayout">
+          {processedProjects.length > 0 ? (
+            <motion.div
+              key="grid"
+              layout
+              variants={showcaseVariants.staggerContainer}
+              initial="hidden"
+              animate="show"
+              className="grid grid-cols-1 md:grid-cols-2 lg:flex lg:flex-col gap-12 md:gap-16 lg:gap-24"
+            >
+              {processedProjects.map((project) => (
+                <motion.div key={project.id} layout className="h-full">
+                  <ProjectCard project={project} />
+                </motion.div>
+              ))}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="empty"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              layout
+            >
+              <EmptyState
+                title="No projects available in this category yet."
+                message="We are constantly working on new artifacts. Check back soon or view our other works."
+                actionText="View All Projects"
+                onAction={() => {
+                  setFilter("All");
+                  setSort("featured");
+                }}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </ErrorBoundary>
     </div>
   );
 }
