@@ -16,6 +16,7 @@ import {
   Globe,
   Briefcase,
   FileText,
+  BookOpen,
 } from "lucide-react";
 
 export function Sidebar() {
@@ -28,6 +29,7 @@ export function Sidebar() {
     { title: "Projects", href: "/admin/projects", icon: FolderKanban },
     { title: "Case Studies", href: "/admin/case-studies", icon: FileText },
     { title: "Services", href: "/admin/services", icon: Briefcase },
+    { title: "Blog", href: "/admin/blog", icon: BookOpen },
     { title: "Settings", href: "/admin/settings", icon: Settings },
     { title: "Consultations", href: "/admin/consultations", icon: PhoneCall },
     { title: "SEO", href: "/admin/seo", icon: Globe },

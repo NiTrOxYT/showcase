@@ -24,8 +24,39 @@ export async function getSitemapData(): Promise<SitemapItem[]> {
     priority: 0.6,
   }));
 
-  // Placeholders for future sitemap modules (Blogs, Services, Locations)
-  const blogRoutes: SitemapItem[] = []; // Fill dynamically in future blog releases
+  // Blog routes
+  let blogRoutes: SitemapItem[] = [{ url: `${siteConfig.url}/blog`, lastModified: new Date(), changeFrequency: "daily" as const, priority: 0.8 }];
+  try {
+    const { BlogRepository } = await import("@/services/repositories/BlogRepository");
+    const [posts, categories, tags] = await Promise.all([
+      BlogRepository.getPublishedPosts(),
+      BlogRepository.getAllCategories(),
+      BlogRepository.getAllTags(),
+    ]);
+    blogRoutes = [
+      ...blogRoutes,
+      ...posts.map((p) => ({
+        url: `${siteConfig.url}/blog/${p.slug}`,
+        lastModified: p.updatedAt ? new Date(p.updatedAt) : new Date(),
+        changeFrequency: "weekly" as const,
+        priority: p.featured ? 0.8 : 0.65,
+      })),
+      ...categories.map((c) => ({
+        url: `${siteConfig.url}/blog/category/${c.slug}`,
+        lastModified: new Date(),
+        changeFrequency: "weekly" as const,
+        priority: 0.5,
+      })),
+      ...tags.map((t) => ({
+        url: `${siteConfig.url}/blog/tag/${t.slug}`,
+        lastModified: new Date(),
+        changeFrequency: "monthly" as const,
+        priority: 0.4,
+      })),
+    ];
+  } catch (err) {
+    console.error("Sitemap blog routes query error:", err);
+  }
   
   let serviceRoutes: SitemapItem[] = [];
   try {

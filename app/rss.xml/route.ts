@@ -15,8 +15,15 @@ interface RSSBlogItem {
 export async function GET() {
   const projects = await showcaseRepository.getProjects();
   
-  // Dynamic placeholders for future blog releases
-  const blogPosts: RSSBlogItem[] = []; 
+  const { BlogRepository } = await import("@/services/repositories/BlogRepository");
+  const blogData = await BlogRepository.getPublishedPosts();
+  const blogPosts: RSSBlogItem[] = blogData.map((p) => ({
+    title: p.title,
+    description: p.excerpt || p.seoDescription || "",
+    slug: p.slug,
+    datePublished: p.publishedAt || p.createdAt,
+    category: p.category?.title,
+  }));
 
   const items = [
     ...projects.map((project) => `
