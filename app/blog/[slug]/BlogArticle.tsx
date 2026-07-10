@@ -284,7 +284,11 @@ export function BlogArticle({ post, relatedPosts }: Props) {
                       <img
                         src={post.author.avatar}
                         alt={post.author.name}
-                        className="w-7 h-7 rounded-full object-cover"
+                        className={`w-7 h-7 shrink-0 ${
+                          post.author.name.toLowerCase() === "annex"
+                            ? "object-contain bg-transparent"
+                            : "rounded-full object-cover"
+                        }`}
                       />
                     ) : (
                       <div className="w-7 h-7 rounded-full bg-surface/50 border border-border/15 flex items-center justify-center">
@@ -385,7 +389,11 @@ export function BlogArticle({ post, relatedPosts }: Props) {
                   <img
                     src={post.author.avatar}
                     alt={post.author.name}
-                    className="w-16 h-16 rounded-full object-cover shrink-0"
+                    className={`w-16 h-16 shrink-0 ${
+                      post.author.name.toLowerCase() === "annex"
+                        ? "object-contain bg-transparent"
+                        : "rounded-full object-cover"
+                    }`}
                   />
                 ) : (
                   <div className="w-16 h-16 rounded-full bg-surface/50 border border-border/15 flex items-center justify-center shrink-0">
