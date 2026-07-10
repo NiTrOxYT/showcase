@@ -26,6 +26,29 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/#contact", request.url));
   }
 
+  // Dynamic dynamic redirects from Supabase
+  try {
+    const { createAdminClient } = await import("@/lib/supabase/server");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const supabase = createAdminClient() as any;
+    const { data } = await supabase
+      .from("redirects")
+      .select("destination_path, redirect_type")
+      .eq("source_path", pathname)
+      .maybeSingle();
+
+    if (data) {
+      const destination = data.destination_path;
+      const status = Number(data.redirect_type) || 301;
+      const redirectUrl = destination.startsWith("http")
+        ? destination
+        : new URL(destination, request.url).toString();
+      return NextResponse.redirect(redirectUrl, { status });
+    }
+  } catch (err) {
+    console.error("Middleware redirects lookup error:", err);
+  }
+
   // 2. Protect /admin routes
   if (pathname.startsWith("/admin")) {
     const { supabaseMiddleware } = await import("@/lib/supabase/middleware");

@@ -13,6 +13,7 @@ import {
   ChevronRight,
   Sparkles,
   PhoneCall,
+  Globe,
 } from "lucide-react";
 
 export function Sidebar() {
@@ -25,6 +26,7 @@ export function Sidebar() {
     { title: "Projects", href: "/admin/projects", icon: FolderKanban },
     { title: "Settings", href: "/admin/settings", icon: Settings },
     { title: "Consultations", href: "/admin/consultations", icon: PhoneCall },
+    { title: "SEO", href: "/admin/seo", icon: Globe },
   ];
 
   const handleLogout = async () => {
