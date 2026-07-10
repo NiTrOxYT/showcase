@@ -46,8 +46,11 @@ export function Footer({
   const links = (navLinks && navLinks.length > 0)
     ? navLinks
     : [
-        { label: "Work", href: "/showcase" },
-        { label: "About", href: "/#about" },
+        { label: "Home", href: "/" },
+        { label: "Services", href: "/services" },
+        { label: "Showcase", href: "/showcase" },
+        { label: "Blog", href: "/blog" },
+        { label: "Book a Free Call", href: "/book-call" },
         { label: "Contact", href: "/#contact" },
       ];
 

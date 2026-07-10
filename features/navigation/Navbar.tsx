@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/cn";
 import { DURATION, EASE } from "@/animations/core/tokens";
@@ -11,12 +12,21 @@ import type { NavigationItem } from "@/services/navigationRepository";
 
 // ─── Nav links ───────────────────────────────────────────────────────────────
 const NAV_LINKS = [
-  { label: "Work", href: "/showcase", num: "01" },
-  { label: "Services", href: "/services", num: "02" },
-  { label: "Blog", href: "/blog", num: "03" },
+  { label: "Services", href: "/services", num: "01" },
+  { label: "Blog", href: "/blog", num: "02" },
+  { label: "Work", href: "/showcase", num: "03" },
   { label: "About", href: "/#about", num: "04" },
   { label: "Contact", href: "/#contact", num: "05" },
 ];
+
+function isActiveLink(href: string, pathname: string): boolean {
+  if (href === "/") return pathname === "/";
+  if (href.startsWith("/#")) return false;
+  if (href === "/blog") return pathname.startsWith("/blog");
+  if (href === "/services") return pathname.startsWith("/services");
+  if (href === "/showcase") return pathname.startsWith("/showcase");
+  return pathname === href;
+}
 
 const SOCIAL_LINKS = [
   { label: "LinkedIn", href: "https://www.linkedin.com/in/annex-consultancy-880a18420/" },
@@ -128,6 +138,7 @@ export function Navbar({ navLinks, logoUrl, contactEmail, contactAddress, theme:
   const email = contactEmail || EMAIL;
   const address = contactAddress || ADDRESS;
   const logo = logoUrl || "/images/logo.png";
+  const pathname = usePathname() || "";
 
   const links: FormattedNavLink[] = (navLinks && navLinks.length > 0)
     ? navLinks.map((item, idx) => ({
@@ -147,12 +158,7 @@ export function Navbar({ navLinks, logoUrl, contactEmail, contactAddress, theme:
       resolvedMenuTheme = docTheme as "light" | "dark";
     } else if (document.documentElement.classList.contains("dark")) {
       resolvedMenuTheme = "dark";
-    } else if (
-      window.location.pathname === "/book-call" ||
-      window.location.pathname.startsWith("/showcase") ||
-      window.location.pathname.startsWith("/blog") ||
-      window.location.pathname.startsWith("/services")
-    ) {
+    } else if (window.location.pathname === "/book-call" || window.location.pathname.startsWith("/showcase")) {
       resolvedMenuTheme = "dark";
     }
   }
@@ -350,9 +356,11 @@ export function Navbar({ navLinks, logoUrl, contactEmail, contactAddress, theme:
                       onClick={() => setHoverOpen(false)}
                       className={cn(
                         "block py-1.5 font-sans text-xs transition-colors duration-150 tracking-wide",
-                        resolvedMenuTheme === "dark"
-                          ? "text-white/70 hover:text-white"
-                          : "text-black/70 hover:text-black"
+                        isActiveLink(link.href, pathname)
+                          ? "text-primary font-bold"
+                          : resolvedMenuTheme === "dark"
+                            ? "text-white/70 hover:text-white"
+                            : "text-black/70 hover:text-black"
                       )}
                     >
                       {link.label}
@@ -438,7 +446,9 @@ export function Navbar({ navLinks, logoUrl, contactEmail, contactAddress, theme:
                             "text-[48px] lg:text-[52px]",
                             resolvedMenuTheme === "dark" ? "text-white after:bg-white" : "text-black after:bg-black",
                             "relative after:absolute after:bottom-[6px] after:left-0 after:h-[1.5px]",
-                            "after:w-0 group-hover:after:w-full after:transition-all after:duration-300",
+                            isActiveLink(link.href, pathname)
+                              ? "after:w-full"
+                              : "after:w-0 group-hover:after:w-full after:transition-all after:duration-300",
                             "group-hover:translate-x-1 transition-transform duration-200",
                           )}
                         >
@@ -604,9 +614,11 @@ export function Navbar({ navLinks, logoUrl, contactEmail, contactAddress, theme:
                       className={cn(
                         "flex items-center justify-center w-full py-2 min-h-[48px]",
                         "font-display font-light text-[40px] leading-none tracking-[-0.04em]",
-                        resolvedMenuTheme === "dark"
-                          ? "text-white hover:text-white/60 focus-visible:ring-white/30"
-                          : "text-black hover:text-black/50 focus-visible:ring-black/30",
+                        isActiveLink(link.href, pathname)
+                          ? "text-primary font-medium"
+                          : resolvedMenuTheme === "dark"
+                            ? "text-white hover:text-white/60 focus-visible:ring-white/30"
+                            : "text-black hover:text-black/50 focus-visible:ring-black/30",
                         "transition-colors duration-200 rounded-lg",
                       )}
                     >
