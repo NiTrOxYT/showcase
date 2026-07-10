@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import Lenis from "lenis";
+import { usePathname } from "next/navigation";
 import { syncLenisWithGSAP, ScrollTrigger } from "@/animations/gsap";
 import { shouldReduceMotion } from "@/animations/utils/reducedMotion";
 
@@ -14,6 +15,7 @@ const SmoothScrollContext = createContext<SmoothScrollContextType>({ lenis: null
 export const useLenis = () => useContext(SmoothScrollContext).lenis;
 
 export const SmoothScrollProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const pathname = usePathname();
   const lenisRef = useRef<Lenis | null>(null);
   const [lenis, setLenis] = useState<Lenis | null>(null);
 
@@ -46,6 +48,31 @@ export const SmoothScrollProvider: React.FC<{ children: React.ReactNode }> = ({ 
       lenisRef.current = null;
     };
   }, []);
+
+  // Handle route change layout and scroll updates
+  useEffect(() => {
+    if (!lenis) return;
+
+    // Reset scroll position to top instantly
+    lenis.scrollTo(0, { immediate: true });
+
+    // Instantly refresh Lenis bounds on the next render frame
+    const handleRaf = requestAnimationFrame(() => {
+      lenis.resize();
+      ScrollTrigger.refresh();
+    });
+
+    // Run again after page transition animations finish (approx 500ms)
+    const handleTimeout = setTimeout(() => {
+      lenis.resize();
+      ScrollTrigger.refresh();
+    }, 500);
+
+    return () => {
+      cancelAnimationFrame(handleRaf);
+      clearTimeout(handleTimeout);
+    };
+  }, [pathname, lenis]);
 
   return (
     <SmoothScrollContext.Provider value={{ lenis }}>
