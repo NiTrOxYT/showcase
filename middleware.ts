@@ -22,9 +22,6 @@ export async function middleware(request: NextRequest) {
   if (pathname === "/about") {
     return NextResponse.redirect(new URL("/#about", request.url));
   }
-  if (pathname === "/contact") {
-    return NextResponse.redirect(new URL("/#contact", request.url));
-  }
 
   // Dynamic dynamic redirects from Supabase
   try {

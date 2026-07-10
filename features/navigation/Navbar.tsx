@@ -16,7 +16,7 @@ const NAV_LINKS = [
   { label: "Blog", href: "/blog", num: "02" },
   { label: "Work", href: "/showcase", num: "03" },
   { label: "About", href: "/#about", num: "04" },
-  { label: "Contact", href: "/#contact", num: "05" },
+  { label: "Contact", href: "/contact", num: "05" },
 ];
 
 function isActiveLink(href: string, pathname: string): boolean {
@@ -295,80 +295,108 @@ export function Navbar({ navLinks, logoUrl, contactEmail, contactAddress, theme:
             <span className="sm:hidden"><AnnexLogo size="mobile" priority logoUrl={logo} theme={headerTheme} /></span>
           </Link>
 
-          {/* ── Menu trigger + hover preview (desktop only) ─────── */}
-          <div
-            className="relative"
-            onMouseEnter={handleMenuMouseEnter}
-            onMouseLeave={handleMenuMouseLeave}
-          >
-            <button
-              ref={menuBtnRef}
-              onClick={toggleMenu}
-              aria-expanded={menuOpen}
-              aria-haspopup="dialog"
-              aria-label={menuOpen ? "Close menu" : "Open menu"}
+          <div className="flex items-center gap-3">
+            {/* Secondary CTA */}
+            <Link
+              href="/proposals"
               className={cn(
-                "relative inline-flex items-center gap-2.5 font-mono text-[10px] uppercase tracking-widest transition-all duration-200",
-                "px-4 py-2 rounded-full border focus-visible:outline-none focus-visible:ring-2",
-                btnClasses
+                "hidden md:inline-flex items-center justify-center px-4 py-2 text-[10px] font-mono uppercase tracking-widest transition-all duration-200 rounded-full border",
+                headerTheme === "light"
+                  ? "border-black text-black hover:bg-black hover:text-white"
+                  : "border-white/20 text-white/90 hover:bg-white hover:text-black"
               )}
             >
-              {/* Animated dot → X */}
-              <span className="relative w-2.5 h-2.5 flex items-center justify-center shrink-0">
-                <span className={cn(
-                  "absolute block w-2 h-[1.5px] transition-all duration-200",
-                  lineClasses,
-                  menuOpen ? "rotate-45 translate-y-0" : "-translate-y-[2.5px]"
-                )} />
-                <span className={cn(
-                  "absolute block w-2 h-[1.5px] transition-all duration-200",
-                  lineClasses,
-                  menuOpen ? "-rotate-45 translate-y-0" : "translate-y-[2.5px]"
-                )} />
-              </span>
-              <span>{menuOpen ? "Close" : "Menu"}</span>
-            </button>
+              Get a Proposal
+            </Link>
 
-            {/* ── Hover preview (desktop only) ────────────────── */}
-            <AnimatePresence>
-              {hoverOpen && !menuOpen && (
-                <motion.div
-                  variants={panelVariants}
-                  initial="hidden"
-                  animate="show"
-                  exit="hidden"
-                  onMouseEnter={handlePanelMouseEnter}
-                  onMouseLeave={handlePanelMouseLeave}
-                  className={cn(
-                    "hidden md:block absolute top-[calc(100%+10px)] right-0 w-44 backdrop-blur-2xl border rounded-2xl shadow-xl py-3 px-4 z-10",
-                    resolvedMenuTheme === "dark"
-                      ? "bg-neutral-900/90 border-white/12 shadow-[0_16px_48px_rgba(0,0,0,0.4)]"
-                      : "bg-white/90 border-black/8"
-                  )}
-                  role="menu"
-                  aria-label="Quick navigation"
-                >
-                  {links.map((link) => (
-                    <Link
-                      key={link.label}
-                      href={link.href}
-                      role="menuitem"
-                      onClick={() => setHoverOpen(false)}
-                      className={cn(
-                        "block py-1.5 font-sans text-xs transition-colors duration-150 tracking-wide",
-                        isActiveLink(link.href, pathname)
-                          ? "text-primary font-bold"
-                          : resolvedMenuTheme === "dark"
-                            ? "text-white/70 hover:text-white"
-                            : "text-black/70 hover:text-black"
-                      )}
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
-                </motion.div>
+            {/* Primary CTA */}
+            <Link
+              href="/book-call"
+              className={cn(
+                "hidden md:inline-flex items-center justify-center px-4.5 py-2 text-[10px] font-mono uppercase tracking-widest font-bold transition-all duration-200 rounded-full border",
+                headerTheme === "light"
+                  ? "bg-black text-white border-black hover:bg-black/85"
+                  : "bg-white text-black border-white hover:bg-white/90"
               )}
-            </AnimatePresence>
+            >
+              Book a Call
+            </Link>
+
+            {/* ── Menu trigger + hover preview (desktop only) ─────── */}
+            <div
+              className="relative"
+              onMouseEnter={handleMenuMouseEnter}
+              onMouseLeave={handleMenuMouseLeave}
+            >
+              <button
+                ref={menuBtnRef}
+                onClick={toggleMenu}
+                aria-expanded={menuOpen}
+                aria-haspopup="dialog"
+                aria-label={menuOpen ? "Close menu" : "Open menu"}
+                className={cn(
+                  "relative inline-flex items-center gap-2.5 font-mono text-[10px] uppercase tracking-widest transition-all duration-200",
+                  "px-4 py-2 rounded-full border focus-visible:outline-none focus-visible:ring-2",
+                  btnClasses
+                )}
+              >
+                {/* Animated dot → X */}
+                <span className="relative w-2.5 h-2.5 flex items-center justify-center shrink-0">
+                  <span className={cn(
+                    "absolute block w-2 h-[1.5px] transition-all duration-200",
+                    lineClasses,
+                    menuOpen ? "rotate-45 translate-y-0" : "-translate-y-[2.5px]"
+                  )} />
+                  <span className={cn(
+                    "absolute block w-2 h-[1.5px] transition-all duration-200",
+                    lineClasses,
+                    menuOpen ? "-rotate-45 translate-y-0" : "translate-y-[2.5px]"
+                  )} />
+                </span>
+                <span>{menuOpen ? "Close" : "Menu"}</span>
+              </button>
+
+              {/* ── Hover preview (desktop only) ────────────────── */}
+              <AnimatePresence>
+                {hoverOpen && !menuOpen && (
+                  <motion.div
+                    variants={panelVariants}
+                    initial="hidden"
+                    animate="show"
+                    exit="hidden"
+                    onMouseEnter={handlePanelMouseEnter}
+                    onMouseLeave={handlePanelMouseLeave}
+                    className={cn(
+                      "hidden md:block absolute top-[calc(100%+10px)] right-0 w-44 backdrop-blur-2xl border rounded-2xl shadow-xl py-3 px-4 z-10",
+                      resolvedMenuTheme === "dark"
+                        ? "bg-neutral-900/90 border-white/12 shadow-[0_16px_48px_rgba(0,0,0,0.4)]"
+                        : "bg-white/90 border-black/8"
+                    )}
+                    role="menu"
+                    aria-label="Quick navigation"
+                  >
+                    {links.map((link) => (
+                      <Link
+                        key={link.label}
+                        href={link.href}
+                        role="menuitem"
+                        onClick={() => setHoverOpen(false)}
+                        className={cn(
+                          "block py-1.5 font-sans text-xs transition-colors duration-150 tracking-wide",
+                          isActiveLink(link.href, pathname)
+                            ? "text-primary font-bold"
+                            : resolvedMenuTheme === "dark"
+                              ? "text-white/70 hover:text-white"
+                              : "text-black/70 hover:text-black"
+                        )}
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         </div>
       </header>

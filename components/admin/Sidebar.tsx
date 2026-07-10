@@ -12,11 +12,14 @@ import {
   ChevronLeft,
   ChevronRight,
   Sparkles,
-  PhoneCall,
   Globe,
   Briefcase,
   FileText,
   BookOpen,
+  Users,
+  ArrowRightLeft,
+  BarChart2,
+  Calendar
 } from "lucide-react";
 
 export function Sidebar() {
@@ -24,15 +27,32 @@ export function Sidebar() {
   const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
 
-  const navItems = [
-    { title: "Dashboard", href: "/admin", icon: LayoutDashboard },
-    { title: "Projects", href: "/admin/projects", icon: FolderKanban },
-    { title: "Case Studies", href: "/admin/case-studies", icon: FileText },
-    { title: "Services", href: "/admin/services", icon: Briefcase },
-    { title: "Blog", href: "/admin/blog", icon: BookOpen },
-    { title: "Settings", href: "/admin/settings", icon: Settings },
-    { title: "Consultations", href: "/admin/consultations", icon: PhoneCall },
-    { title: "SEO", href: "/admin/seo", icon: Globe },
+  const navGroups = [
+    {
+      group: "Content",
+      items: [
+        { title: "Showcase", href: "/admin/projects", icon: FolderKanban },
+        { title: "Case Studies", href: "/admin/case-studies", icon: FileText },
+        { title: "Services", href: "/admin/services", icon: Briefcase },
+        { title: "Blog", href: "/admin/blog", icon: BookOpen },
+      ]
+    },
+    {
+      group: "Marketing",
+      items: [
+        { title: "SEO", href: "/admin/seo", icon: Globe },
+        { title: "Redirects", href: "/admin/redirects", icon: ArrowRightLeft },
+      ]
+    },
+    {
+      group: "Sales",
+      items: [
+        { title: "Leads", href: "/admin/leads", icon: Users },
+        { title: "Bookings", href: "/admin/bookings", icon: Calendar },
+        { title: "Proposals", href: "/admin/proposals", icon: FileText },
+        { title: "Analytics", href: "/admin/analytics", icon: BarChart2 },
+      ]
+    }
   ];
 
   const handleLogout = async () => {
@@ -47,6 +67,10 @@ export function Sidebar() {
     }
   };
 
+  const isActiveLink = (href: string) => {
+    return pathname === href || (href !== "/admin" && pathname.startsWith(href));
+  };
+
   return (
     <aside
       className={cn(
@@ -54,7 +78,8 @@ export function Sidebar() {
         collapsed ? "w-16 px-2" : "w-64 px-4"
       )}
     >
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-6 overflow-y-auto max-h-[calc(100vh-100px)] no-scrollbar">
+        {/* Header */}
         <div className="flex items-center justify-between px-2">
           {!collapsed && (
             <div className="flex items-center gap-2">
@@ -74,26 +99,72 @@ export function Sidebar() {
           </button>
         </div>
 
-        <nav className="flex flex-col gap-1.5">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href));
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "flex items-center gap-3 py-2.5 px-3.5 rounded-lg text-xs font-mono uppercase tracking-wider transition-all duration-200",
-                  isActive
-                    ? "bg-primary text-background font-bold shadow-[0_0_12px_rgba(255,255,255,0.15)]"
-                    : "text-muted hover:text-foreground hover:bg-surface/30"
-                )}
-              >
-                <Icon className="w-4 h-4 shrink-0" />
-                {!collapsed && <span>{item.title}</span>}
-              </Link>
-            );
-          })}
+        {/* Nav Items */}
+        <nav className="flex flex-col gap-5">
+          {/* Dashboard link (always at top) */}
+          <div>
+            <Link
+              href="/admin"
+              className={cn(
+                "flex items-center gap-3 py-2.5 px-3.5 rounded-lg text-xs font-mono uppercase tracking-wider transition-all duration-200",
+                pathname === "/admin"
+                  ? "bg-primary text-background font-bold shadow-[0_0_12px_rgba(255,255,255,0.15)]"
+                  : "text-muted hover:text-foreground hover:bg-surface/30"
+              )}
+            >
+              <LayoutDashboard className="w-4 h-4 shrink-0" />
+              {!collapsed && <span>Dashboard</span>}
+            </Link>
+          </div>
+
+          {/* Grouped links */}
+          {navGroups.map((group) => (
+            <div key={group.group} className="flex flex-col gap-1.5">
+              {!collapsed && (
+                <span className="text-[10px] font-mono uppercase tracking-wider text-muted/30 px-3.5 select-none font-bold">
+                  {group.group}
+                </span>
+              )}
+              {collapsed && <hr className="border-border/5 my-1" />}
+              <div className="flex flex-col gap-1">
+                {group.items.map((item) => {
+                  const Icon = item.icon;
+                  const active = isActiveLink(item.href);
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={cn(
+                        "flex items-center gap-3 py-2.5 px-3.5 rounded-lg text-xs font-mono uppercase tracking-wider transition-all duration-200",
+                        active
+                          ? "bg-primary text-background font-bold shadow-[0_0_12px_rgba(255,255,255,0.15)]"
+                          : "text-muted hover:text-foreground hover:bg-surface/30"
+                      )}
+                    >
+                      <Icon className="w-4 h-4 shrink-0" />
+                      {!collapsed && <span>{item.title}</span>}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+
+          {/* Settings at bottom of list */}
+          <div>
+            <Link
+              href="/admin/settings"
+              className={cn(
+                "flex items-center gap-3 py-2.5 px-3.5 rounded-lg text-xs font-mono uppercase tracking-wider transition-all duration-200",
+                isActiveLink("/admin/settings")
+                  ? "bg-primary text-background font-bold shadow-[0_0_12px_rgba(255,255,255,0.15)]"
+                  : "text-muted hover:text-foreground hover:bg-surface/30"
+              )}
+            >
+              <Settings className="w-4 h-4 shrink-0" />
+              {!collapsed && <span>Settings</span>}
+            </Link>
+          </div>
         </nav>
       </div>
 

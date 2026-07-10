@@ -4,35 +4,28 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Calendar,
-  Clock,
   User,
   Phone,
+  Globe,
+  Briefcase,
+  MessageSquare,
   CheckCircle2,
   ArrowRight,
-  ArrowLeft,
-  Briefcase,
-  Globe,
-  MessageSquare
+  ArrowLeft
 } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 
-const BOOKING_TYPES = [
-  { id: "Discovery Call", label: "Discovery Call", desc: "Brief intro & project overview (15 min)" },
-  { id: "Website Consultation", label: "Website Consultation", desc: "Performance, design, and architecture audit (30 min)" },
-  { id: "SaaS Consultation", label: "SaaS Consultation", desc: "Product roadmap & technology stack review (45 min)" },
-  { id: "AI Automation Consultation", label: "AI Automation Consultation", desc: "Identify workflow bottlenecks & AI solutions (45 min)" }
-];
+interface ServiceItem {
+  id: string;
+  title: string;
+  slug: string;
+}
 
-const TIMES = [
-  "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM",
-  "12:00 PM", "12:30 PM", "01:00 PM", "01:30 PM",
-  "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM",
-  "04:00 PM", "04:30 PM", "05:00 PM", "05:30 PM",
-  "06:00 PM"
-];
+interface Props {
+  categories: ServiceItem[];
+}
 
-interface BookingFormData {
+interface ContactFormData {
   full_name: string;
   email: string;
   phone: string;
@@ -40,17 +33,17 @@ interface BookingFormData {
   website: string;
   company_size: "Solo" | "2-10" | "11-50" | "51-200" | "200+";
   project_type: "Business Website" | "SaaS" | "AI Automation" | "Mobile App" | "Internal Tool" | "UI/UX Design";
+  budget: string;
+  timeline: string;
   message: string;
-  booking_type: string;
-  requested_date: string;
-  requested_time: string;
+  serviceIds: string[];
+  lead_source: string;
 }
 
-export function BookCallForm() {
+export function ContactFormClient({ categories }: Props) {
   const [step, setStep] = useState(1);
-  const [timezone, setTimezone] = useState("UTC");
-  const [formData, setFormData] = useState<BookingFormData>(() => {
-    const initial: BookingFormData = {
+  const [formData, setFormData] = useState<ContactFormData>(() => {
+    const initial: ContactFormData = {
       full_name: "",
       email: "",
       phone: "",
@@ -58,13 +51,14 @@ export function BookCallForm() {
       website: "",
       company_size: "Solo",
       project_type: "Business Website",
+      budget: "₹1,50,000 - ₹3,00,000",
+      timeline: "1-3 Months",
       message: "",
-      booking_type: "Discovery Call",
-      requested_date: "",
-      requested_time: "10:00 AM"
+      serviceIds: [],
+      lead_source: "Website Contact Form"
     };
     if (typeof window !== "undefined") {
-      const draft = localStorage.getItem("annex-booking-draft");
+      const draft = localStorage.getItem("annex-contact-draft");
       if (draft) {
         try {
           return { ...initial, ...JSON.parse(draft) };
@@ -78,24 +72,26 @@ export function BookCallForm() {
 
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
-  const [bookingId, setBookingId] = useState("");
-
-  // Auto-detect timezone on mount
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Kolkata");
-    }, 0);
-    return () => clearTimeout(timer);
-  }, []);
+  const [leadId, setLeadId] = useState("");
 
   // Save draft on edit
   useEffect(() => {
-    localStorage.setItem("annex-booking-draft", JSON.stringify(formData));
+    localStorage.setItem("annex-contact-draft", JSON.stringify(formData));
   }, [formData]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleServiceToggle = (serviceId: string) => {
+    setFormData((prev) => {
+      const active = prev.serviceIds.includes(serviceId);
+      const updated = active
+        ? prev.serviceIds.filter((id) => id !== serviceId)
+        : [...prev.serviceIds, serviceId];
+      return { ...prev, serviceIds: updated };
+    });
   };
 
   const handleStepSubmit = (e: React.FormEvent) => {
@@ -110,70 +106,57 @@ export function BookCallForm() {
     }
   };
 
-  const handleBookingSubmit = async (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.requested_date || !formData.requested_time) {
-      setErrorMessage("Please select a date and time slot.");
-      return;
-    }
-
     setStatus("loading");
     setErrorMessage("");
 
     try {
-      const res = await fetch("/api/bookings", {
+      const res = await fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formData, timezone })
+        body: JSON.stringify(formData)
       });
 
       const data = await res.json();
       if (!res.ok) {
         setStatus("error");
-        setErrorMessage(data.error || "Failed to submit booking request.");
+        setErrorMessage(data.error || "Failed to submit request.");
         return;
       }
 
-      setBookingId(data.bookingId || "");
+      setLeadId(data.lead?.id || "");
       setStatus("success");
-      localStorage.removeItem("annex-booking-draft");
+      localStorage.removeItem("annex-contact-draft");
     } catch {
       setStatus("error");
       setErrorMessage("Network error occurred. Please try again.");
     }
   };
 
-  const getMinDate = () => {
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, "0");
-    const dd = String(today.getDate()).padStart(2, "0");
-    return `${yyyy}-${mm}-${dd}`;
-  };
-
   return (
     <Container className="py-12 md:py-20 max-w-[1440px] mx-auto select-none">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
         
-        {/* Left Side Info */}
+        {/* Left Side Header Text */}
         <div className="lg:col-span-5 flex flex-col gap-6">
           <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold">
-            [ Consultation Desk ]
+            [ Contact Annex ]
           </span>
           <h1 className="text-4xl md:text-5xl font-display font-black tracking-tightest leading-tight uppercase text-foreground">
-            Connect With Our Team.
+            Let&apos;s Launch Your Project.
           </h1>
           <p className="text-sm text-muted/75 leading-relaxed max-w-md">
-            Schedule a direct strategy call. We will examine your project requirements, technology parameters, and deliver a clean implementation breakdown.
+            Partner with ANNEX to design, engineer, and deploy high-performance custom digital platforms. Provide your specifications below to request a strategic proposal.
           </p>
           <div className="flex flex-col gap-3 font-mono text-xs text-muted/60 border-t border-border/10 pt-6">
-            <span>✓ No-obligation discovery session</span>
-            <span>✓ Direct discussion with senior architects</span>
-            <span>✓ Actionable technical roadmaps</span>
+            <span>✓ Complete design independence</span>
+            <span>✓ Highly optimized Next.js/React engineering</span>
+            <span>✓ Integrated CRM and lead pipelines</span>
           </div>
         </div>
 
-        {/* Right Side Step Form */}
+        {/* Right Side Step Form Card */}
         <div className="lg:col-span-7 w-full">
           <AnimatePresence mode="wait">
             {status === "success" ? (
@@ -188,14 +171,14 @@ export function BookCallForm() {
                   <CheckCircle2 className="w-10 h-10" />
                 </div>
                 <h2 className="text-2xl font-display font-black tracking-tightest uppercase text-foreground">
-                  Request Logged successfully.
+                  Submission Logged!
                 </h2>
                 <p className="text-xs text-muted/70 max-w-sm">
-                  Our team is reviewing your availability. We will follow up via email shortly to confirm your consultation session.
+                  Your inquiry is recorded inside our conversion queue. One of our engineers will manually reach out with follow-up options.
                 </p>
-                {bookingId && (
+                {leadId && (
                   <span className="text-[10px] font-mono text-primary bg-primary/10 px-4 py-1.5 rounded-full border border-primary/20">
-                    ID: {bookingId}
+                    Lead ID: {leadId}
                   </span>
                 )}
                 <Link
@@ -218,10 +201,10 @@ export function BookCallForm() {
                 <div className="flex items-center justify-between border-b border-border/15 pb-4 mb-6">
                   <div>
                     <h2 className="text-lg font-display font-bold text-foreground">
-                      {step === 1 ? "1. Business Details" : "2. Select Schedule"}
+                      {step === 1 ? "1. Partner Information" : "2. Project Specifications"}
                     </h2>
                     <p className="text-xs text-muted/50 font-sans mt-0.5">
-                      {step === 1 ? "Help us customize your roadmaps" : "Choose a time slot"}
+                      {step === 1 ? "Tell us about your team and brand" : "Budget, timeline, and scope parameters"}
                     </p>
                   </div>
                   <div className="flex items-center gap-1.5 font-mono text-xs">
@@ -232,13 +215,13 @@ export function BookCallForm() {
                 </div>
 
                 {errorMessage && (
-                  <div className="p-4 border border-red-500/25 bg-red-500/5 text-red-300 text-xs rounded-lg mb-5 flex items-center gap-2">
-                    <span>{errorMessage}</span>
+                  <div className="p-4 border border-red-500/25 bg-red-500/5 text-red-300 text-xs rounded-lg mb-5">
+                    {errorMessage}
                   </div>
                 )}
 
                 {step === 1 ? (
-                  /* STEP 1: BUSINESS / CONTACT INFO */
+                  /* STEP 1 FORM */
                   <form onSubmit={handleStepSubmit} className="flex flex-col gap-5">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       <div className="flex flex-col gap-1.5">
@@ -291,7 +274,7 @@ export function BookCallForm() {
                       </div>
 
                       <div className="flex flex-col gap-1.5">
-                        <label className="text-[10px] font-mono uppercase tracking-wider text-muted/80">Company / Entity</label>
+                        <label className="text-[10px] font-mono uppercase tracking-wider text-muted/80">Company Name</label>
                         <div className="relative flex items-center">
                           <Briefcase className="w-4 h-4 absolute left-3 text-muted/40" />
                           <input
@@ -308,6 +291,21 @@ export function BookCallForm() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       <div className="flex flex-col gap-1.5">
+                        <label className="text-[10px] font-mono uppercase tracking-wider text-muted/80">Website Link</label>
+                        <div className="relative flex items-center">
+                          <Globe className="w-4 h-4 absolute left-3 text-muted/40" />
+                          <input
+                            type="text"
+                            name="website"
+                            value={formData.website}
+                            onChange={handleInputChange}
+                            placeholder="https://yourbrand.com"
+                            className="w-full pl-10 pr-4 py-3 bg-surface/30 border border-border/20 rounded-lg text-sm text-foreground focus:outline-none focus:border-primary/40"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col gap-1.5">
                         <label className="text-[10px] font-mono uppercase tracking-wider text-muted/80">Company Size</label>
                         <select
                           name="company_size"
@@ -322,7 +320,19 @@ export function BookCallForm() {
                           <option value="200+">200+ Employees</option>
                         </select>
                       </div>
+                    </div>
 
+                    <button
+                      type="submit"
+                      className="mt-4 flex items-center justify-center gap-2 py-3.5 px-6 rounded bg-primary text-background font-mono text-xs uppercase tracking-widest font-bold hover:bg-primary/95 transition-all shadow-lg"
+                    >
+                      Next Step <ArrowRight className="w-4 h-4" />
+                    </button>
+                  </form>
+                ) : (
+                  /* STEP 2 FORM */
+                  <form onSubmit={handleFormSubmit} className="flex flex-col gap-5">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       <div className="flex flex-col gap-1.5">
                         <label className="text-[10px] font-mono uppercase tracking-wider text-muted/80">Project Category</label>
                         <select
@@ -339,91 +349,77 @@ export function BookCallForm() {
                           <option value="UI/UX Design">UI/UX Redesign</option>
                         </select>
                       </div>
+
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-[10px] font-mono uppercase tracking-wider text-muted/80">Budget Range</label>
+                        <select
+                          name="budget"
+                          value={formData.budget}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 bg-surface/30 border border-border/20 rounded-lg text-sm text-foreground focus:outline-none focus:border-primary/40 appearance-none"
+                        >
+                          <option value="Under ₹1,50,000">Under ₹1,50,000</option>
+                          <option value="₹1,50,000 - ₹3,00,000">₹1,50,000 - ₹3,00,000</option>
+                          <option value="₹3,00,000 - ₹6,00,000">₹3,00,000 - ₹6,00,000</option>
+                          <option value="₹6,00,000 - ₹12,00,000">₹6,00,000 - ₹12,00,000</option>
+                          <option value="₹12,00,000+">₹12,00,000+</option>
+                        </select>
+                      </div>
                     </div>
 
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-[10px] font-mono uppercase tracking-wider text-muted/80">Brief Message / Requirements</label>
+                      <label className="text-[10px] font-mono uppercase tracking-wider text-muted/80">Target Timeline</label>
+                      <select
+                        name="timeline"
+                        value={formData.timeline}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-3 bg-surface/30 border border-border/20 rounded-lg text-sm text-foreground focus:outline-none focus:border-primary/40 appearance-none"
+                      >
+                        <option value="Immediate (< 1 Month)">Immediate (&lt; 1 Month)</option>
+                        <option value="1-3 Months">1-3 Months</option>
+                        <option value="3-6 Months">3-6 Months</option>
+                        <option value="Flexible / Long-Term">Flexible / Long-Term</option>
+                      </select>
+                    </div>
+
+                    {/* Services checkboxes */}
+                    {categories && categories.length > 0 && (
+                      <div className="flex flex-col gap-2">
+                        <label className="text-[10px] font-mono uppercase tracking-wider text-muted/80">Link Services Interest</label>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          {categories.map((service: ServiceItem) => (
+                            <div
+                              key={service.id}
+                              onClick={() => handleServiceToggle(service.id)}
+                              className={`p-3 border rounded-lg cursor-pointer flex items-center justify-between text-xs transition-all ${
+                                formData.serviceIds.includes(service.id)
+                                  ? "border-primary bg-primary/5 text-primary"
+                                  : "border-border/15 bg-surface/10 hover:border-border/30 text-muted"
+                              }`}
+                            >
+                              <span>{service.title}</span>
+                              <div className={`w-3.5 h-3.5 rounded border shrink-0 flex items-center justify-center ${formData.serviceIds.includes(service.id) ? "bg-primary border-primary" : "border-border/30"}`}>
+                                {formData.serviceIds.includes(service.id) && <span className="text-background text-[10px] font-bold">✓</span>}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[10px] font-mono uppercase tracking-wider text-muted/80">Message details / Scope summary</label>
                       <div className="relative flex">
                         <MessageSquare className="w-4 h-4 absolute left-3 top-3.5 text-muted/40" />
                         <textarea
                           name="message"
+                          required
                           value={formData.message}
                           onChange={handleInputChange}
-                          rows={3}
-                          placeholder="Describe your project briefly..."
+                          rows={4}
+                          placeholder="Provide any specific scope items or questions..."
                           className="w-full pl-10 pr-4 py-3 bg-surface/30 border border-border/20 rounded-lg text-sm text-foreground focus:outline-none focus:border-primary/40"
                         />
-                      </div>
-                    </div>
-
-                    <button
-                      type="submit"
-                      className="mt-4 flex items-center justify-center gap-2 py-3.5 px-6 rounded bg-primary text-background font-mono text-xs uppercase tracking-widest font-bold hover:bg-primary/95 transition-all shadow-lg"
-                    >
-                      Next Step <ArrowRight className="w-4 h-4" />
-                    </button>
-                  </form>
-                ) : (
-                  /* STEP 2: MEETING TYPE, DATE & TIME */
-                  <form onSubmit={handleBookingSubmit} className="flex flex-col gap-6">
-                    {/* Booking Types Selection */}
-                    <div className="flex flex-col gap-3">
-                      <label className="text-[10px] font-mono uppercase tracking-wider text-muted/80">Select Meeting Type</label>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        {BOOKING_TYPES.map((type) => (
-                          <div
-                            key={type.id}
-                            onClick={() => setFormData(prev => ({ ...prev, booking_type: type.id }))}
-                            className={`p-4 border rounded-lg cursor-pointer flex flex-col gap-1 transition-all ${
-                              formData.booking_type === type.id
-                                ? "border-primary bg-primary/5"
-                                : "border-border/15 bg-surface/10 hover:border-border/30"
-                            }`}
-                          >
-                            <span className={`text-xs font-bold font-sans ${formData.booking_type === type.id ? "text-primary" : "text-foreground"}`}>
-                              {type.label}
-                            </span>
-                            <span className="text-[10px] text-muted/50 leading-relaxed font-sans">{type.desc}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Date picker */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                      <div className="flex flex-col gap-1.5">
-                        <label className="text-[10px] font-mono uppercase tracking-wider text-muted/80">Preferred Date</label>
-                        <div className="relative flex items-center">
-                          <Calendar className="w-4 h-4 absolute left-3 text-muted/40" />
-                          <input
-                            type="date"
-                            name="requested_date"
-                            required
-                            min={getMinDate()}
-                            value={formData.requested_date}
-                            onChange={handleInputChange}
-                            className="w-full pl-10 pr-4 py-3 bg-surface/30 border border-border/20 rounded-lg text-sm text-foreground focus:outline-none focus:border-primary/40"
-                          />
-                        </div>
-                      </div>
-
-                      {/* Time Slot Picker */}
-                      <div className="flex flex-col gap-1.5">
-                        <label className="text-[10px] font-mono uppercase tracking-wider text-muted/80">Time Slot ({timezone})</label>
-                        <div className="relative flex items-center">
-                          <Clock className="w-4 h-4 absolute left-3 text-muted/40" />
-                          <select
-                            name="requested_time"
-                            required
-                            value={formData.requested_time}
-                            onChange={handleInputChange}
-                            className="w-full pl-10 pr-4 py-3 bg-surface/30 border border-border/20 rounded-lg text-sm text-foreground focus:outline-none focus:border-primary/40 appearance-none"
-                          >
-                            {TIMES.map((time) => (
-                              <option key={time} value={time}>{time}</option>
-                            ))}
-                          </select>
-                        </div>
                       </div>
                     </div>
 
@@ -441,7 +437,7 @@ export function BookCallForm() {
                         disabled={status === "loading"}
                         className="flex-1 flex items-center justify-center gap-2 py-3.5 px-6 rounded bg-primary text-background font-mono text-xs uppercase tracking-widest font-bold hover:bg-primary/95 transition-all shadow-lg disabled:opacity-50"
                       >
-                        {status === "loading" ? "Scheduling..." : "Request Booking"}
+                        {status === "loading" ? "Submitting..." : "Send Request"}
                       </button>
                     </div>
                   </form>
