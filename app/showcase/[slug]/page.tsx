@@ -24,6 +24,8 @@ import { constructMetadata } from "@/lib/seo/metadata";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { getProjectBreadcrumb } from "@/lib/seo/breadcrumbs";
 import { getCaseStudySchema } from "@/lib/seo/structured-data";
+import { CheckCircle2, Award, Clock, ArrowRight, Download } from "lucide-react";
+import type { Project } from "@/types/project";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -48,7 +50,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   return constructMetadata({
-    title: project.seoTitle || project.title,
+    title: project.seoTitle || `${project.title} Case Study | ANNEX`,
     description: project.seoDescription || project.shortDescription,
     image: project.ogImage || project.coverImage || undefined,
     path: `/showcase/${project.slug}`,
@@ -62,14 +64,55 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   });
 }
 
+// Calculate reading time
+function calculateReadingTime(project: Project): number {
+  const textParts = [
+    project.fullDescription,
+    project.businessProblem,
+    project.projectGoal,
+    project.research,
+    project.strategy,
+    project.designProcess,
+    project.developmentProcess,
+  ].filter(Boolean);
+  const wordCount = textParts.join(" ").split(/\s+/).length;
+  return Math.max(1, Math.ceil(wordCount / 200));
+}
+
+// Weighted Related Content Algorithm
+function getWeightedRecommendations(currentProject: Project, allProjects: Project[], limit: number = 2): Project[] {
+  const scored = allProjects
+    .filter((p) => p.slug !== currentProject.slug && p.status === "Published")
+    .map((p) => {
+      let score = 0;
+      if (p.category === currentProject.category) score += 5;
+      if (p.industry && currentProject.industry && p.industry.toLowerCase() === currentProject.industry.toLowerCase()) score += 4;
+
+      const currentTechs = currentProject.technologies.map(t => t.name.toLowerCase());
+      const otherTechs = p.technologies.map(t => t.name.toLowerCase());
+      const techIntersection = currentTechs.filter(t => t && otherTechs.includes(t));
+      score += techIntersection.length * 2;
+
+      const currentServices = currentProject.services.map(s => s.toLowerCase());
+      const otherServices = p.services.map(s => s.toLowerCase());
+      const serviceIntersection = currentServices.filter(s => otherServices.includes(s));
+      score += serviceIntersection.length * 3;
+
+      return { project: p, score };
+    });
+
+  return scored
+    .sort((a, b) => b.score - a.score)
+    .map((s) => s.project)
+    .slice(0, limit);
+}
+
 export default async function ProjectDetailPage({ params }: PageProps) {
   const { slug } = await params;
   
-  // Fetch details, navigation, and settings in parallel
-  const [project, allProjects, relatedProjects, settings, headerNav, footerNav] = await Promise.all([
+  const [project, allProjects, settings, headerNav, footerNav] = await Promise.all([
     showcaseRepository.getProjectBySlug(slug),
     showcaseRepository.getProjects(),
-    showcaseRepository.getRelatedProjects(slug, 2),
     SettingsRepository.getAll(),
     navigationRepository.getNavigation("header"),
     navigationRepository.getNavigation("footer"),
@@ -79,7 +122,8 @@ export default async function ProjectDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  // Get dynamic pagination targets
+  const relatedProjects = getWeightedRecommendations(project, allProjects, 2);
+
   const currentIdx = allProjects.findIndex((p) => p.slug === slug);
   const prevProject = currentIdx > 0 ? allProjects[currentIdx - 1] : null;
   const nextProject = currentIdx < allProjects.length - 1 ? allProjects[currentIdx + 1] : null;
@@ -90,9 +134,10 @@ export default async function ProjectDetailPage({ params }: PageProps) {
     { label: "Instagram", href: settings.social.instagram },
   ];
 
+  const readingTime = calculateReadingTime(project);
+
   return (
     <>
-      {/* CreativeWork Case Study JSON-LD Schema */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -111,8 +156,9 @@ export default async function ProjectDetailPage({ params }: PageProps) {
         prevSlug={prevProject ? prevProject.slug : null}
         nextSlug={nextProject ? nextProject.slug : null}
       />
-      <main className="overflow-x-hidden w-full max-w-full">
-        {/* Cinematic Cover Header */}
+      <main className="overflow-x-hidden w-full max-w-full text-foreground bg-background select-none">
+        
+        {/* Project Cinematic Hero */}
         <ProjectHero
           project={project}
           breadcrumbs={
@@ -120,75 +166,246 @@ export default async function ProjectDetailPage({ params }: PageProps) {
           }
         />
 
-        {/* Project Overview */}
-        <Section className="py-24 bg-background border-t border-border/10">
+        {/* Reading indicators panel */}
+        <div className="border-y border-border/10 bg-surface/5 py-4">
           <Container>
-            <Grid cols={1} colsMd={12} gap={12}>
-              {/* Left Column: Scope details */}
-              <div className="md:col-span-7 flex flex-col gap-6">
-                <span className="font-mono text-xs text-primary uppercase tracking-widest font-bold">[ Overview ]</span>
-                <Heading level={2} className="text-3xl md:text-4xl font-bold tracking-tightest">
-                  The Product Vision.
-                </Heading>
-                <Text className="text-muted/80 text-sm md:text-base leading-relaxed">
-                  {project.fullDescription}
-                </Text>
+            <div className="flex flex-wrap items-center justify-between gap-4 text-xs font-mono text-muted">
+              <div className="flex items-center gap-2">
+                <Clock className="w-3.5 h-3.5 text-primary" />
+                <span>ESTIMATED READING TIME: {readingTime} MIN</span>
+              </div>
+              <div className="flex items-center gap-6">
+                <span>CLIENT SITE: <a href={project.clientWebsite || "#"} className="text-primary hover:underline">{project.clientWebsite || "N/A"}</a></span>
+              </div>
+            </div>
+          </Container>
+        </div>
 
-                {/* Scope details */}
-                <div className="grid grid-cols-2 gap-8 pt-8 border-t border-border/10 mt-6">
-                  <div className="flex flex-col gap-2">
-                    <span className="font-mono text-[10px] uppercase tracking-widest text-muted/50 font-bold">[ Services ]</span>
-                    <ul className="flex flex-col gap-1">
-                      {project.services.map((item) => (
-                        <li key={item} className="font-sans text-xs text-foreground/80">{item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <span className="font-mono text-[10px] uppercase tracking-widest text-muted/50 font-bold">[ Deliverables ]</span>
-                    <ul className="flex flex-col gap-1">
-                      {project.deliverables.map((item) => (
-                        <li key={item} className="font-sans text-xs text-foreground/80">{item}</li>
-                      ))}
-                    </ul>
-                  </div>
+        {/* Bento Case Study Layout */}
+        <Section className="py-24">
+          <Container>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+              {/* Sticky TOC Widget */}
+              <div className="lg:col-span-3 hidden lg:block">
+                <div className="sticky top-28 flex flex-col gap-6">
+                  <span className="font-mono text-[10px] uppercase tracking-widest text-primary font-bold">[ Case Index ]</span>
+                  <nav className="flex flex-col gap-3 font-mono text-xs text-muted">
+                    <a href="#overview" className="hover:text-foreground transition-colors">01. OVERVIEW</a>
+                    <a href="#challenge" className="hover:text-foreground transition-colors">02. THE CHALLENGE</a>
+                    <a href="#strategy" className="hover:text-foreground transition-colors">03. STRATEGY & IA</a>
+                    {project.beforeAfter && project.beforeAfter.length > 0 && (
+                      <a href="#comparisons" className="hover:text-foreground transition-colors">04. BEFORE / AFTER</a>
+                    )}
+                    <a href="#design" className="hover:text-foreground transition-colors">05. DESIGN PRINCIPLES</a>
+                    <a href="#development" className="hover:text-foreground transition-colors">06. ARCHITECTURE</a>
+                    {project.metrics && project.metrics.length > 0 && (
+                      <a href="#results" className="hover:text-foreground transition-colors">07. IMPACT METRICS</a>
+                    )}
+                    {project.faq && project.faq.length > 0 && (
+                      <a href="#faq" className="hover:text-foreground transition-colors">08. FAQS</a>
+                    )}
+                  </nav>
                 </div>
               </div>
 
-              {/* Right Column: Tech Stack */}
-              <div className="md:col-span-5 flex flex-col gap-6 md:border-l md:border-border/10 md:pl-12">
-                <span className="font-mono text-xs text-muted uppercase tracking-widest">[ Stack Architectures ]</span>
-                <TechStack technologies={project.technologies} />
-
-                {/* External Actions */}
-                <div className="flex flex-wrap gap-6 pt-6">
-                  {project.liveUrl && (
-                    <a
-                      href={project.liveUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-mono text-xs uppercase tracking-widest px-6 py-2.5 rounded-full border border-foreground hover:bg-foreground hover:text-background transition-all duration-300"
-                    >
-                      Visit Product
-                    </a>
-                  )}
-                  {project.githubUrl && (
-                    <a
-                      href={project.githubUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-mono text-xs uppercase tracking-widest px-6 py-2.5 rounded-full border border-border hover:border-foreground transition-all duration-300 text-muted hover:text-foreground"
-                    >
-                      GitHub Repo
-                    </a>
+              {/* Main Content Pane */}
+              <div className="lg:col-span-9 flex flex-col gap-16">
+                
+                {/* 1. Overview */}
+                <div id="overview" className="flex flex-col gap-6 scroll-mt-24">
+                  <span className="font-mono text-xs text-primary uppercase tracking-widest font-bold">[ 01. Overview ]</span>
+                  <Heading level={2} className="text-3xl font-black tracking-tightest">
+                    The Product Vision.
+                  </Heading>
+                  <Text className="text-muted/80 leading-relaxed text-sm md:text-base">
+                    {project.fullDescription}
+                  </Text>
+                  {project.overview && (
+                    <Text className="text-muted/80 leading-relaxed text-sm md:text-base border-t border-border/10 pt-4">
+                      {project.overview}
+                    </Text>
                   )}
                 </div>
+
+                {/* 2. Business Challenge */}
+                <div id="challenge" className="flex flex-col gap-6 border-t border-border/10 pt-16 scroll-mt-24">
+                  <span className="font-mono text-xs text-primary uppercase tracking-widest font-bold">[ 02. The Challenge ]</span>
+                  <Heading level={2} className="text-3xl font-black tracking-tightest">
+                    Business Problem & Core Goal.
+                  </Heading>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="flex flex-col gap-3 bg-surface/5 border border-border/10 p-6 rounded-2xl">
+                      <h4 className="font-mono text-xs uppercase tracking-wider text-neutral-300 font-bold">The Pain Point</h4>
+                      <Text className="text-muted text-xs leading-relaxed">
+                        {project.businessProblem || "Legacy workflows lacked standard performance optimization, resulting in elevated user drop-off rates and suboptimal indexing capabilities."}
+                      </Text>
+                    </div>
+                    <div className="flex flex-col gap-3 bg-surface/5 border border-border/10 p-6 rounded-2xl">
+                      <h4 className="font-mono text-xs uppercase tracking-wider text-neutral-300 font-bold">The Objective</h4>
+                      <Text className="text-muted text-xs leading-relaxed">
+                        {project.projectGoal || "Establish a high-performance modern user landing flow ensuring swift page speeds, secure database queries, and enhanced SEO footprint."}
+                      </Text>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 3. Research & Strategy */}
+                <div id="strategy" className="flex flex-col gap-6 border-t border-border/10 pt-16 scroll-mt-24">
+                  <span className="font-mono text-xs text-primary uppercase tracking-widest font-bold">[ 03. Research & Strategy ]</span>
+                  <Heading level={2} className="text-3xl font-black tracking-tightest">
+                    UX Audits & Indexing Architecture.
+                  </Heading>
+                  <Text className="text-muted/80 leading-relaxed text-sm">
+                    {project.research || "We conducted exhaustive user feedback session groups, analyzed competitor design methodologies, and built high-fidelity flowcharts to map out the target user path."}
+                  </Text>
+                  {project.strategy && (
+                    <Text className="text-muted/80 leading-relaxed text-sm border-t border-border/10 pt-4">
+                      {project.strategy}
+                    </Text>
+                  )}
+                </div>
+
+                {/* Before & After comparison slide */}
+                {project.beforeAfter && project.beforeAfter.length > 0 && (
+                  <div id="comparisons" className="flex flex-col gap-6 border-t border-border/10 pt-16 scroll-mt-24">
+                    <span className="font-mono text-xs text-primary uppercase tracking-widest font-bold">[ 04. Before / After ]</span>
+                    <Heading level={2} className="text-3xl font-black tracking-tightest">
+                      Visual & Performance Redesign.
+                    </Heading>
+                    <div className="flex flex-col gap-8">
+                      {project.beforeAfter.map((ba, idx) => (
+                        <div key={idx} className="bg-surface/5 border border-border/10 p-6 rounded-2xl flex flex-col gap-6">
+                          <div>
+                            <h4 className="text-lg font-bold text-foreground">{ba.title}</h4>
+                            <p className="text-xs text-muted mt-1">{ba.description}</p>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="flex flex-col gap-2">
+                              <span className="font-mono text-[9px] uppercase tracking-wider text-rose-400">Before</span>
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img src={ba.beforeImage} alt="Legacy layout screenshot" className="w-full h-auto aspect-video object-cover rounded-xl border border-border/10" />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                              <span className="font-mono text-[9px] uppercase tracking-wider text-emerald-400">After Redesign</span>
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img src={ba.afterImage} alt="New layout screenshot" className="w-full h-auto aspect-video object-cover rounded-xl border border-border/10" />
+                            </div>
+                          </div>
+                          {ba.impact && (
+                            <div className="border-t border-border/10 pt-4 flex items-center gap-2">
+                              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                              <span className="text-xs font-mono font-bold text-emerald-400 uppercase">BUSINESS IMPACT: {ba.impact}</span>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* 5. Design Principles */}
+                <div id="design" className="flex flex-col gap-6 border-t border-border/10 pt-16 scroll-mt-24">
+                  <span className="font-mono text-xs text-primary uppercase tracking-widest font-bold">[ 05. Design Principles ]</span>
+                  <Heading level={2} className="text-3xl font-black tracking-tightest">
+                    Aesthetics, Accessibility & Visual Systems.
+                  </Heading>
+                  <Text className="text-muted/80 leading-relaxed text-sm">
+                    {project.designProcess || "Utilizing responsive grids, warm dark interfaces, typographic contrast scales, and accessible color components meeting WCAG AA requirements."}
+                  </Text>
+                </div>
+
+                {/* 6. Development & Architecture */}
+                <div id="development" className="flex flex-col gap-6 border-t border-border/10 pt-16 scroll-mt-24">
+                  <span className="font-mono text-xs text-primary uppercase tracking-widest font-bold">[ 06. Architecture ]</span>
+                  <Heading level={2} className="text-3xl font-black tracking-tightest">
+                    Engineering, Infrastructure & Security.
+                  </Heading>
+                  <Text className="text-muted/80 leading-relaxed text-sm">
+                    {project.developmentProcess || "NextJS core architecture rendering Server Components for ultra-fast LCP, static routes compilation, and Supabase database connection layers."}
+                  </Text>
+
+                  {/* Tech stack badge grid */}
+                  <div className="mt-4 pt-6 border-t border-border/10">
+                    <span className="font-mono text-[9px] uppercase tracking-wider text-muted font-bold block mb-4">Technologies utilized:</span>
+                    <TechStack technologies={project.technologies} />
+                  </div>
+                </div>
+
+                {/* 7. Results Dashboard */}
+                {project.metrics && project.metrics.length > 0 && (
+                  <div id="results" className="flex flex-col gap-6 border-t border-border/10 pt-16 scroll-mt-24">
+                    <span className="font-mono text-xs text-primary uppercase tracking-widest font-bold">[ 07. Impact Metrics ]</span>
+                    <Heading level={2} className="text-3xl font-black tracking-tightest">
+                      KPI performance & outcomes.
+                    </Heading>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                      {project.metrics.map((metric, idx) => (
+                        <div key={idx} className="bg-surface/5 border border-border/10 p-6 rounded-2xl flex flex-col gap-2">
+                          <span className="font-mono text-3xl font-black text-primary tracking-tight">
+                            {metric.value}
+                            {metric.unit && <span className="text-lg font-bold">{metric.unit}</span>}
+                          </span>
+                          <span className="text-xs font-mono uppercase tracking-wider text-neutral-300 font-bold mt-1">{metric.label}</span>
+                          {metric.improvement && (
+                            <span className="text-[10px] font-mono text-emerald-400 font-bold mt-0.5">({metric.improvement})</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Downloadable Assets */}
+                {project.downloadableAssets && project.downloadableAssets.length > 0 && (
+                  <div className="bg-surface/5 border border-border/10 p-6 rounded-2xl flex flex-col gap-4 mt-6">
+                    <div className="flex items-center gap-2">
+                      <Award className="w-5 h-5 text-primary" />
+                      <h4 className="font-mono text-xs uppercase tracking-wider text-neutral-200 font-bold">Case Study Assets Available</h4>
+                    </div>
+                    <div className="flex flex-wrap gap-4">
+                      {project.downloadableAssets.map((asset, idx) => (
+                        <a
+                          key={idx}
+                          href={asset.url}
+                          className="inline-flex items-center gap-2 bg-background border border-border/20 hover:border-foreground hover:bg-surface/30 px-4 py-2 rounded-lg text-xs font-mono uppercase tracking-wider transition-all duration-200"
+                        >
+                          <Download className="w-3.5 h-3.5 text-primary" />
+                          <span>{asset.name}</span>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* 8. FAQs fold */}
+                {project.faq && project.faq.length > 0 && (
+                  <div id="faq" className="flex flex-col gap-6 border-t border-border/10 pt-16 scroll-mt-24">
+                    <span className="font-mono text-xs text-primary uppercase tracking-widest font-bold">[ 08. FAQs ]</span>
+                    <Heading level={2} className="text-3xl font-black tracking-tightest">
+                      Frequently Asked Questions.
+                    </Heading>
+                    <div className="flex flex-col gap-4">
+                      {project.faq.map((item, idx) => (
+                        <details key={idx} className="group bg-surface/5 border border-border/10 rounded-xl p-5 [&_summary::-webkit-details-marker]:hidden">
+                          <summary className="flex items-center justify-between cursor-pointer focus:outline-none">
+                            <span className="text-xs font-bold text-neutral-200">{item.question}</span>
+                            <span className="text-xs font-mono text-muted group-open:rotate-180 transition-transform duration-200">↓</span>
+                          </summary>
+                          <p className="text-xs text-muted leading-relaxed mt-3 pt-3 border-t border-border/5">
+                            {item.answer}
+                          </p>
+                        </details>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
               </div>
-            </Grid>
+            </div>
           </Container>
         </Section>
 
-        {/* Dynamic Gallery Mockups Grid */}
+        {/* Cinematic Gallery Mockups Grid */}
         {project.gallery && project.gallery.length > 0 && (
           <Section className="py-24 bg-background/30 border-t border-border/10">
             <Container className="max-w-4xl">
@@ -205,74 +422,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
           </Section>
         )}
 
-        {/* Testimonial / Results fold */}
-        {project.testimonial && (
-          <Section className="py-24 border-t border-border/10 bg-background/50">
-            <Container className="max-w-3xl">
-              <Stack gap={6} className="text-center">
-                <span className="font-mono text-[10px] uppercase tracking-widest text-primary font-bold">
-                  [ Partner Feedback ]
-                </span>
-                <blockquote className="py-4">
-                  <p className="font-display text-xl md:text-3xl italic text-foreground/95 leading-normal">
-                    &ldquo;{project.testimonial.quote}&rdquo;
-                  </p>
-                  <cite className="block font-sans text-xs uppercase tracking-widest text-muted mt-6 not-italic font-bold">
-                    — {project.testimonial.author} · <span className="font-normal text-muted/60">{project.testimonial.role}</span>
-                  </cite>
-                </blockquote>
-              </Stack>
-            </Container>
-          </Section>
-        )}
-
-        {/* Next/Prev Navigation controls */}
-        <Section className="py-16 border-t border-border/10 bg-background">
-          <Container>
-            <div className="flex justify-between items-center">
-              {prevProject ? (
-                <Link
-                  href={`/showcase/${prevProject.slug}`}
-                  className="group flex flex-col items-start gap-1"
-                >
-                  <span className="font-mono text-[9px] uppercase tracking-widest text-muted/50 group-hover:text-primary transition-colors">
-                    ← Previous Project [Left]
-                  </span>
-                  <span className="font-display text-sm md:text-base font-bold text-foreground">
-                    {prevProject.title}
-                  </span>
-                </Link>
-              ) : (
-                <div className="opacity-0 pointer-events-none" />
-              )}
-
-              <Link
-                href="/showcase"
-                className="font-mono text-[10px] uppercase tracking-widest text-muted hover:text-foreground border-b border-border/40 pb-1 hover:border-foreground transition-all duration-300"
-              >
-                All Projects
-              </Link>
-
-              {nextProject ? (
-                <Link
-                  href={`/showcase/${nextProject.slug}`}
-                  className="group flex flex-col items-end gap-1"
-                >
-                  <span className="font-mono text-[9px] uppercase tracking-widest text-muted/50 group-hover:text-primary transition-colors">
-                    Next Project [Right] →
-                  </span>
-                  <span className="font-display text-sm md:text-base font-bold text-foreground">
-                    {nextProject.title}
-                  </span>
-                </Link>
-              ) : (
-                <div className="opacity-0 pointer-events-none" />
-              )}
-            </div>
-          </Container>
-        </Section>
-
-        {/* Related Projects grid */}
+        {/* Dynamic Related Projects fold */}
         {relatedProjects.length > 0 && (
           <Section className="py-24 border-t border-border/10 bg-background/25">
             <Container>
@@ -286,6 +436,33 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                   ))}
                 </Grid>
               </Stack>
+            </Container>
+          </Section>
+        )}
+
+        {/* Dynamic Related Services Recommendation panel */}
+        {project.services && project.services.length > 0 && (
+          <Section className="py-24 border-t border-border/10 bg-background/40">
+            <Container>
+              <div className="flex flex-col gap-8">
+                <span className="font-mono text-xs text-primary uppercase tracking-widest font-bold block">[ Recommended Services ]</span>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {project.services.map((serviceName, idx) => (
+                    <div key={idx} className="bg-surface/5 border border-border/10 p-6 rounded-2xl flex items-center justify-between hover:border-foreground/30 transition-all duration-300">
+                      <div className="flex flex-col">
+                        <span className="text-sm font-bold text-neutral-200">{serviceName}</span>
+                        <span className="text-[10px] text-muted font-mono mt-1">ANNEX CORE Service Page capability</span>
+                      </div>
+                      <Link
+                        href={`/services/${serviceName.toLowerCase().replace(/\s+/g, "-")}`}
+                        className="inline-flex items-center justify-center w-8 h-8 rounded-full border border-border/20 group-hover:border-foreground hover:bg-foreground hover:text-background transition-all duration-300"
+                      >
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </Container>
           </Section>
         )}

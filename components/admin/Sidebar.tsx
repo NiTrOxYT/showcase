@@ -15,6 +15,7 @@ import {
   PhoneCall,
   Globe,
   Briefcase,
+  FileText,
 } from "lucide-react";
 
 export function Sidebar() {
@@ -25,6 +26,7 @@ export function Sidebar() {
   const navItems = [
     { title: "Dashboard", href: "/admin", icon: LayoutDashboard },
     { title: "Projects", href: "/admin/projects", icon: FolderKanban },
+    { title: "Case Studies", href: "/admin/case-studies", icon: FileText },
     { title: "Services", href: "/admin/services", icon: Briefcase },
     { title: "Settings", href: "/admin/settings", icon: Settings },
     { title: "Consultations", href: "/admin/consultations", icon: PhoneCall },

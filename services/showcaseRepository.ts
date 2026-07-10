@@ -42,6 +42,27 @@ export function mapRowToProject(row: any): Project {
     thumbnailAlt: row.title || "",
     createdAt: row.created_at || new Date().toISOString(),
     updatedAt: row.updated_at || new Date().toISOString(),
+
+    // Extended Case Study Fields mapping
+    clientWebsite: row.client_website || "",
+    businessProblem: row.business_problem || "",
+    projectGoal: row.project_goal || "",
+    research: row.research || "",
+    strategy: row.strategy || "",
+    designProcess: row.design_process || "",
+    developmentProcess: row.development_process || "",
+    technicalChallenges: Array.isArray(row.technical_challenges) ? row.technical_challenges : [],
+    performanceImprovements: Array.isArray(row.performance_improvements) ? row.performance_improvements : [],
+    results: Array.isArray(row.results) ? row.results : [],
+    timeline: Array.isArray(row.timeline) ? row.timeline : [],
+    metrics: Array.isArray(row.metrics) ? row.metrics : [],
+    faq: Array.isArray(row.faq) ? row.faq : [],
+    relatedProjects: Array.isArray(row.related_projects) ? row.related_projects : [],
+    relatedServices: Array.isArray(row.related_services) ? row.related_services : [],
+    beforeAfter: Array.isArray(row.before_after) ? row.before_after : [],
+    downloadableAssets: Array.isArray(row.downloadable_assets) ? row.downloadable_assets : [],
+    testimonialDetails: row.testimonial_details && typeof row.testimonial_details === "object" ? row.testimonial_details : {},
+    overview: row.overview || "",
   };
 }
 
@@ -82,6 +103,27 @@ export function mapProjectToRow(p: Partial<Project>): any {
   if (p.duration !== undefined) row.duration = p.duration;
   if (p.teamSize !== undefined) row.team_size = p.teamSize;
   if (p.repositoryVisibility !== undefined) row.repository_visibility = p.repositoryVisibility;
+
+  // Extended Case Study Fields serialization
+  if (p.clientWebsite !== undefined) row.client_website = p.clientWebsite;
+  if (p.businessProblem !== undefined) row.business_problem = p.businessProblem;
+  if (p.projectGoal !== undefined) row.project_goal = p.projectGoal;
+  if (p.research !== undefined) row.research = p.research;
+  if (p.strategy !== undefined) row.strategy = p.strategy;
+  if (p.designProcess !== undefined) row.design_process = p.designProcess;
+  if (p.developmentProcess !== undefined) row.development_process = p.developmentProcess;
+  if (p.technicalChallenges !== undefined) row.technical_challenges = p.technicalChallenges;
+  if (p.performanceImprovements !== undefined) row.performance_improvements = p.performanceImprovements;
+  if (p.results !== undefined) row.results = p.results;
+  if (p.timeline !== undefined) row.timeline = p.timeline;
+  if (p.metrics !== undefined) row.metrics = p.metrics;
+  if (p.faq !== undefined) row.faq = p.faq;
+  if (p.relatedProjects !== undefined) row.related_projects = p.relatedProjects;
+  if (p.relatedServices !== undefined) row.related_services = p.relatedServices;
+  if (p.beforeAfter !== undefined) row.before_after = p.beforeAfter;
+  if (p.downloadableAssets !== undefined) row.downloadable_assets = p.downloadableAssets;
+  if (p.testimonialDetails !== undefined) row.testimonial_details = p.testimonialDetails;
+  if (p.overview !== undefined) row.overview = p.overview;
   return row;
 }
 
