@@ -14,8 +14,10 @@ interface BookingItem {
   status?: string;
   lead_id: string;
   lead?: {
+    id?: string;
     full_name: string;
     company?: string | null;
+    clients?: { id: string }[];
   };
 }
 
@@ -114,12 +116,36 @@ export function BookingsClient({ initialBookings }: Props) {
                         <option value="Cancelled">Cancel</option>
                       </select>
                       
-                      <Link
-                        href={`/admin/leads/${b.lead_id}`}
-                        className="font-mono text-[9px] text-muted hover:text-foreground border border-border/20 bg-surface/30 px-2.5 py-1 rounded"
-                      >
-                        Profile
-                      </Link>
+                      {(() => {
+                        const linkedClient = b.lead?.clients?.[0];
+                        if (linkedClient?.id) {
+                          return (
+                            <Link
+                              href={`/admin/clients/${linkedClient.id}`}
+                              className="font-mono text-[9px] text-muted hover:text-foreground border border-border/20 bg-surface/30 px-2.5 py-1 rounded"
+                            >
+                              Profile
+                            </Link>
+                          );
+                        }
+                        if (b.lead_id || b.lead?.id) {
+                          return (
+                            <Link
+                              href={`/admin/leads/${b.lead_id || b.lead?.id}`}
+                              className="font-mono text-[9px] text-muted hover:text-foreground border border-border/20 bg-surface/30 px-2.5 py-1 rounded"
+                            >
+                              Profile
+                            </Link>
+                          );
+                        }
+                        return (
+                          <span
+                            className="font-mono text-[9px] text-muted/40 border border-border/10 bg-surface/10 px-2.5 py-1 rounded cursor-not-allowed select-none"
+                          >
+                            No Profile
+                          </span>
+                        );
+                      })()}
                     </div>
                   </td>
                 </tr>

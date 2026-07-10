@@ -22,6 +22,7 @@ export interface Lead {
   status?: "New" | "Reviewing" | "Contacted" | "Proposal Sent" | "Meeting Scheduled" | "Won" | "Lost" | "Archived";
   created_at?: string;
   updated_at?: string;
+  clients?: { id: string }[];
 }
 
 export interface LeadNote {
@@ -260,7 +261,7 @@ export const ConversionRepository = {
     const supabase = getSupabase();
     const { data, error } = await supabase
       .from("bookings")
-      .select("*, lead:leads(*)")
+      .select("*, lead:leads(*, clients(id))")
       .order("requested_date", { ascending: true })
       .order("requested_time", { ascending: true });
 
