@@ -12,8 +12,10 @@ import type { NavigationItem } from "@/services/navigationRepository";
 // ─── Nav links ───────────────────────────────────────────────────────────────
 const NAV_LINKS = [
   { label: "Work", href: "/showcase", num: "01" },
-  { label: "About", href: "/#about", num: "02" },
-  { label: "Contact", href: "/#contact", num: "03" },
+  { label: "Services", href: "/services", num: "02" },
+  { label: "Blog", href: "/blog", num: "03" },
+  { label: "About", href: "/#about", num: "04" },
+  { label: "Contact", href: "/#contact", num: "05" },
 ];
 
 const SOCIAL_LINKS = [
@@ -145,7 +147,12 @@ export function Navbar({ navLinks, logoUrl, contactEmail, contactAddress, theme:
       resolvedMenuTheme = docTheme as "light" | "dark";
     } else if (document.documentElement.classList.contains("dark")) {
       resolvedMenuTheme = "dark";
-    } else if (window.location.pathname === "/book-call" || window.location.pathname.startsWith("/showcase")) {
+    } else if (
+      window.location.pathname === "/book-call" ||
+      window.location.pathname.startsWith("/showcase") ||
+      window.location.pathname.startsWith("/blog") ||
+      window.location.pathname.startsWith("/services")
+    ) {
       resolvedMenuTheme = "dark";
     }
   }
