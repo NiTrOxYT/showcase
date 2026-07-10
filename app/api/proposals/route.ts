@@ -46,7 +46,10 @@ export async function POST(req: Request) {
     }, serviceIds);
 
     if (!lead || !lead.id) {
-      return NextResponse.json({ error: "Failed to initialize lead file" }, { status: 500 });
+      return NextResponse.json({ 
+        error: "Lead creation failed",
+        details: "Unable to initialize lead record for proposal."
+      }, { status: 500 });
     }
 
     // 2. Upload attachments and log them
@@ -56,6 +59,12 @@ export async function POST(req: Request) {
     for (const fileObject of files) {
       if (fileObject && typeof fileObject === "object" && "name" in fileObject) {
         const file = fileObject as File;
+        
+        // Skip empty or placeholder inputs
+        if (!file.name || file.size === 0) {
+          continue;
+        }
+
         const arrayBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
 
@@ -73,17 +82,22 @@ export async function POST(req: Request) {
 
         if (uploadError) {
           console.error(`[API Proposals Upload] Failed to upload ${file.name}:`, uploadError);
+          // Attachments are optional, do not block proposal submission
           continue;
         }
 
-        // Log file link in lead_files
-        await ConversionRepository.createLeadFile({
-          lead_id: lead.id,
-          filename: file.name,
-          storage_path: storagePath,
-          mime_type: file.type,
-          size: file.size,
-        });
+        // Log file link in lead_files (optional, don't crash if database insert fails)
+        try {
+          await ConversionRepository.createLeadFile({
+            lead_id: lead.id,
+            filename: file.name,
+            storage_path: storagePath,
+            mime_type: file.type,
+            size: file.size,
+          });
+        } catch (fileError) {
+          console.error(`[API Proposals File Log] Failed to log file record for ${file.name}:`, fileError);
+        }
       }
     }
 
@@ -105,10 +119,20 @@ export async function POST(req: Request) {
       project_priority,
     });
 
-    return NextResponse.json({ success: true, leadId: lead.id, proposalId: proposal?.id });
-  } catch (error) {
+    if (!proposal) {
+      return NextResponse.json({
+        error: "Proposal creation failed",
+        details: "Lead was created but proposal request could not be registered."
+      }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true, leadId: lead.id, proposalId: proposal.id });
+  } catch (error: any) {
     console.error("[API proposals POST] Failed:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json({ 
+      error: "Proposal submission failed", 
+      details: error?.message || "Internal Server Error"
+    }, { status: 500 });
   }
 }
 

@@ -23,13 +23,13 @@ import {
 export const dynamic = "force-dynamic";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default async function LeadDetailsPage({ params }: PageProps) {
-  const { id } = params;
+  const { id } = await params;
 
   const lead = await ConversionRepository.getLeadById(id);
   if (!lead) {

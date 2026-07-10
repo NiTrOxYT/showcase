@@ -100,7 +100,7 @@ export const ConversionRepository = {
 
     if (error) {
       console.error("[ConversionRepository] Error creating lead:", error);
-      return null;
+      throw new Error(`Database error on 'leads' table creation: ${error.message} (Code: ${error.code})`);
     }
 
     if (data && serviceIds && serviceIds.length > 0) {
@@ -114,6 +114,7 @@ export const ConversionRepository = {
 
       if (mappingError) {
         console.error("[ConversionRepository] Error mapping services to lead:", mappingError);
+        throw new Error(`Database error on 'lead_services' table mapping: ${mappingError.message} (Code: ${mappingError.code})`);
       }
     }
 
@@ -242,7 +243,7 @@ export const ConversionRepository = {
 
     if (error) {
       console.error("[ConversionRepository] Error creating booking:", error);
-      return null;
+      throw new Error(`Database error on 'bookings' table creation: ${error.message} (Code: ${error.code})`);
     }
 
     // Add timeline
@@ -308,7 +309,7 @@ export const ConversionRepository = {
 
     if (error) {
       console.error("[ConversionRepository] Error creating proposal request:", error);
-      return null;
+      throw new Error(`Database error on 'proposal_requests' table creation: ${error.message} (Code: ${error.code})`);
     }
 
     // Add timeline
@@ -373,7 +374,7 @@ export const ConversionRepository = {
 
     if (error) {
       console.error("[ConversionRepository] Error creating lead file record:", error);
-      return null;
+      throw new Error(`Database error on 'lead_files' table creation: ${error.message} (Code: ${error.code})`);
     }
 
     // Add timeline

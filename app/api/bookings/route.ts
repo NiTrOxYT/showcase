@@ -43,7 +43,10 @@ export async function POST(req: Request) {
     }, serviceIds);
 
     if (!lead || !lead.id) {
-      return NextResponse.json({ error: "Failed to create lead file" }, { status: 500 });
+      return NextResponse.json({ 
+        error: "Lead creation failed",
+        details: "Unable to insert lead record into database."
+      }, { status: 500 });
     }
 
     // 2. Create Booking
@@ -55,10 +58,21 @@ export async function POST(req: Request) {
       timezone,
     });
 
-    return NextResponse.json({ success: true, leadId: lead.id, bookingId: booking?.id });
-  } catch (error) {
+    if (!booking) {
+      return NextResponse.json({
+        error: "Booking creation failed",
+        details: "Lead was created but scheduling slot could not be reserved."
+      }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true, leadId: lead.id, bookingId: booking.id });
+  } catch (error: unknown) {
     console.error("[API bookings POST] Failed:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    const details = error instanceof Error ? error.message : "Internal Server Error";
+    return NextResponse.json({ 
+      error: "Booking request failed", 
+      details
+    }, { status: 500 });
   }
 }
 

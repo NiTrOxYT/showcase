@@ -33,12 +33,19 @@ export async function POST(req: Request) {
     
     const lead = await ConversionRepository.createLead(leadData, serviceIds);
     if (!lead) {
-      return NextResponse.json({ error: "Failed to create lead" }, { status: 400 });
+      return NextResponse.json({ 
+        error: "Lead creation failed",
+        details: "Unable to insert lead record into database."
+      }, { status: 400 });
     }
     return NextResponse.json({ lead });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("[API leads POST] Failed:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    const details = error instanceof Error ? error.message : "Internal Server Error";
+    return NextResponse.json({ 
+      error: "Lead submission failed", 
+      details
+    }, { status: 500 });
   }
 }
 
