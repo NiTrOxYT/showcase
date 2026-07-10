@@ -8,9 +8,10 @@ import { safeSrc } from "@/lib/images";
 
 interface ProjectHeroProps {
   project: Project;
+  breadcrumbs?: React.ReactNode;
 }
 
-export function ProjectHero({ project }: ProjectHeroProps) {
+export function ProjectHero({ project, breadcrumbs }: ProjectHeroProps) {
   return (
     <section className="relative min-h-[75vh] flex items-end pt-40 pb-20 overflow-hidden bg-background">
       <div className="absolute inset-0 z-0">
@@ -28,6 +29,7 @@ export function ProjectHero({ project }: ProjectHeroProps) {
       <Container className="relative z-10 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-end">
           <Stack gap={6} className="lg:col-span-8">
+            {breadcrumbs}
             <div className="flex items-center gap-4">
               <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold px-3 py-1 rounded-full border border-primary/20 bg-primary/5">
                 {project.category}

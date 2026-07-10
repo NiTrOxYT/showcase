@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import { Providers } from "@/providers/Providers";
-import { defaultMetadata } from "@/config/seo";
+import { constructMetadata } from "@/lib/seo/metadata";
+import { getOrganizationSchema } from "@/lib/seo/structured-data";
 import "./globals.css";
 
 const fontSans = Inter({
@@ -16,7 +17,7 @@ const fontDisplay = Space_Grotesk({
   display: "swap",
 });
 
-export const metadata: Metadata = defaultMetadata;
+export const metadata: Metadata = constructMetadata();
 
 export default function RootLayout({
   children,
@@ -30,6 +31,11 @@ export default function RootLayout({
       className={`${fontSans.variable} ${fontDisplay.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-background text-foreground selection:bg-primary selection:text-background transition-colors duration-300">
+        {/* Global Organization JSON-LD to prevent duplication across children */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(getOrganizationSchema()) }}
+        />
         <Providers>{children}</Providers>
       </body>
     </html>

@@ -15,13 +15,18 @@ import { showcaseRepository } from "@/services/showcaseRepository";
 
 import { SettingsRepository } from "@/services/repositories/SettingsRepository";
 import { navigationRepository } from "@/services/navigationRepository";
+import { constructMetadata } from "@/lib/seo/metadata";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
+import { getShowcaseBreadcrumb } from "@/lib/seo/breadcrumbs";
+import { getCollectionPageSchema } from "@/lib/seo/structured-data";
 
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await SettingsRepository.getModule("seo");
-  return {
-    title: seo.titleTemplate ? seo.titleTemplate.replace("%s", "Showcase") : "Showcase | ANNEX",
+  return constructMetadata({
+    title: seo.titleTemplate ? seo.titleTemplate.replace("%s", "Showcase") : "Showcase",
     description: seo.defaultDescription || "Bespoke digital platforms built for scale.",
-  };
+    path: "/showcase",
+  });
 }
 
 export default async function ShowcasePage() {
@@ -41,6 +46,13 @@ export default async function ShowcasePage() {
 
   return (
     <>
+      {/* CollectionPage ItemList JSON-LD Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(getCollectionPageSchema(initialProjects)),
+        }}
+      />
       <Navbar
         navLinks={headerNav}
         logoUrl={settings.branding.logoUrl}
@@ -52,7 +64,8 @@ export default async function ShowcasePage() {
         {/* Showcase Hero Section */}
         <Section className="pt-40 pb-16 border-b border-border/10 bg-background/50">
           <Container>
-            <Stack gap={6} className="max-w-3xl">
+            <Breadcrumbs items={getShowcaseBreadcrumb()} />
+            <Stack gap={6} className="max-w-3xl mt-4">
               <span className="font-mono text-xs text-primary uppercase tracking-widest font-bold">
                 [ Selected Artifacts ]
               </span>

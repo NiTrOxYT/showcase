@@ -20,6 +20,10 @@ import { ScrollProgress } from "@/components/motion/ScrollProgress";
 import { showcaseRepository } from "@/services/showcaseRepository";
 import { SettingsRepository } from "@/services/repositories/SettingsRepository";
 import { navigationRepository } from "@/services/navigationRepository";
+import { constructMetadata } from "@/lib/seo/metadata";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
+import { getProjectBreadcrumb } from "@/lib/seo/breadcrumbs";
+import { getCaseStudySchema } from "@/lib/seo/structured-data";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -37,20 +41,25 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const project = await showcaseRepository.getProjectBySlug(slug);
 
   if (!project) {
-    return {
+    return constructMetadata({
       title: "Project Not Found",
-    };
+      path: `/showcase/${slug}`,
+    });
   }
 
-  return {
-    title: `${project.seoTitle || project.title} | ANNEX`,
+  return constructMetadata({
+    title: project.seoTitle || project.title,
     description: project.seoDescription || project.shortDescription,
-    openGraph: {
-      title: project.title,
-      description: project.shortDescription,
-      images: project.ogImage ? [{ url: project.ogImage }] : [],
-    },
-  };
+    image: project.ogImage || project.coverImage || undefined,
+    path: `/showcase/${project.slug}`,
+    type: "article",
+    category: project.category,
+    technologies: project.technologies,
+    services: project.services,
+    tags: project.deliverables,
+    publishedTime: project.completionDate ? new Date(project.completionDate).toISOString() : undefined,
+    modifiedTime: project.updatedAt ? new Date(project.updatedAt).toISOString() : undefined,
+  });
 }
 
 export default async function ProjectDetailPage({ params }: PageProps) {
@@ -83,6 +92,13 @@ export default async function ProjectDetailPage({ params }: PageProps) {
 
   return (
     <>
+      {/* CreativeWork Case Study JSON-LD Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(getCaseStudySchema(project)),
+        }}
+      />
       <ScrollProgress />
       <Navbar
         navLinks={headerNav}
@@ -97,7 +113,12 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       />
       <main className="overflow-x-hidden w-full max-w-full">
         {/* Cinematic Cover Header */}
-        <ProjectHero project={project} />
+        <ProjectHero
+          project={project}
+          breadcrumbs={
+            <Breadcrumbs items={getProjectBreadcrumb(project.title, project.slug)} />
+          }
+        />
 
         {/* Project Overview */}
         <Section className="py-24 bg-background border-t border-border/10">
