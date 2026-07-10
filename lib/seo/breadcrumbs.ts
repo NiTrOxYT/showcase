@@ -22,11 +22,14 @@ export function getBookCallBreadcrumb(): BreadcrumbLink[] {
   return [{ name: "Book a Call", href: "/book-call" }];
 }
 
-// Future Service Pages
-export function getServiceBreadcrumb(serviceName: string, serviceSlug: string): BreadcrumbLink[] {
+export function getServicesBreadcrumb(): BreadcrumbLink[] {
+  return [{ name: "Services", href: "/services" }];
+}
+
+export function getServiceDetailBreadcrumb(service: { title: string; slug: string }): BreadcrumbLink[] {
   return [
     { name: "Services", href: "/services" },
-    { name: serviceName, href: `/services/${serviceSlug}` },
+    { name: service.title, href: `/services/${service.slug}` },
   ];
 }
 

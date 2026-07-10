@@ -9,7 +9,7 @@ export interface SitemapItem {
 }
 
 export async function getSitemapData(): Promise<SitemapItem[]> {
-  const routes = ["", "/showcase", "/book-call"].map((route) => ({
+  const routes = ["", "/showcase", "/services", "/book-call"].map((route) => ({
     url: `${siteConfig.url}${route}`,
     lastModified: new Date(),
     changeFrequency: "daily" as const,
@@ -26,7 +26,21 @@ export async function getSitemapData(): Promise<SitemapItem[]> {
 
   // Placeholders for future sitemap modules (Blogs, Services, Locations)
   const blogRoutes: SitemapItem[] = []; // Fill dynamically in future blog releases
-  const serviceRoutes: SitemapItem[] = []; // Fill dynamically in future services releases
+  
+  let serviceRoutes: SitemapItem[] = [];
+  try {
+    const { ServiceRepository } = await import("@/services/repositories/ServiceRepository");
+    const services = await ServiceRepository.getPublished();
+    serviceRoutes = services.map((s) => ({
+      url: `${siteConfig.url}/services/${s.slug}`,
+      lastModified: s.updatedAt ? new Date(s.updatedAt) : new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    }));
+  } catch (err) {
+    console.error("Sitemap service routes query error:", err);
+  }
+
   const locationRoutes: SitemapItem[] = []; // Fill dynamically in future locations releases
 
   return [...routes, ...projectRoutes, ...blogRoutes, ...serviceRoutes, ...locationRoutes];
