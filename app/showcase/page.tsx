@@ -46,6 +46,7 @@ export default async function ShowcasePage() {
         logoUrl={settings.branding.logoUrl}
         contactEmail={settings.contact.email}
         contactAddress={settings.contact.address}
+        theme="dark"
       />
       <main className="overflow-x-hidden w-full max-w-full">
         {/* Showcase Hero Section */}

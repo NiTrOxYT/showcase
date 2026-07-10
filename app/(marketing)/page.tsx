@@ -34,6 +34,7 @@ export default async function HomePage() {
         logoUrl={settings.branding.logoUrl}
         contactEmail={settings.contact.email}
         contactAddress={settings.contact.address}
+        theme="light"
       />
       <main className="overflow-x-hidden w-full max-w-full">
         <Hero settings={settings.homepage.hero} />

@@ -89,6 +89,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
         logoUrl={settings.branding.logoUrl}
         contactEmail={settings.contact.email}
         contactAddress={settings.contact.address}
+        theme="dark"
       />
       <ProjectNavigationListener
         prevSlug={prevProject ? prevProject.slug : null}

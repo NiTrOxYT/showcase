@@ -54,6 +54,7 @@ export default async function BookCallPage() {
         logoUrl={settings.branding.logoUrl}
         contactEmail={settings.contact.email}
         contactAddress={settings.contact.address}
+        theme="dark"
       />
       <main className="min-h-screen pt-24 bg-background overflow-x-hidden w-full max-w-full">
         <BookCallForm />
