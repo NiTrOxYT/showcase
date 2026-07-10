@@ -19,7 +19,8 @@ import {
   Users,
   ArrowRightLeft,
   BarChart2,
-  Calendar
+  Calendar,
+  Building2
 } from "lucide-react";
 
 export function Sidebar() {
@@ -48,6 +49,8 @@ export function Sidebar() {
       group: "Sales",
       items: [
         { title: "Leads", href: "/admin/leads", icon: Users },
+        { title: "Clients", href: "/admin/clients", icon: Building2 },
+        { title: "Projects", href: "/admin/delivery-projects", icon: FolderKanban },
         { title: "Bookings", href: "/admin/bookings", icon: Calendar },
         { title: "Proposals", href: "/admin/proposals", icon: FileText },
         { title: "Analytics", href: "/admin/analytics", icon: BarChart2 },

@@ -2,22 +2,26 @@ import React from "react";
 import { Heading } from "@/components/typography/Heading";
 import { Text } from "@/components/typography/Text";
 import { ConversionRepository } from "@/services/repositories/ConversionRepository";
-import { BarChart3, TrendingUp, DollarSign, Calendar, Users, Activity } from "lucide-react";
+import { ClientPortalRepository } from "@/services/repositories/ClientPortalRepository";
+import { BarChart3, TrendingUp, DollarSign, Calendar, Users, Activity, CheckCircle, Briefcase, Award } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
 export default async function AnalyticsAdminPage() {
-  const stats = await ConversionRepository.getCRMStats();
+  const [stats, portalStats] = await Promise.all([
+    ConversionRepository.getCRMStats(),
+    ClientPortalRepository.getPortalAnalytics(),
+  ]);
 
   const executiveStats = [
-    { label: "Total CRM Leads", value: stats.totalLeads, desc: "Cumulative database count", icon: Users, color: "text-primary" },
-    { label: "New Leads Today", value: stats.leadsToday, desc: "Logged since midnight", icon: TrendingUp, color: "text-emerald-500" },
-    { label: "New Leads This Week", value: stats.leadsThisWeek, desc: "Logged in past 7 days", icon: Activity, color: "text-blue-500" },
-    { label: "New Leads This Month", value: stats.leadsThisMonth, desc: "Logged in current month", icon: Activity, color: "text-indigo-500" },
-    { label: "Hot Leads", value: stats.hotLeads, desc: "Score >= 80% (High Priority)", icon: Users, color: "text-red-500" },
-    { label: "Warm Leads", value: stats.warmLeads, desc: "Score 50% - 79%", icon: Users, color: "text-amber-500" },
-    { label: "Cold Leads", value: stats.coldLeads, desc: "Score < 50%", icon: Users, color: "text-slate-500" },
-    { label: "Average Budget Estimate", value: stats.avgBudget ? `₹${stats.avgBudget.toLocaleString()}` : "N/A", desc: "Averaged across responses", icon: DollarSign, color: "text-emerald-400" },
+    { label: "Active Clients", value: portalStats.activeClients, desc: "Total accounts active", icon: Users, color: "text-primary" },
+    { label: "Projects In Progress", value: portalStats.projectsInProgress, desc: "Currently active deliveries", icon: Briefcase, color: "text-blue-500" },
+    { label: "Completed Projects", value: portalStats.completedProjects, desc: "Successfully delivered", icon: CheckCircle, color: "text-emerald-500" },
+    { label: "Avg Project Duration", value: portalStats.avgProjectDurationDays ? `${portalStats.avgProjectDurationDays} Days` : "N/A", desc: "Averaged across deliveries", icon: Calendar, color: "text-indigo-500" },
+    { label: "Lead Conversion Rate", value: `${portalStats.leadConversionRate}%`, desc: "Leads Won vs Total Leads", icon: Award, color: "text-primary" },
+    { label: "Returning Clients", value: portalStats.returningClients, desc: "> 1 completed project", icon: Users, color: "text-amber-500" },
+    { label: "Revenue Pipeline", value: "₹ --", desc: "Phase 7 Revenue Estimation", icon: DollarSign, color: "text-emerald-400" },
+    { label: "Total CRM Leads", value: stats.totalLeads, desc: "Cumulative database count", icon: Users, color: "text-muted" },
   ];
 
   return (

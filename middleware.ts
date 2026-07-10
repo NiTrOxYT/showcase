@@ -62,6 +62,19 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // 3. Protect /portal routes (client portal — Supabase Auth + client_users lookup)
+  if (pathname.startsWith("/portal")) {
+    if (pathname === "/portal/login") {
+      // Already on login — allow through
+    } else {
+      const { getPortalSession } = await import("@/lib/supabase/middleware");
+      const session = await getPortalSession(request);
+      if (!session) {
+        return NextResponse.redirect(new URL("/portal/login", request.url));
+      }
+    }
+  }
+
   return response;
 }
 
