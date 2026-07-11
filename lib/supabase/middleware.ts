@@ -52,11 +52,11 @@ export async function getPortalSession(request: NextRequest): Promise<PortalSess
 
     const { data: clientUser } = await adminClient
       .from("client_users")
-      .select("id, client_id, role, name, email")
+      .select("id, client_id, role, name, email, status")
       .eq("auth_user_id", user.id)
       .maybeSingle();
 
-    if (!clientUser) return null;
+    if (!clientUser || clientUser.status !== "active") return null;
 
     return {
       authUserId: user.id,

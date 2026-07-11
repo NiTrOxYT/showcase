@@ -3,7 +3,6 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import { getPortalSession } from "@/lib/supabase/middleware";
 import { ClientPortalRepository } from "@/services/repositories/ClientPortalRepository";
-import { Heading } from "@/components/typography/Heading";
 import { ProjectProgressBar } from "@/components/portal/ProjectProgressBar";
 import { MilestoneTimeline } from "@/components/portal/MilestoneTimeline";
 import { FolderKanban, Calendar, History, ArrowRight } from "lucide-react";

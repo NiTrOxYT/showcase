@@ -2,10 +2,9 @@
 
 import React, { useState } from "react";
 import { 
-  Building2, Users, FolderKanban, History, Mail, Phone, Globe, ExternalLink, Plus, RefreshCw, Key, FileText, CheckCircle,
-  Briefcase, Calendar, CheckSquare, Paperclip, MessageSquare, Clock, ArrowUpRight, Play, AlertTriangle
+  FolderKanban, Calendar, Paperclip, MessageSquare, History, ExternalLink, RefreshCw, Clock
 } from "lucide-react";
-import type { DeliveryProject, ProjectMilestone, Comment, ProjectActivity, PortalSession } from "@/types/portal";
+import type { DeliveryProject, Comment, ProjectActivity, PortalSession } from "@/types/portal";
 import { ProjectProgressBar } from "@/components/portal/ProjectProgressBar";
 import { MilestoneTimeline } from "@/components/portal/MilestoneTimeline";
 import { FileCard } from "@/components/portal/FileCard";

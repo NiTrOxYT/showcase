@@ -182,10 +182,10 @@ export const ClientPortalRepository = {
     const sb = getSupabase();
     const { data, error } = await sb
       .from("client_users")
-      .select("id, client_id, role, name, email")
+      .select("id, client_id, role, name, email, status")
       .eq("auth_user_id", authUserId)
       .maybeSingle();
-    if (error || !data) return null;
+    if (error || !data || data.status !== "active") return null;
     return {
       authUserId,
       clientUserId: data.id,

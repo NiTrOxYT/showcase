@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { supabaseClient } from "@/lib/supabase/client";
 import { Heading } from "@/components/typography/Heading";
-import { User, Lock, Loader2, CheckCircle2 } from "lucide-react";
+import { User, Lock, Loader2 } from "lucide-react";
 
 export default function PortalProfilePage() {
   const [profile, setProfile] = useState<{ name: string; email: string; role: string } | null>(null);

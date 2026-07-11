@@ -140,7 +140,7 @@ export function Navbar({ navLinks, logoUrl, contactEmail, contactAddress, theme:
   const logo = logoUrl || "/images/logo.png";
   const pathname = usePathname() || "";
 
-  const links: FormattedNavLink[] = (navLinks && navLinks.length > 0)
+  const resolvedLinks: FormattedNavLink[] = (navLinks && navLinks.length > 0)
     ? navLinks.map((item, idx) => ({
       label: item.title,
       href: item.href,
@@ -148,6 +148,17 @@ export function Navbar({ navLinks, logoUrl, contactEmail, contactAddress, theme:
       children: item.children || [],
     }))
     : NAV_LINKS.map((item) => ({ ...item, children: [] }));
+
+  // Append Client Portal link if missing (ponytail: ensure link matches ANNEX style)
+  const links = [...resolvedLinks];
+  if (!links.some((l) => l.label.toLowerCase() === "client portal")) {
+    links.push({
+      label: "Client Portal",
+      href: "/portal/login",
+      num: `0${links.length + 1}`,
+      children: [],
+    });
+  }
 
   let resolvedMenuTheme: "light" | "dark" = "light";
   if (themeProp) {

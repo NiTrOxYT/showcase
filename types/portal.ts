@@ -33,6 +33,7 @@ export interface ClientUser {
   name: string;
   email: string;
   role: ClientRole;
+  status: "active" | "disabled";
   last_login?: string | null;
   created_at: string;
 }

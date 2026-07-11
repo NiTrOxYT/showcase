@@ -29,8 +29,18 @@ export default function PortalLoginPage() {
       }
 
       if (data.session) {
-        // Authenticated successfully! Verify if portal user profile is mapped
-        // Route to portal root dashboard page
+        // Authenticated successfully! Verify if portal user profile is active
+        const { data: profile } = await (supabaseClient as any)
+          .from("client_users")
+          .select("status")
+          .eq("auth_user_id", data.user.id)
+          .maybeSingle();
+
+        if (profile && profile.status === "disabled") {
+          await supabaseClient.auth.signOut();
+          throw new Error("Account disabled. Please contact support.");
+        }
+
         router.push("/portal");
         router.refresh();
       }
