@@ -195,5 +195,4 @@ export function NotesWidget({ leadId, initialNotes }: NotesProps) {
   );
 }
 
-// Bind Notes widget as sub-property to keep import clean
-LeadWorkspaceClient.Notes = NotesWidget;
+

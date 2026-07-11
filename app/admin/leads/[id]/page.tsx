@@ -6,7 +6,7 @@ import { Heading } from "@/components/typography/Heading";
 import { Text } from "@/components/typography/Text";
 import { ConversionRepository } from "@/services/repositories/ConversionRepository";
 import { createAdminClient } from "@/lib/supabase/server";
-import { LeadWorkspaceClient } from "./LeadWorkspaceClient";
+import { LeadWorkspaceClient, NotesWidget } from "./LeadWorkspaceClient";
 import {
   ArrowLeft,
   User,
@@ -251,7 +251,7 @@ export default async function LeadDetailsPage({ params }: PageProps) {
         <div className="lg:col-span-4 flex flex-col gap-8">
           
           {/* Notes Log widget */}
-          <LeadWorkspaceClient.Notes leadId={lead.id!} initialNotes={lead.notes || []} />
+          <NotesWidget leadId={lead.id!} initialNotes={lead.notes || []} />
 
           {/* Timeline tracker */}
           <div className="p-6 border border-border/30 bg-surface/10 rounded-xl flex flex-col gap-4">
